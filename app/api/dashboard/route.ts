@@ -4,6 +4,8 @@ import { authOptions } from '@/lib/auth'
 import dbConnect from '@/lib/mongodb'
 import Invoice from '@/models/Invoice'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/dashboard — stats for dashboard overview
 export async function GET() {
   try {

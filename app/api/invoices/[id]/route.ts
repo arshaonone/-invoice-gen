@@ -4,6 +4,8 @@ import { authOptions } from '@/lib/auth'
 import dbConnect from '@/lib/mongodb'
 import Invoice from '@/models/Invoice'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/invoices/[id]
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   try {

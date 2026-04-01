@@ -298,7 +298,7 @@ export default function InvoiceCreator({ invoiceId }: { invoiceId?: string }) {
               ].map(({ key, label, placeholder }) => (
                 <div key={key}>
                   <label className="label">{label}</label>
-                  <input value={(data as Record<string, string>)[key]} onChange={e => setField(key as keyof InvoiceData, e.target.value)} placeholder={placeholder} className="input" />
+                  <input value={(data as any)[key]} onChange={e => setField(key as keyof InvoiceData, e.target.value)} placeholder={placeholder} className="input" />
                 </div>
               ))}
             </div>
@@ -315,7 +315,7 @@ export default function InvoiceCreator({ invoiceId }: { invoiceId?: string }) {
               ].map(({ key, label, placeholder }) => (
                 <div key={key}>
                   <label className="label">{label}</label>
-                  <input value={(data as Record<string, string>)[key]} onChange={e => setField(key as keyof InvoiceData, e.target.value)} placeholder={placeholder} className="input" />
+                  <input value={(data as any)[key]} onChange={e => setField(key as keyof InvoiceData, e.target.value)} placeholder={placeholder} className="input" />
                 </div>
               ))}
             </div>

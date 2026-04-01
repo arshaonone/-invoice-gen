@@ -6,6 +6,8 @@ import Invoice from '@/models/Invoice'
 import User from '@/models/User'
 import { generateInvoiceNumber } from '@/lib/utils'
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/invoices — list all invoices for current user
 export async function GET(req: NextRequest) {
   try {
