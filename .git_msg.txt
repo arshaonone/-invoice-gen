@@ -1,13 +1,6 @@
-feat: professional mobile-first UI overhaul
+feat: add professional favicon for invoice-gen.net
 
-- Header simplified on mobile: icon + name only, Settings icon only, Download hidden (bottom bar handles it)
-- No more duplicate Download button on mobile
-- Mobile line items: proper card layout with larger 40px delete touch target, Amount shown in brand-colored pill
-- Add Line Item button is full-width on mobile with dashed border for discoverability
-- Notes/Terms labels use consistent gray styling (no more amber clash)
-- Totals panel: consistent alignment, all inputs same size, clean borders
-- Mobile sticky bottom bar: Print + Download PDF with backdrop blur, brand-colored download
-- Date fields use 2-column grid on mobile for compact display
-- Sidebar hidden on mobile (settings accessible via header Settings icon + sidebar scrolled to below form)
-- All touch targets minimum 40px height
-- pb-28 bottom padding prevents content hidden behind sticky bar
+- Added favicon.png and apple-touch-icon.png to public/ folder
+- Added app/icon.png for Next.js App Router auto-detection
+- Updated layout.tsx metadata with icons, apple-touch-icon, and shortcut entries
+- Updated page title and description to reflect free, no-signup product
