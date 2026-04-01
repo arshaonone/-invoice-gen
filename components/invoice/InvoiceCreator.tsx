@@ -180,8 +180,8 @@ export default function InvoiceCreator() {
               <FileText className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold text-gray-900 text-sm">
-              Invoice-<span className="text-green-500">Generator</span>
-              <span className="text-gray-400 font-normal">.com</span>
+              invoice-<span className="text-green-500">gen</span>
+              <span className="text-gray-400 font-normal">.net</span>
             </span>
           </div>
 
@@ -287,7 +287,7 @@ export default function InvoiceCreator() {
       )}
 
       {/* ── Main Body: Invoice + Sidebar ── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 print:hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-28 lg:pb-6 print:hidden">
         <div className="flex flex-col lg:flex-row gap-6 items-start">
 
           {/* ── INVOICE CARD ── */}
@@ -450,9 +450,9 @@ export default function InvoiceCreator() {
                         />
                       </div>
                       <input
-                        type="number" min="0" step="0.01"
+                        type="number" min="1" step="1"
                         value={item.quantity}
-                        onChange={e => updateItem(item.id, { quantity: parseFloat(e.target.value) || 0 })}
+                        onChange={e => updateItem(item.id, { quantity: parseInt(e.target.value) || 1 })}
                         className={cls(inputBase, 'text-center')}
                       />
                       <div className="relative">
@@ -498,9 +498,9 @@ export default function InvoiceCreator() {
                       <div className="grid grid-cols-3 gap-2 items-end">
                         <div>
                           <label className="text-xs text-gray-400 mb-1 block">Qty</label>
-                          <input type="number" min="0" step="0.01"
+                          <input type="number" min="1" step="1"
                             value={item.quantity}
-                            onChange={e => updateItem(item.id, { quantity: parseFloat(e.target.value) || 0 })}
+                            onChange={e => updateItem(item.id, { quantity: parseInt(e.target.value) || 1 })}
                             className={cls(inputBase, 'text-center')}
                           />
                         </div>
@@ -792,6 +792,28 @@ export default function InvoiceCreator() {
 
           </div>{/* end sidebar */}
         </div>
+      </div>
+
+      {/* ── MOBILE STICKY BOTTOM BAR ── */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-4 py-3 flex gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] print:hidden">
+        <button
+          onClick={handlePrint}
+          className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition active:scale-95"
+        >
+          <Printer className="w-4 h-4" /> Print
+        </button>
+        <button
+          onClick={() => {
+            toast.promise(
+              new Promise<void>((resolve) => { handlePrint(); setTimeout(resolve, 500) }),
+              { loading: 'Preparing PDF…', success: 'Download ready!', error: 'Failed' }
+            )
+          }}
+          className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold text-white rounded-xl transition active:scale-95 shadow-md"
+          style={{ background: data.brandColor }}
+        >
+          <Download className="w-4 h-4" /> Download PDF
+        </button>
       </div>
 
       {/* ── PRINTABLE INVOICE (hidden, for PDF) ── */}

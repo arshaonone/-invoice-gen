@@ -1,7 +1,6 @@
-fix: resolve TypeScript build errors for Hostinger deployment
+feat: rename to invoice-gen.net, whole-number qty, mobile sticky bottom bar
 
-- Add missing fields back to InvoiceData (senderName, senderEmail, senderPhone,
-  senderAddress, clientCompany, clientEmail, clientPhone, language)
-- Add taxRate back to InvoiceItem (used by template components)
-- Fix LANGS indexing in BoldTemplate, MinimalTemplate, ModernTemplate
-- Build now passes clean with Next.js 14 type checking
+- Navbar brand updated: invoice-gen.net
+- QTY field now accepts only whole numbers (1, 2, 3...)
+- Added sticky bottom action bar on mobile with Print + Download PDF buttons
+- Added pb-28 on mobile body so content is not hidden behind the bar
