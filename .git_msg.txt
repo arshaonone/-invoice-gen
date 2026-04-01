@@ -1,10 +1,14 @@
-feat: replace print-dialog with direct PDF download using html2canvas + jsPDF
+fix: PDF generation "Failed to generate PDF" error
 
-- Download PDF button now generates and saves PDF directly to file manager
-- No more print dialog when clicking Download PDF
-- Uses html2canvas (scale 2x for quality) + jsPDF (A4 portrait format)
-- Multi-page support: long invoices automatically paginate
-- Spinner/loading state on all 3 Download buttons while generating
-- Buttons disabled during generation to prevent double-clicks
-- Print button still opens print dialog as expected
-- Dynamic import of jspdf+html2canvas avoids SSR issues
+Root cause: downloadPDF was attempting to show the inner printRef div,
+but the outer container had display:none (from Tailwind's hidden class),
+which blocked html2canvas from rendering anything.
+
+Fix:
+- Added printContainerRef to the outer wrapper div
+- Changed outer div from className="hidden" to style={{ display: 'none' }}
+  so JavaScript can reliably toggle it
+- downloadPDF now shows/hides the OUTER container (not the inner div)
+- Container is revealed off-screen at 794px width for A4 capture
+- Container is guaranteed to be re-hidden even on error (finally block)
+- Added allowTaint: true and windowWidth: 794 to html2canvas options

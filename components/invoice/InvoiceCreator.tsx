@@ -120,6 +120,7 @@ export default function InvoiceCreator() {
   const [showBanner, setShowBanner] = useState(true)
   const [isGenerating, setIsGenerating] = useState(false)
   const printRef = useRef<HTMLDivElement>(null)
+  const printContainerRef = useRef<HTMLDivElement>(null)
   const logoInputRef = useRef<HTMLInputElement>(null)
 
   const set = <K extends keyof InvoiceData>(key: K, val: InvoiceData[K]) =>
@@ -163,82 +164,82 @@ export default function InvoiceCreator() {
   const balanceDue = Math.max(0, data.total - data.amountPaid)
 
   const downloadPDF = async () => {
-    if (!printRef.current || isGenerating) return
+    if (!printRef.current || !printContainerRef.current || isGenerating) return
     setIsGenerating(true)
     const toastId = toast.loading('Generating PDF…')
+    const container = printContainerRef.current
     try {
-      // Dynamically import to avoid SSR issues
       const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
         import('jspdf'),
         import('html2canvas'),
       ])
 
-      const element = printRef.current
-      // Temporarily make visible off-screen for capture
-      element.style.position = 'fixed'
-      element.style.left = '-9999px'
-      element.style.top = '0'
-      element.style.display = 'block'
-      element.style.width = '794px' // A4 at 96dpi
+      // Reveal the container off-screen so html2canvas can render it
+      container.style.display = 'block'
+      container.style.position = 'fixed'
+      container.style.left = '-9999px'
+      container.style.top = '0'
+      container.style.width = '794px'
+      container.style.zIndex = '-1'
 
-      await new Promise(r => setTimeout(r, 200)) // let fonts render
+      // Wait for fonts/images to settle
+      await new Promise(r => setTimeout(r, 300))
 
-      const canvas = await html2canvas(element, {
+      const canvas = await html2canvas(printRef.current, {
         scale: 2,
         useCORS: true,
+        allowTaint: true,
         logging: false,
         backgroundColor: '#ffffff',
         width: 794,
+        windowWidth: 794,
       })
 
-      // Restore
-      element.style.position = ''
-      element.style.left = ''
-      element.style.top = ''
-      element.style.display = ''
-      element.style.width = ''
+      // Hide again
+      container.style.display = 'none'
+      container.style.position = ''
+      container.style.left = ''
+      container.style.top = ''
+      container.style.width = ''
+      container.style.zIndex = ''
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.95)
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-      })
+      const imgData = canvas.toDataURL('image/jpeg', 0.92)
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
 
-      const pdfWidth = pdf.internal.pageSize.getWidth()
-      const pdfHeight = pdf.internal.pageSize.getHeight()
-      const imgWidth = canvas.width
-      const imgHeight = canvas.height
-      const ratio = imgWidth / imgHeight
-      const pdfImgWidth = pdfWidth
-      const pdfImgHeight = pdfWidth / ratio
+      const pdfW = pdf.internal.pageSize.getWidth()
+      const pdfH = pdf.internal.pageSize.getHeight()
+      const imgW = canvas.width
+      const imgH = canvas.height
+      const scaledH = (imgH * pdfW) / imgW // mm height of full content
 
-      // Handle multi-page if content is tall
-      if (pdfImgHeight <= pdfHeight) {
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfImgWidth, pdfImgHeight)
+      if (scaledH <= pdfH) {
+        // Fits on one page
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, scaledH)
       } else {
-        let yPos = 0
-        const pageHeightPx = (pdfHeight / pdfImgHeight) * imgHeight
-        let pageNum = 0
-        while (yPos < imgHeight) {
+        // Multi-page: slice canvas into A4-sized chunks
+        const pxPerPage = Math.floor((pdfH / scaledH) * imgH)
+        let yPx = 0
+        let page = 0
+        while (yPx < imgH) {
+          const sliceH = Math.min(pxPerPage, imgH - yPx)
           const pageCanvas = document.createElement('canvas')
-          pageCanvas.width = imgWidth
-          pageCanvas.height = Math.min(pageHeightPx, imgHeight - yPos)
-          const ctx = pageCanvas.getContext('2d')!
-          ctx.drawImage(canvas, 0, yPos, imgWidth, pageCanvas.height, 0, 0, imgWidth, pageCanvas.height)
-          const pageData = pageCanvas.toDataURL('image/jpeg', 0.95)
-          const pageActualHeight = (pageCanvas.height / imgWidth) * pdfImgWidth
-          if (pageNum > 0) pdf.addPage()
-          pdf.addImage(pageData, 'JPEG', 0, 0, pdfImgWidth, pageActualHeight)
-          yPos += pageCanvas.height
-          pageNum++
+          pageCanvas.width = imgW
+          pageCanvas.height = sliceH
+          pageCanvas.getContext('2d')!.drawImage(canvas, 0, yPx, imgW, sliceH, 0, 0, imgW, sliceH)
+          const sliceMmH = (sliceH * pdfW) / imgW
+          if (page > 0) pdf.addPage()
+          pdf.addImage(pageCanvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, pdfW, sliceMmH)
+          yPx += sliceH
+          page++
         }
       }
 
       pdf.save(`Invoice-${data.invoiceNumber}.pdf`)
       toast.success('PDF downloaded!', { id: toastId })
     } catch (err) {
-      console.error(err)
+      console.error('PDF generation error:', err)
+      // Ensure container is hidden on error
+      container.style.display = 'none'
       toast.error('Failed to generate PDF', { id: toastId })
     } finally {
       setIsGenerating(false)
@@ -895,8 +896,8 @@ export default function InvoiceCreator() {
         </button>
       </div>
 
-      {/* ── PRINTABLE INVOICE ── */}
-      <div className="hidden" aria-hidden>
+      {/* ── PRINTABLE INVOICE (hidden off-screen, ref-controlled for PDF capture) ── */}
+      <div ref={printContainerRef} style={{ display: 'none' }} aria-hidden>
         <div ref={printRef}>
           <PrintableInvoice data={data} />
         </div>
