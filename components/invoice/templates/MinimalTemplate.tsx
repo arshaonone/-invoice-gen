@@ -27,12 +27,12 @@ export default function MinimalTemplate({ data }: { data: InvoiceData }) {
           <div className="text-sm text-gray-400 mt-1">{data.invoiceNumber}</div>
           <div className="mt-4 space-y-1 text-sm">
             <div className="flex justify-end gap-3">
-              <span className="text-gray-400">{t.date}:</span>
-              <span className="font-medium">{formatDate(data.invoiceDate)}</span>
+              <span className="text-gray-400 w-20 text-right">{t.date}:</span>
+              <span className="font-medium text-right min-w-[100px]">{formatDate(data.invoiceDate)}</span>
             </div>
             <div className="flex justify-end gap-3">
-              <span className="text-gray-400">{t.dueDate}:</span>
-              <span className="font-medium">{formatDate(data.dueDate)}</span>
+              <span className="text-gray-400 w-20 text-right">{t.dueDate}:</span>
+              <span className="font-medium text-right min-w-[100px]">{formatDate(data.dueDate)}</span>
             </div>
           </div>
         </div>

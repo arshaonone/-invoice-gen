@@ -154,7 +154,8 @@
   @media print {
     .no-print { display: none !important; }
     .print-only { display: block !important; }
-    body { background: white !important; }
+    body { background: white !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @page { margin: 0; size: auto; }
   }
 }
 

@@ -7,11 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default function Home() {
-  return (
-    <main className="min-h-screen bg-gray-50 flex py-10 px-4">
-      <div className="flex-1 max-w-7xl mx-auto">
-        <InvoiceCreator />
-      </div>
-    </main>
-  )
+  return <InvoiceCreator />
 }

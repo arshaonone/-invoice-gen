@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { FileText, Plus, Search, Trash2, Edit, Download, Filter, ChevronDown } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils'
-import { downloadInvoicePDF } from '@/lib/pdf'
 import MinimalTemplate from '@/components/invoice/templates/MinimalTemplate'
 import type { InvoiceData } from '@/components/invoice/InvoiceCreator'
 
