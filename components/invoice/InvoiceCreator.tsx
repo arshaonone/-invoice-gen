@@ -6,7 +6,7 @@ import { useReactToPrint } from 'react-to-print'
 import toast from 'react-hot-toast'
 import {
   Plus, Trash2, Download, Printer, RotateCcw, FileText,
-  ChevronDown, X, Upload, RefreshCw, Settings2
+  ChevronDown, X, Upload, RefreshCw, Settings2, Loader2
 } from 'lucide-react'
 import { getCurrencySymbol, CURRENCIES } from '@/lib/utils'
 
@@ -118,6 +118,7 @@ export default function InvoiceCreator() {
   const [data, setData] = useState<InvoiceData>(defaultData())
   const [showSettings, setShowSettings] = useState(false)
   const [showBanner, setShowBanner] = useState(true)
+  const [isGenerating, setIsGenerating] = useState(false)
   const printRef = useRef<HTMLDivElement>(null)
   const logoInputRef = useRef<HTMLInputElement>(null)
 
@@ -161,11 +162,87 @@ export default function InvoiceCreator() {
   const sym = getCurrencySymbol(data.currency)
   const balanceDue = Math.max(0, data.total - data.amountPaid)
 
-  const doDownload = () => {
-    toast.promise(
-      new Promise<void>(resolve => { handlePrint(); setTimeout(resolve, 600) }),
-      { loading: 'Preparing PDF…', success: 'Download ready!', error: 'Failed' }
-    )
+  const downloadPDF = async () => {
+    if (!printRef.current || isGenerating) return
+    setIsGenerating(true)
+    const toastId = toast.loading('Generating PDF…')
+    try {
+      // Dynamically import to avoid SSR issues
+      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+        import('jspdf'),
+        import('html2canvas'),
+      ])
+
+      const element = printRef.current
+      // Temporarily make visible off-screen for capture
+      element.style.position = 'fixed'
+      element.style.left = '-9999px'
+      element.style.top = '0'
+      element.style.display = 'block'
+      element.style.width = '794px' // A4 at 96dpi
+
+      await new Promise(r => setTimeout(r, 200)) // let fonts render
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        width: 794,
+      })
+
+      // Restore
+      element.style.position = ''
+      element.style.left = ''
+      element.style.top = ''
+      element.style.display = ''
+      element.style.width = ''
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95)
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      })
+
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const pdfHeight = pdf.internal.pageSize.getHeight()
+      const imgWidth = canvas.width
+      const imgHeight = canvas.height
+      const ratio = imgWidth / imgHeight
+      const pdfImgWidth = pdfWidth
+      const pdfImgHeight = pdfWidth / ratio
+
+      // Handle multi-page if content is tall
+      if (pdfImgHeight <= pdfHeight) {
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfImgWidth, pdfImgHeight)
+      } else {
+        let yPos = 0
+        const pageHeightPx = (pdfHeight / pdfImgHeight) * imgHeight
+        let pageNum = 0
+        while (yPos < imgHeight) {
+          const pageCanvas = document.createElement('canvas')
+          pageCanvas.width = imgWidth
+          pageCanvas.height = Math.min(pageHeightPx, imgHeight - yPos)
+          const ctx = pageCanvas.getContext('2d')!
+          ctx.drawImage(canvas, 0, yPos, imgWidth, pageCanvas.height, 0, 0, imgWidth, pageCanvas.height)
+          const pageData = pageCanvas.toDataURL('image/jpeg', 0.95)
+          const pageActualHeight = (pageCanvas.height / imgWidth) * pdfImgWidth
+          if (pageNum > 0) pdf.addPage()
+          pdf.addImage(pageData, 'JPEG', 0, 0, pdfImgWidth, pageActualHeight)
+          yPos += pageCanvas.height
+          pageNum++
+        }
+      }
+
+      pdf.save(`Invoice-${data.invoiceNumber}.pdf`)
+      toast.success('PDF downloaded!', { id: toastId })
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to generate PDF', { id: toastId })
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   return (
@@ -207,10 +284,13 @@ export default function InvoiceCreator() {
 
             {/* Download — hidden on mobile (bottom bar handles it) */}
             <button
-              onClick={doDownload}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-green-500 hover:bg-green-600 rounded-lg transition shadow-sm"
+              onClick={downloadPDF}
+              disabled={isGenerating}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-green-500 hover:bg-green-600 disabled:opacity-60 rounded-lg transition shadow-sm"
             >
-              <Download className="w-3.5 h-3.5" /> Download PDF
+              {isGenerating
+                ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating…</>
+                : <><Download className="w-3.5 h-3.5" /> Download PDF</>}
             </button>
           </div>
         </div>
@@ -688,11 +768,14 @@ export default function InvoiceCreator() {
             {/* Desktop: Download + Print */}
             <div className="hidden lg:flex flex-col gap-2">
               <button
-                onClick={doDownload}
-                className="w-full flex items-center justify-center gap-2 py-3 text-sm font-bold text-white rounded-xl transition shadow-md hover:opacity-90 active:scale-95"
+                onClick={downloadPDF}
+                disabled={isGenerating}
+                className="w-full flex items-center justify-center gap-2 py-3 text-sm font-bold text-white rounded-xl transition shadow-md hover:opacity-90 active:scale-95 disabled:opacity-60"
                 style={{ background: data.brandColor }}
               >
-                <Download className="w-4 h-4" /> Download
+                {isGenerating
+                  ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating…</>
+                  : <><Download className="w-4 h-4" /> Download</>}
               </button>
               <button
                 onClick={handlePrint}
@@ -801,11 +884,14 @@ export default function InvoiceCreator() {
           <Printer className="w-4 h-4" /> Print
         </button>
         <button
-          onClick={doDownload}
-          className="flex-[2] flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-xl transition active:scale-95 shadow-lg"
+          onClick={downloadPDF}
+          disabled={isGenerating}
+          className="flex-[2] flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-xl transition active:scale-95 shadow-lg disabled:opacity-60"
           style={{ background: data.brandColor }}
         >
-          <Download className="w-4 h-4" /> Download PDF
+          {isGenerating
+            ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating…</>
+            : <><Download className="w-4 h-4" /> Download PDF</>}
         </button>
       </div>
 

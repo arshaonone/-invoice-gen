@@ -1,6 +1,10 @@
-feat: add professional favicon for invoice-gen.net
+feat: replace print-dialog with direct PDF download using html2canvas + jsPDF
 
-- Added favicon.png and apple-touch-icon.png to public/ folder
-- Added app/icon.png for Next.js App Router auto-detection
-- Updated layout.tsx metadata with icons, apple-touch-icon, and shortcut entries
-- Updated page title and description to reflect free, no-signup product
+- Download PDF button now generates and saves PDF directly to file manager
+- No more print dialog when clicking Download PDF
+- Uses html2canvas (scale 2x for quality) + jsPDF (A4 portrait format)
+- Multi-page support: long invoices automatically paginate
+- Spinner/loading state on all 3 Download buttons while generating
+- Buttons disabled during generation to prevent double-clicks
+- Print button still opens print dialog as expected
+- Dynamic import of jspdf+html2canvas avoids SSR issues
