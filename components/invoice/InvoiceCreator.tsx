@@ -17,6 +17,7 @@ export interface InvoiceItem {
   description: string
   quantity: number
   unitPrice: number
+  taxRate: number
   total: number
 }
 
@@ -24,10 +25,20 @@ export interface InvoiceData {
   invoiceNumber: string
   brandColor: string
   currency: string
+  language: 'en' | 'bn'
+  // Sender (kept for template compatibility)
   senderInfo: string
   senderLogo: string
+  senderName: string
+  senderEmail: string
+  senderPhone: string
+  senderAddress: string
+  // Client
   clientName: string
   clientAddress: string
+  clientCompany: string
+  clientEmail: string
+  clientPhone: string
   invoiceDate: string
   paymentTerms: string
   dueDate: string
@@ -52,6 +63,7 @@ const defaultItem = (): InvoiceItem => ({
   description: '',
   quantity: 1,
   unitPrice: 0,
+  taxRate: 0,
   total: 0,
 })
 
@@ -59,10 +71,18 @@ const defaultData = (): InvoiceData => ({
   invoiceNumber: '1',
   brandColor: '#1a73e8',
   currency: 'USD',
+  language: 'en',
   senderInfo: '',
   senderLogo: '',
+  senderName: '',
+  senderEmail: '',
+  senderPhone: '',
+  senderAddress: '',
   clientName: '',
   clientAddress: '',
+  clientCompany: '',
+  clientEmail: '',
+  clientPhone: '',
   invoiceDate: new Date().toISOString().split('T')[0],
   paymentTerms: '',
   dueDate: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],

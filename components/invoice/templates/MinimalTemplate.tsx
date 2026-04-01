@@ -2,7 +2,7 @@ import { formatCurrency, formatDate, LANGS } from '@/lib/utils'
 import type { InvoiceData } from '@/components/invoice/InvoiceCreator'
 
 export default function MinimalTemplate({ data }: { data: InvoiceData }) {
-  const t   = LANGS[data.language]
+  const t   = LANGS['en']
   const sym = data.brandColor
 
   return (

@@ -1,0 +1,7 @@
+fix: resolve TypeScript build errors for Hostinger deployment
+
+- Add missing fields back to InvoiceData (senderName, senderEmail, senderPhone,
+  senderAddress, clientCompany, clientEmail, clientPhone, language)
+- Add taxRate back to InvoiceItem (used by template components)
+- Fix LANGS indexing in BoldTemplate, MinimalTemplate, ModernTemplate
+- Build now passes clean with Next.js 14 type checking
