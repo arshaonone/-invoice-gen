@@ -13,7 +13,16 @@ import { downloadInvoicePDF, printInvoice } from '@/lib/pdf'
 import MinimalTemplate from '@/components/invoice/templates/MinimalTemplate'
 import ModernTemplate from '@/components/invoice/templates/ModernTemplate'
 import BoldTemplate from '@/components/invoice/templates/BoldTemplate'
-import type { InvoiceItem } from '@/models/Invoice'
+
+export interface InvoiceItem {
+  id: string
+  name: string
+  description: string
+  quantity: number
+  unitPrice: number
+  taxRate: number
+  total: number
+}
 
 export interface InvoiceData {
   invoiceNumber: string
@@ -87,26 +96,10 @@ const TEMPLATES = [
   { id: 'bold',    label: 'Bold',    color: '#ec4899' },
 ] as const
 
-export default function InvoiceCreator({ invoiceId }: { invoiceId?: string }) {
-  const router        = useRouter()
+export default function InvoiceCreator() {
   const [data, setData]       = useState<InvoiceData>(defaultData())
-  const [loading, setLoading] = useState(false)
-  const [saving, setSaving]   = useState(false)
   const [preview, setPreview] = useState(true)
   const logoInputRef          = useRef<HTMLInputElement>(null)
-
-  // Load existing invoice
-  useEffect(() => {
-    if (!invoiceId) return
-    setLoading(true)
-    fetch(`/api/invoices/${invoiceId}`)
-      .then(r => r.json())
-      .then(inv => {
-        setData({ ...defaultData(), ...inv, invoiceDate: inv.invoiceDate?.split('T')[0] ?? '', dueDate: inv.dueDate?.split('T')[0] ?? '' })
-        setLoading(false)
-      })
-      .catch(() => { toast.error('Failed to load invoice'); setLoading(false) })
-  }, [invoiceId])
 
   // Recalculate totals whenever items / discount change
   const recalc = useCallback((items: InvoiceItem[], discount: number) => {
@@ -141,36 +134,10 @@ export default function InvoiceCreator({ invoiceId }: { invoiceId?: string }) {
     reader.readAsDataURL(file)
   }
 
-  // Save invoice
-  const handleSave = async (status = data.status) => {
-    setSaving(true)
-    try {
-      const payload = { ...data, status }
-      const method  = invoiceId ? 'PUT' : 'POST'
-      const url     = invoiceId ? `/api/invoices/${invoiceId}` : '/api/invoices'
-
-      const res  = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
-      const json = await res.json()
-
-      if (!res.ok) { toast.error(json.error ?? 'Save failed'); setSaving(false); return }
-      toast.success(invoiceId ? 'Invoice updated!' : 'Invoice saved!')
-      if (!invoiceId) router.push(`/invoices/${json._id}`)
-    } catch {
-      toast.error('Something went wrong')
-    }
-    setSaving(false)
-  }
-
   const sym = getCurrencySymbol(data.currency)
   const t   = LANGS[data.language]
 
   const TemplateComponent = data.template === 'modern' ? ModernTemplate : data.template === 'bold' ? BoldTemplate : MinimalTemplate
-
-  if (loading) return (
-    <div className="flex items-center justify-center h-64">
-      <div className="w-8 h-8 border-3 border-brand-500/30 border-t-brand-500 rounded-full animate-spin" />
-    </div>
-  )
 
   return (
     <div className="max-w-screen-2xl mx-auto">
@@ -178,7 +145,7 @@ export default function InvoiceCreator({ invoiceId }: { invoiceId?: string }) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-display font-700 text-gray-900 dark:text-white">
-            {invoiceId ? 'Edit Invoice' : 'Create Invoice'}
+            Create Invoice
           </h1>
           <p className="text-sm text-gray-400 mt-0.5">{data.invoiceNumber}</p>
         </div>
@@ -190,15 +157,8 @@ export default function InvoiceCreator({ invoiceId }: { invoiceId?: string }) {
           <button onClick={() => printInvoice('invoice-preview')} className="btn-ghost gap-2 text-sm">
             <Printer className="w-4 h-4" /> Print
           </button>
-          <button onClick={() => downloadInvoicePDF('invoice-preview', `${data.invoiceNumber}.pdf`)} className="btn-secondary gap-2 text-sm">
-            <Download className="w-4 h-4" /> PDF
-          </button>
-          <button onClick={() => handleSave('sent')} disabled={saving} className="btn-secondary gap-2 text-sm">
-            Mark Sent
-          </button>
-          <button onClick={() => handleSave()} disabled={saving} className="btn-primary gap-2 text-sm">
-            {saving ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save className="w-4 h-4" />}
-            {invoiceId ? 'Update' : 'Save'}
+          <button onClick={() => downloadInvoicePDF('invoice-preview', `${data.invoiceNumber}.pdf`)} className="btn-primary gap-2 text-sm shadow-glow">
+            <Download className="w-4 h-4" /> Download PDF
           </button>
         </div>
       </div>
