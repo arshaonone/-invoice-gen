@@ -321,7 +321,7 @@ export default function InvoiceCreator() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
-            <div id="google_translate_element" className="inline-block shrink-0 print:hidden hidden sm:block"></div>
+            <div id="google_translate_element" suppressHydrationWarning className="inline-block shrink-0 print:hidden"></div>
             {/* Settings — icon only on mobile */}
             <button
               onClick={() => setShowSettings(!showSettings)}
@@ -937,11 +937,8 @@ export default function InvoiceCreator() {
                 </div>
                 <span className="font-bold text-gray-800 text-lg">invoice-gen.net</span>
               </div>
-              <p className="text-sm text-gray-500 leading-relaxed max-w-lg mb-4">
-                Invoice-Gen is a completely free online invoice generator designed for freelancers, entrepreneurs, and small businesses to create professional invoices easily and instantly. With a clean and user-friendly interface, you can enter your business and client details, add items, and generate a polished invoice within seconds.
-              </p>
-              <p className="text-sm text-gray-500 leading-relaxed max-w-lg mb-4">
-                Built for simplicity and speed, Invoice-Gen requires no technical knowledge and works seamlessly across desktop and mobile devices. It is a 100% free tool — no login required, no payment needed, and no limitations on usage.
+              <p className="text-sm text-gray-500 leading-relaxed max-w-sm mb-4">
+                The ultimately simple and free invoice generator for freelancers and small businesses. Create, customize, and download professional PDF invoices in seconds. No sign-up required.
               </p>
             </div>
             
