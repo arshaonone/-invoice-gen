@@ -275,32 +275,4 @@
 ::-webkit-scrollbar-thumb { background: #6366f122; border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: #6366f144; }
 
-/* ─── Google Translate Overrides ─── */
-.goog-te-banner-frame.skiptranslate { display: none !important; }
-body { top: 0px !important; }
-.goog-logo-link { display: none !important; }
-.goog-te-gadget { color: transparent !important; font-size: 0px !important; margin: 0 !important; padding: 0 !important; background: transparent !important; border: none !important; }
-.goog-te-gadget .goog-te-combo { 
-  color: #4b5563 !important; 
-  padding: 6px 28px 6px 12px; 
-  border-radius: 8px; 
-  border: 1px solid #e5e7eb !important; 
-  font-size: 13px !important; 
-  font-weight: 500;
-  font-family: inherit;
-  outline: none; 
-  background-color: #ffffff; 
-  cursor: pointer; 
-  transition: all 0.2s;
-  height: 36px;
-  margin: 0 !important;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239ca3af%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 8px center !important;
-  background-size: 14px !important;
-}
-.goog-te-gadget .goog-te-combo:hover { border-color: #d1d5db !important; background-color: #f9fafb !important; }
-.goog-te-gadget .goog-te-combo:focus { border-color: #10b981 !important; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1) !important; }
-#goog-gt-tt, .VIpgJd-ZVi9od-ORHb-OEVmcd { display: none !important; }
+

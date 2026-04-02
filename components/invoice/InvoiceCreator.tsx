@@ -321,7 +321,6 @@ export default function InvoiceCreator() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
-            <div id="google_translate_element" suppressHydrationWarning className="inline-block shrink-0 print:hidden"></div>
             {/* Settings — icon only on mobile */}
             <button
               onClick={() => setShowSettings(!showSettings)}

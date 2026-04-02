@@ -38,20 +38,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${poppins.variable} font-sans antialiased`} style={{ top: '0px' }}>
         <Providers>{children}</Providers>
-        <Script id="google-translate-config" strategy="beforeInteractive">
-          {`
-            window.googleTranslateElementInit = function() {
-              new google.translate.TranslateElement(
-                { pageLanguage: 'en', autoDisplay: false },
-                'google_translate_element'
-              );
-            }
-          `}
-        </Script>
-        <Script 
-          src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" 
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   )
