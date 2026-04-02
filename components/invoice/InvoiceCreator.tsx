@@ -325,7 +325,7 @@ export default function InvoiceCreator() {
             {/* Settings — icon only on mobile */}
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="flex items-center gap-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg px-2 sm:px-3 py-2 hover:bg-gray-50 transition min-w-[36px] justify-center"
+              className="flex items-center gap-1.5 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-lg px-2 sm:px-3 hover:bg-gray-50 hover:text-gray-900 transition shadow-sm h-9 min-w-[36px] justify-center"
               title="Settings"
             >
               <Settings2 className="w-4 h-4 shrink-0" />
@@ -336,7 +336,7 @@ export default function InvoiceCreator() {
             <button
               onClick={downloadPDF}
               disabled={isGenerating}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-green-500 hover:bg-green-600 disabled:opacity-60 rounded-lg transition shadow-sm"
+              className="hidden sm:flex items-center gap-1.5 px-4 text-[13px] font-semibold text-white bg-green-500 hover:bg-green-600 disabled:opacity-60 rounded-lg transition shadow-sm h-9"
             >
               {isGenerating
                 ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating…</>
@@ -824,35 +824,38 @@ export default function InvoiceCreator() {
               {/* Currency */}
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1.5">Currency</label>
-                <div className="relative">
+                <div className="relative group">
                   <select
                     value={data.currency}
                     onChange={e => set('currency', e.target.value)}
-                    className="w-full text-sm border border-gray-200 rounded-lg px-2.5 py-2 pr-8 bg-white text-gray-700 focus:outline-none focus:border-blue-400 appearance-none cursor-pointer"
+                    className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 pr-8 bg-white text-gray-700 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 appearance-none cursor-pointer hover:border-gray-300 transition shadow-sm"
                   >
                     {CURRENCIES.map(c => (
                       <option key={c.code} value={c.code}>{c.code} – {c.symbol}</option>
                     ))}
                   </select>
-                  <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none group-hover:text-gray-500 transition" />
                 </div>
               </div>
 
               {/* Brand Color */}
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1.5">Brand Color</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={data.brandColor}
-                    onChange={e => set('brandColor', e.target.value)}
-                    className="w-10 h-10 rounded-lg cursor-pointer border border-gray-200 p-0.5 bg-white shrink-0"
-                  />
+                <div className="flex bg-white border border-gray-200 rounded-lg overflow-hidden focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition shadow-sm hover:border-gray-300">
+                  <div className="relative w-10 shrink-0 border-r border-gray-200 bg-gray-50 cursor-pointer overflow-hidden group">
+                    <input
+                      type="color"
+                      value={data.brandColor}
+                      onChange={e => set('brandColor', e.target.value)}
+                      className="absolute inset-0 w-[200%] h-[200%] -translate-x-1/4 -translate-y-1/4 cursor-pointer opacity-0 z-10"
+                    />
+                    <div className="absolute inset-0 m-1.5 rounded shadow-sm border border-black/10 group-hover:scale-105 transition-transform" style={{ background: data.brandColor }}></div>
+                  </div>
                   <input
                     type="text"
                     value={data.brandColor}
                     onChange={e => { if (/^#[0-9a-fA-F]{0,6}$/.test(e.target.value)) set('brandColor', e.target.value) }}
-                    className="flex-1 text-xs border border-gray-200 rounded-lg px-2 py-1.5 font-mono focus:outline-none focus:border-blue-400"
+                    className="flex-1 text-sm uppercase px-3 py-2 border-none font-mono focus:outline-none focus:ring-0 bg-transparent text-gray-700"
                     maxLength={7}
                   />
                 </div>
@@ -861,15 +864,16 @@ export default function InvoiceCreator() {
               {/* Invoice # */}
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1.5">Invoice #</label>
-                <div className="flex gap-1.5">
+                <div className="flex bg-white border border-gray-200 rounded-lg overflow-hidden focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition shadow-sm hover:border-gray-300">
                   <input
                     value={data.invoiceNumber}
                     onChange={e => set('invoiceNumber', e.target.value)}
-                    className="flex-1 text-sm border border-gray-200 rounded-lg px-2.5 py-2 focus:outline-none focus:border-blue-400"
+                    className="flex-1 text-sm px-3 py-2 border-none focus:outline-none focus:ring-0 bg-transparent text-gray-700"
                   />
                   <button
                     onClick={() => set('invoiceNumber', String(Math.floor(Math.random() * 9000) + 1000))}
-                    className="px-2 text-gray-300 hover:text-blue-500 border border-gray-200 rounded-lg transition hover:border-blue-300"
+                    className="px-3 text-gray-400 hover:text-blue-500 bg-gray-50 border-l border-gray-200 transition"
+                    title="Generate random invoice number"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
                   </button>
@@ -1130,18 +1134,18 @@ export default function InvoiceCreator() {
               <button onClick={() => setShowAboutModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
             </div>
             <div className="p-6 space-y-4 overflow-y-auto">
-              <p className="text-sm text-gray-600 leading-relaxed">
-                <strong>Invoice-Gen</strong> is a product of <strong>Ever Legit LLC</strong>, a digital solutions company focused on building simple, powerful, and accessible tools for businesses worldwide. 
+              <p className="text-sm text-gray-600 leading-relaxed text-justify mb-4">
+                <strong>Invoice-Gen</strong> is a completely free online invoice generator designed for freelancers, entrepreneurs, and small businesses to create professional invoices easily and instantly. With a clean and user-friendly interface, you can enter your business and client details, add items, and generate a polished invoice within seconds.
               </p>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Our mission is to make essential business tools free, easy to use, and available to everyone without barriers.
+              <p className="text-sm text-gray-600 leading-relaxed text-justify mb-4">
+                Built for simplicity and speed, Invoice-Gen requires no technical knowledge and works seamlessly across desktop and mobile devices. It is a 100% free tool &mdash; no login required, no payment needed, and no limitations on usage.
               </p>
               <div className="mt-4 pt-4 border-t border-gray-100">
-                <h4 className="font-semibold text-gray-900 text-sm mb-3">We are committed to:</h4>
+                <h4 className="font-semibold text-gray-900 text-sm mb-3">A Product of Ever Legit LLC</h4>
                 <ul className="space-y-2 text-sm text-gray-600 list-disc pl-5">
+                  <li>Mission: Make essential tools free and available to everyone.</li>
                   <li>Simplicity and user-friendly design</li>
                   <li>Privacy and data security</li>
-                  <li>Providing 100% free tools with no hidden costs</li>
                 </ul>
               </div>
             </div>
