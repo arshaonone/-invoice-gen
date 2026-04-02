@@ -123,6 +123,9 @@ export default function InvoiceCreator() {
   const [showHistoryModal, setShowHistoryModal] = useState(false)
   const [showGuideModal, setShowGuideModal] = useState(false)
   const [showHelpModal, setShowHelpModal] = useState(false)
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false)
+  const [showTermsModal, setShowTermsModal] = useState(false)
+  const [showAboutModal, setShowAboutModal] = useState(false)
   const [historyItems, setHistoryItems] = useState<InvoiceData[]>([])
 
   const printRef = useRef<HTMLDivElement>(null)
@@ -318,6 +321,7 @@ export default function InvoiceCreator() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
+            <div id="google_translate_element" className="inline-block shrink-0 print:hidden hidden sm:block"></div>
             {/* Settings — icon only on mobile */}
             <button
               onClick={() => setShowSettings(!showSettings)}
@@ -914,6 +918,17 @@ export default function InvoiceCreator() {
       {/* ── FOOTER ── */}
       <footer className="bg-white border-t border-gray-200 mt-8 print:hidden pb-28 lg:pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+          {/* TRUST STATEMENT */}
+          <div className="mb-12 bg-green-50 border border-green-100 rounded-xl p-4 sm:p-6 text-center max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 shadow-sm">
+            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+              <Settings2 className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <h4 className="font-bold text-gray-900 text-sm sm:text-base">No data is stored on our servers.</h4>
+              <p className="text-sm text-gray-600 mt-0.5">All information remains secure in your browser.</p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
             <div className="lg:col-span-2">
               <div className="flex items-center gap-2 mb-4">
@@ -923,21 +938,18 @@ export default function InvoiceCreator() {
                 <span className="font-bold text-gray-800 text-lg">invoice-gen.net</span>
               </div>
               <p className="text-sm text-gray-500 leading-relaxed max-w-lg mb-4">
-                Invoice-Gen is a completely free online invoice generator designed for freelancers, entrepreneurs, and small businesses to create professional invoices easily and instantly. With a clean and user-friendly interface, you can enter your business and client details, add items, and generate a polished invoice within seconds. The platform allows you to preview your invoice and download it as a high-quality PDF without any signup, subscription, or hidden fees.
+                Invoice-Gen is a completely free online invoice generator designed for freelancers, entrepreneurs, and small businesses to create professional invoices easily and instantly. With a clean and user-friendly interface, you can enter your business and client details, add items, and generate a polished invoice within seconds.
               </p>
               <p className="text-sm text-gray-500 leading-relaxed max-w-lg mb-4">
                 Built for simplicity and speed, Invoice-Gen requires no technical knowledge and works seamlessly across desktop and mobile devices. It is a 100% free tool — no login required, no payment needed, and no limitations on usage.
-              </p>
-              <p className="text-sm text-gray-500 leading-relaxed max-w-lg">
-                Your privacy is our priority. Invoice-Gen does not store any of your personal or invoice data on servers. All information is processed securely inside your browser, ensuring complete control and confidentiality. Whether you are a freelancer sending invoices to clients, a startup managing billing, or a small business owner handling transactions, Invoice-Gen provides a fast, secure, and reliable solution for your invoicing needs.
               </p>
             </div>
             
             <div>
               <h4 className="font-bold text-gray-900 mb-4">Resources</h4>
               <ul className="space-y-2 text-sm text-gray-500">
-                <li><button onClick={() => setShowGuideModal(true)} className="hover:text-green-600 transition">Invoicing Guide</button></li>
-                <li><button onClick={() => setShowHelpModal(true)} className="hover:text-green-600 transition">Help & FAQ</button></li>
+                <li><button onClick={() => setShowGuideModal(true)} className="hover:text-green-600 transition text-left">Invoicing Guide</button></li>
+                <li><button onClick={() => setShowHelpModal(true)} className="hover:text-green-600 transition text-left">Help & FAQ</button></li>
                 <li><a href="#" className="hover:text-green-600 transition">Invoice Templates</a></li>
                 <li><a href="#" className="hover:text-green-600 transition">Receipt Generator</a></li>
               </ul>
@@ -947,15 +959,15 @@ export default function InvoiceCreator() {
               <h4 className="font-bold text-gray-900 mb-4">Company</h4>
               <ul className="space-y-2 text-sm text-gray-500">
                 <li><a href="mailto:support@invoice-gen.net" className="hover:text-green-600 transition">Contact Us</a></li>
-                <li><a href="#" className="hover:text-green-600 transition">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-green-600 transition">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-green-600 transition">About Us</a></li>
+                <li><button onClick={() => setShowPrivacyModal(true)} className="hover:text-green-600 transition text-left">Privacy Policy</button></li>
+                <li><button onClick={() => setShowTermsModal(true)} className="hover:text-green-600 transition text-left">Terms of Service</button></li>
+                <li><button onClick={() => setShowAboutModal(true)} className="hover:text-green-600 transition text-left">About Us</button></li>
               </ul>
             </div>
           </div>
           <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
-            <p>&copy; {new Date().getFullYear()} invoice-gen.net. All rights reserved.</p>
-            <p className="flex items-center gap-1.5">Developed with <Heart className="w-3.5 h-3.5 text-red-500 fill-current" /> by <a href="https://github.com/arshaonone" target="_blank" rel="noopener noreferrer" className="font-semibold text-gray-500 hover:text-green-600 transition">Ashikur Rahman Shaon</a></p>
+            <p>&copy; {new Date().getFullYear()} Invoice-Gen.net — A Product of Ever Legit LLC. All Rights Reserved.</p>
+            <p className="flex items-center gap-1.5 flex-wrap">Developed with <Heart className="w-3.5 h-3.5 text-red-500 fill-current shrink-0" /> by <a href="https://github.com/arshaonone" target="_blank" rel="noopener noreferrer" className="font-semibold text-gray-500 hover:text-green-600 transition">Ashikur Rahman Shaon</a></p>
           </div>
         </div>
       </footer>
@@ -1047,26 +1059,97 @@ export default function InvoiceCreator() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="font-bold text-lg text-gray-900">Help & Privacy Check</h3>
+              <h3 className="font-bold text-lg text-gray-900">Help & FAQ</h3>
               <button onClick={() => setShowHelpModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
             </div>
             <div className="p-6 space-y-5">
               <div>
-                <h4 className="text-sm font-bold text-gray-900 flex items-center gap-1.5"><FileText className="w-4 h-4 text-green-500"/> Is this really free?</h4>
-                <p className="text-sm text-gray-500 mt-1 leading-relaxed">Yes, 100% free forever. No watermarks, no hidden fees, and no sign-up is required to download your invoices.</p>
+                <h4 className="text-sm font-bold text-gray-900">Is this service free?</h4>
+                <p className="text-sm text-gray-500 mt-1 leading-relaxed">Yes, generating invoices is 100% free with no hidden costs.</p>
               </div>
               <div className="pt-1">
-                <h4 className="text-sm font-bold text-gray-900 flex items-center gap-1.5"><Settings2 className="w-4 h-4 text-green-500"/> Is my data secure?</h4>
-                <p className="text-sm text-gray-500 mt-1 leading-relaxed">Absolutely. All data (including client info and totals) is stored locally securely inside your browser. We never upload or view your invoice data.</p>
+                <h4 className="text-sm font-bold text-gray-900">Do I need to sign up?</h4>
+                <p className="text-sm text-gray-500 mt-1 leading-relaxed">No login or subscription is required to use this tool.</p>
               </div>
               <div className="pt-1">
-                <h4 className="text-sm font-bold text-gray-900 flex items-center gap-1.5"><RefreshCw className="w-4 h-4 text-green-500"/> Need more support?</h4>
-                <p className="text-sm text-gray-500 mt-1 leading-relaxed">If you need advanced tracking, a dedicated account setup, or have a feature request, get in touch with our team below.</p>
+                <h4 className="text-sm font-bold text-gray-900">Is my data secure?</h4>
+                <p className="text-sm text-gray-500 mt-1 leading-relaxed">Yes! All information remains locally on your browser. Your invoice data is never uploaded or saved on our servers.</p>
+              </div>
+              <div className="pt-1">
+                <h4 className="text-sm font-bold text-gray-900">How do I download my invoice?</h4>
+                <p className="text-sm text-gray-500 mt-1 leading-relaxed">Simply click the "Download PDF" button at the top or bottom of the screen once you finish editing.</p>
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
-              <a href="mailto:support@invoice-gen.net" className="text-sm font-bold text-green-600 hover:text-green-700 transition flex items-center gap-1">Contact Support</a>
-              <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-bold rounded-lg transition active:scale-95">Close</button>
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+              <button onClick={() => setShowHelpModal(false)} className="px-5 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition active:scale-95">Got it</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showPrivacyModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h3 className="font-bold text-lg text-gray-900">Privacy Policy</h3>
+              <button onClick={() => setShowPrivacyModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600 leading-relaxed text-justify">
+                We respect your privacy. <strong>Invoice-Gen does not store any personal or invoice data on servers.</strong> All information is processed locally in your browser, ensuring complete security and control over your data.
+              </p>
+            </div>
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+              <button onClick={() => setShowPrivacyModal(false)} className="px-5 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition active:scale-95">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showTermsModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h3 className="font-bold text-lg text-gray-900">Terms of Service</h3>
+              <button onClick={() => setShowTermsModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-gray-600 leading-relaxed text-justify">
+                Invoice-Gen is a free tool for generating invoices. Users are responsible for the accuracy of the information they enter. We do not guarantee legal compliance across all countries or jurisdictions.
+              </p>
+            </div>
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+              <button onClick={() => setShowTermsModal(false)} className="px-5 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition active:scale-95">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showAboutModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden flex-col">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
+              <h3 className="font-bold text-lg text-gray-900">About Ever Legit LLC</h3>
+              <button onClick={() => setShowAboutModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-4 overflow-y-auto">
+              <p className="text-sm text-gray-600 leading-relaxed">
+                <strong>Invoice-Gen</strong> is a product of <strong>Ever Legit LLC</strong>, a digital solutions company focused on building simple, powerful, and accessible tools for businesses worldwide. 
+              </p>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Our mission is to make essential business tools free, easy to use, and available to everyone without barriers.
+              </p>
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <h4 className="font-semibold text-gray-900 text-sm mb-3">We are committed to:</h4>
+                <ul className="space-y-2 text-sm text-gray-600 list-disc pl-5">
+                  <li>Simplicity and user-friendly design</li>
+                  <li>Privacy and data security</li>
+                  <li>Providing 100% free tools with no hidden costs</li>
+                </ul>
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end shrink-0">
+              <button onClick={() => setShowAboutModal(false)} className="px-5 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition active:scale-95">Close</button>
             </div>
           </div>
         </div>
