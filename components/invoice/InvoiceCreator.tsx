@@ -1201,111 +1201,112 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
     const c = data.brandColor
 
     return (
-      <div ref={ref} style={{ fontFamily: 'Inter, Arial, sans-serif', background: '#fff', color: '#111', minHeight: '297mm', padding: '40px 48px', boxSizing: 'border-box', fontSize: 13 }}>
+      <div ref={ref} style={{ fontFamily: '"Inter", "Helvetica Neue", Helvetica, Arial, sans-serif', background: '#fff', color: '#1e293b', minHeight: '297mm', padding: '50px 60px', boxSizing: 'border-box', fontSize: 13, borderTop: `8px solid ${c}` }}>
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
-          <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40 }}>
+          <div style={{ maxWidth: '50%' }}>
             {data.senderLogo
-              ? <img src={data.senderLogo} alt="Logo" style={{ height: 56, objectFit: 'contain', marginBottom: 12 }} />
+              ? <img src={data.senderLogo} alt="Logo" style={{ height: 64, objectFit: 'contain', marginBottom: 16 }} />
               : data.senderInfo && (
-                <div style={{ width: 48, height: 48, borderRadius: 10, background: c, color: '#fff', fontWeight: 800, fontSize: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                <div style={{ width: 56, height: 56, borderRadius: 12, background: c, color: '#fff', fontWeight: 800, fontSize: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                   {data.senderInfo[0]?.toUpperCase()}
                 </div>
               )
             }
-            <div style={{ color: '#555', whiteSpace: 'pre-line', lineHeight: 1.6 }}>{data.senderInfo}</div>
+            <div style={{ color: '#475569', whiteSpace: 'pre-line', lineHeight: 1.6, fontSize: 14 }}>{data.senderInfo}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: 6, color: c, textTransform: 'uppercase' }}>INVOICE</div>
-            <div style={{ color: '#888', marginTop: 4 }}>#{data.invoiceNumber}</div>
-            <div style={{ marginTop: 12, lineHeight: 2 }}>
-              {([ data.invoiceDate ? ['Date', fmtDate(data.invoiceDate)] : null,
-                  data.paymentTerms ? ['Payment Terms', data.paymentTerms] : null,
+            <div style={{ fontSize: 42, fontWeight: 800, letterSpacing: 4, color: '#0f172a', textTransform: 'uppercase' }}>INVOICE</div>
+            <div style={{ color: '#64748b', marginTop: 4, fontSize: 16 }}>#{data.invoiceNumber}</div>
+            <div style={{ marginTop: 20, lineHeight: 1.8, fontSize: 13 }}>
+              {([ data.invoiceDate ? ['Invoice Date', fmtDate(data.invoiceDate)] : null,
                   data.dueDate ? ['Due Date', fmtDate(data.dueDate)] : null,
+                  data.paymentTerms ? ['Payment Terms', data.paymentTerms] : null,
                   data.poNumber ? ['PO Number', data.poNumber] : null,
               ].filter((x): x is string[] => x !== null)).map(([label, val]) => (
-                <div key={label} style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
-                  <span style={{ color: '#888' }}>{label}:</span>
-                  <span style={{ fontWeight: 600, minWidth: 100, textAlign: 'right' }}>{val}</span>
+                <div key={label} style={{ display: 'flex', justifyContent: 'flex-end', gap: 16 }}>
+                  <span style={{ color: '#64748b' }}>{label}:</span>
+                  <span style={{ fontWeight: 600, color: '#0f172a', minWidth: 120, textAlign: 'right' }}>{val}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Bill To */}
-        {data.clientName && (
-          <div style={{ marginBottom: 28, background: '#f8f9fa', borderRadius: 8, padding: '14px 18px' }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 6 }}>BILL TO</div>
-            <div style={{ whiteSpace: 'pre-line', color: '#333', lineHeight: 1.6 }}>{data.clientName}</div>
-          </div>
-        )}
-        {data.clientAddress && (
-          <div style={{ marginBottom: 28, background: '#f8f9fa', borderRadius: 8, padding: '14px 18px' }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#888', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 6 }}>SHIP TO</div>
-            <div style={{ whiteSpace: 'pre-line', color: '#333', lineHeight: 1.6 }}>{data.clientAddress}</div>
-          </div>
-        )}
+        {/* Client Info Grid */}
+        <div style={{ display: 'flex', gap: 40, marginBottom: 40, paddingTop: 32, borderTop: '1px solid #f1f5f9' }}>
+          {data.clientName && (
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: c, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8 }}>BILLED TO</div>
+              <div style={{ whiteSpace: 'pre-line', color: '#0f172a', lineHeight: 1.6, fontSize: 14, fontWeight: 500 }}>{data.clientName}</div>
+            </div>
+          )}
+          {data.clientAddress && (
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: c, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8 }}>SHIPPED TO</div>
+              <div style={{ whiteSpace: 'pre-line', color: '#0f172a', lineHeight: 1.6, fontSize: 14, fontWeight: 500 }}>{data.clientAddress}</div>
+            </div>
+          )}
+        </div>
 
         {/* Items table */}
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 24 }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 32, tableLayout: 'fixed' }}>
           <thead>
-            <tr style={{ background: '#1a1a2e', color: '#fff' }}>
-              {['Item', 'Qty', 'Rate', 'Amount'].map((h, i) => (
-                <th key={h} style={{ padding: '10px 12px', textAlign: i === 0 ? 'left' : 'right', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, width: i === 0 ? '50%' : undefined }}>
-                  {h}
-                </th>
-              ))}
+            <tr style={{ background: '#f8fafc' }}>
+              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: 600, fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', width: '50%' }}>Description</th>
+              <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 600, fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>Qty</th>
+              <th style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600, fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>Rate</th>
+              <th style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600, fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>Amount</th>
             </tr>
           </thead>
           <tbody>
             {data.items.map((item, i) => (
-              <tr key={item.id} style={{ borderBottom: '1px solid #f1f1f1', background: i % 2 === 1 ? '#fafafa' : '#fff' }}>
-                <td style={{ padding: '10px 12px' }}>
-                  <div style={{ fontWeight: 600 }}>{item.name || '—'}</div>
-                  {item.description && <div style={{ color: '#888', fontSize: 11, marginTop: 2 }}>{item.description}</div>}
+              <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                <td style={{ padding: '16px', verticalAlign: 'top' }}>
+                  <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>{item.name || '—'}</div>
+                  {item.description && <div style={{ color: '#64748b', fontSize: 12, marginTop: 4, lineHeight: 1.5 }}>{item.description}</div>}
                 </td>
-                <td style={{ padding: '10px 12px', textAlign: 'right', color: '#444' }}>{item.quantity}</td>
-                <td style={{ padding: '10px 12px', textAlign: 'right', color: '#444' }}>{sym}{item.unitPrice.toFixed(2)}</td>
-                <td style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600 }}>{sym}{item.total.toFixed(2)}</td>
+                <td style={{ padding: '16px', textAlign: 'center', color: '#475569', verticalAlign: 'top' }}>{item.quantity}</td>
+                <td style={{ padding: '16px', textAlign: 'right', color: '#475569', verticalAlign: 'top' }}>{sym}{item.unitPrice.toFixed(2)}</td>
+                <td style={{ padding: '16px', textAlign: 'right', fontWeight: 600, color: '#0f172a', verticalAlign: 'top' }}>{sym}{item.total.toFixed(2)}</td>
               </tr>
             ))}
           </tbody>
         </table>
 
         {/* Totals + Notes */}
-        <div style={{ display: 'flex', gap: 32, justifyContent: 'space-between' }}>
-          <div style={{ flex: 1 }}>
-            {data.notes && <div style={{ marginBottom: 16 }}><div style={{ fontSize: 10, fontWeight: 700, color: '#555', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Notes</div><div style={{ color: '#555', fontSize: 12, whiteSpace: 'pre-line' }}>{data.notes}</div></div>}
-            {data.terms && <div><div style={{ fontSize: 10, fontWeight: 700, color: '#555', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Terms</div><div style={{ color: '#555', fontSize: 12, whiteSpace: 'pre-line' }}>{data.terms}</div></div>}
+        <div style={{ display: 'flex', gap: 48, justifyItems: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ flex: 1, paddingTop: 16 }}>
+            {data.notes && <div style={{ marginBottom: 24 }}><div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Notes</div><div style={{ color: '#475569', fontSize: 13, whiteSpace: 'pre-line', lineHeight: 1.6 }}>{data.notes}</div></div>}
+            {data.terms && <div><div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Terms & Conditions</div><div style={{ color: '#475569', fontSize: 13, whiteSpace: 'pre-line', lineHeight: 1.6 }}>{data.terms}</div></div>}
           </div>
-          <div style={{ minWidth: 240 }}>
+          <div style={{ minWidth: 280, background: '#f8fafc', padding: 24, borderRadius: 12 }}>
             {([
               { label: 'Subtotal', val: `${sym}${data.subtotal.toFixed(2)}` },
               data.taxRate  > 0 ? { label: `Tax (${data.taxRate}%)`, val: `${sym}${data.taxAmount.toFixed(2)}` } : null,
               data.discount > 0 ? { label: 'Discount', val: `-${sym}${data.discount.toFixed(2)}` } : null,
               data.shipping > 0 ? { label: 'Shipping', val: `${sym}${data.shipping.toFixed(2)}` } : null,
             ].filter((x): x is { label: string; val: string } => x !== null)).map(({ label, val }) => (
-              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', color: '#555', fontSize: 13, borderBottom: '1px solid #f1f1f1' }}>
-                <span>{label}</span><span>{val}</span>
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', color: '#475569', fontSize: 13 }}>
+                <span>{label}</span><span style={{ fontWeight: 500 }}>{val}</span>
               </div>
             ))}
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', fontWeight: 700, fontSize: 15, borderTop: '2px solid #e5e7eb' }}>
-              <span>Total</span><span style={{ color: c }}>{sym}{data.total.toFixed(2)}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0 8px 0', fontWeight: 600, fontSize: 15, color: '#0f172a', borderTop: '1px solid #cbd5e1', marginTop: 12 }}>
+              <span>Total</span><span>{sym}{data.total.toFixed(2)}</span>
             </div>
             {data.amountPaid > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', color: '#555', fontSize: 13 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', color: '#475569', fontSize: 14 }}>
                 <span>Amount Paid</span><span>{sym}{data.amountPaid.toFixed(2)}</span>
               </div>
             )}
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', fontWeight: 900, fontSize: 16, borderTop: '3px solid #111', marginTop: 4 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0 0 0', fontWeight: 800, fontSize: 18, color: c, borderTop: '2px solid #cbd5e1', marginTop: 8 }}>
               <span>Balance Due</span><span>{sym}{balanceDue.toFixed(2)}</span>
             </div>
           </div>
         </div>
 
         {data.footerNote && (
-          <div style={{ marginTop: 48, paddingTop: 16, borderTop: '1px solid #e5e7eb', textAlign: 'center', color: '#999', fontSize: 12 }}>
+          <div style={{ marginTop: 64, paddingTop: 24, borderTop: '1px solid #e2e8f0', textAlign: 'center', color: '#94a3b8', fontSize: 12, letterSpacing: 0.5 }}>
             {data.footerNote}
           </div>
         )}
