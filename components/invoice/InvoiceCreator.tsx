@@ -55,7 +55,7 @@ export interface InvoiceData {
 }
 
 const defaultItem = (): InvoiceItem => ({
-  id: crypto.randomUUID(),
+  id: Math.random().toString(36).substring(2, 9),
   name: '',
   description: '',
   quantity: 1,

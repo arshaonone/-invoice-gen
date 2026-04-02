@@ -1,5 +1,9 @@
 import { Metadata } from 'next'
-import InvoiceCreator from '@/components/invoice/InvoiceCreator'
+import dynamic from 'next/dynamic'
+
+const InvoiceCreator = dynamic(() => import('@/components/invoice/InvoiceCreator'), {
+  ssr: false,
+})
 
 export const metadata: Metadata = {
   title: 'invoice-gen.net — Free Online Invoice Generator',
