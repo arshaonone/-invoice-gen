@@ -221,7 +221,7 @@ export default function InvoiceCreator() {
       await new Promise(r => setTimeout(r, 400))
 
       const canvas = await html2canvas(printRef.current, {
-        scale: 1.5, // Reduced from 2 to 1.5 to prevent memory limit crashes on mobile devices
+        scale: 3, // Increased to 3 for ultra-HD massive quality
         useCORS: true,
         allowTaint: true,
         logging: false,
@@ -238,7 +238,8 @@ export default function InvoiceCreator() {
       container.style.width = ''
       container.style.zIndex = ''
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.92)
+      // Use PNG for completely lossless crisp text compression, hitting 1MB+ sizes
+      const imgData = canvas.toDataURL('image/png')
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
 
       const pdfW = pdf.internal.pageSize.getWidth()
@@ -249,7 +250,7 @@ export default function InvoiceCreator() {
 
       if (scaledH <= pdfH) {
         // Fits on one page
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, scaledH)
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfW, scaledH, undefined, 'FAST')
       } else {
         // Multi-page: slice canvas into A4-sized chunks
         const pxPerPage = Math.floor((pdfH / scaledH) * imgH)
@@ -263,7 +264,7 @@ export default function InvoiceCreator() {
           pageCanvas.getContext('2d')!.drawImage(canvas, 0, yPx, imgW, sliceH, 0, 0, imgW, sliceH)
           const sliceMmH = (sliceH * pdfW) / imgW
           if (page > 0) pdf.addPage()
-          pdf.addImage(pageCanvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, pdfW, sliceMmH)
+          pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, sliceMmH, undefined, 'FAST')
           yPx += sliceH
           page++
         }
