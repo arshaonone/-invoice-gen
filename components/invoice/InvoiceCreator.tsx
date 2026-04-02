@@ -54,8 +54,8 @@ export interface InvoiceData {
   total: number
 }
 
-const defaultItem = (): InvoiceItem => ({
-  id: Math.random().toString(36).substring(2, 9),
+const defaultItem = (isInitial = false): InvoiceItem => ({
+  id: isInitial ? '1' : Math.random().toString(36).substring(2, 9),
   name: '',
   description: '',
   quantity: 1,
@@ -80,11 +80,11 @@ const defaultData = (): InvoiceData => ({
   clientCompany: '',
   clientEmail: '',
   clientPhone: '',
-  invoiceDate: new Date().toISOString().split('T')[0],
+  invoiceDate: '',
   paymentTerms: '',
-  dueDate: new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
+  dueDate: '',
   poNumber: '',
-  items: [defaultItem()],
+  items: [defaultItem(true)],
   discount: 0,
   taxRate: 0,
   shipping: 0,
@@ -118,6 +118,24 @@ export default function InvoiceCreator() {
   const [data, setData] = useState<InvoiceData>(defaultData())
   const [showSettings, setShowSettings] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+    setData(prev => {
+      let needsUpdate = false;
+      const updates = { ...prev };
+      if (!prev.invoiceDate) {
+        updates.invoiceDate = new Date().toISOString().split('T')[0];
+        needsUpdate = true;
+      }
+      if (!prev.dueDate) {
+        updates.dueDate = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
+        needsUpdate = true;
+      }
+      return needsUpdate ? updates : prev;
+    });
+  }, [])
   
   // Modals & History State
   const [showHistoryModal, setShowHistoryModal] = useState(false)
