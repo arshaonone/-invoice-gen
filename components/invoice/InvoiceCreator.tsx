@@ -174,19 +174,22 @@ export default function InvoiceCreator() {
         import('html2canvas'),
       ])
 
-      // Reveal the container off-screen so html2canvas can render it
+      // Reveal the container securely so html2canvas can render it.
+      // We use absolute positioning with zIndex -10 instead of fixed/-9999px
+      // because mobile browsers (especially iOS Safari) will cull/clip elements completely off-screen,
+      // resulting in blank canvases or JS errors during generation.
       container.style.display = 'block'
-      container.style.position = 'fixed'
-      container.style.left = '-9999px'
+      container.style.position = 'absolute'
+      container.style.left = '0'
       container.style.top = '0'
       container.style.width = '794px'
-      container.style.zIndex = '-1'
+      container.style.zIndex = '-10'
 
-      // Wait for fonts/images to settle
-      await new Promise(r => setTimeout(r, 300))
+      // Wait for fonts/images to settle and browser to paint
+      await new Promise(r => setTimeout(r, 400))
 
       const canvas = await html2canvas(printRef.current, {
-        scale: 2,
+        scale: 1.5, // Reduced from 2 to 1.5 to prevent memory limit crashes on mobile devices
         useCORS: true,
         allowTaint: true,
         logging: false,
@@ -234,7 +237,20 @@ export default function InvoiceCreator() {
         }
       }
 
-      pdf.save(`Invoice-${data.invoiceNumber}.pdf`)
+      const fileName = `Invoice-${data.invoiceNumber}.pdf`
+      const pdfBlob = pdf.output('blob')
+      
+      // Robust download approach using Blob and temporary anchor
+      const blobUrl = URL.createObjectURL(pdfBlob)
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 2000)
+
       toast.success('PDF downloaded!', { id: toastId })
     } catch (err) {
       console.error('PDF generation error:', err)
@@ -247,7 +263,7 @@ export default function InvoiceCreator() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f2f5] font-sans">
+    <div className="min-h-screen bg-[#f0f2f5] font-sans relative z-0">
 
       {/* ── TOP NAV ── */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40 print:hidden shadow-sm">
