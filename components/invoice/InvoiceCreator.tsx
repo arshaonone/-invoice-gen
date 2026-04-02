@@ -6,7 +6,7 @@ import { useReactToPrint } from 'react-to-print'
 import toast from 'react-hot-toast'
 import {
   Plus, Trash2, Download, Printer, RotateCcw, FileText,
-  ChevronDown, X, Upload, RefreshCw, Settings2, Loader2
+  ChevronDown, X, Upload, RefreshCw, Settings2, Loader2, Heart
 } from 'lucide-react'
 import { getCurrencySymbol, CURRENCIES } from '@/lib/utils'
 
@@ -955,7 +955,7 @@ export default function InvoiceCreator() {
           </div>
           <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
             <p>&copy; {new Date().getFullYear()} invoice-gen.net. All rights reserved.</p>
-            <p>Created with simplicity and privacy in mind.</p>
+            <p className="flex items-center gap-1.5">Developed with <Heart className="w-3.5 h-3.5 text-red-500 fill-current" /> by <a href="https://github.com/arshaonone" target="_blank" rel="noopener noreferrer" className="font-semibold text-gray-500 hover:text-green-600 transition">Ashikur Rahman Shaon</a></p>
           </div>
         </div>
       </footer>
