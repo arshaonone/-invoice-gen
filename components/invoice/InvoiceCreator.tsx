@@ -117,11 +117,36 @@ function cls(...parts: (string | undefined | false)[]) {
 export default function InvoiceCreator() {
   const [data, setData] = useState<InvoiceData>(defaultData())
   const [showSettings, setShowSettings] = useState(false)
-  const [showBanner, setShowBanner] = useState(true)
   const [isGenerating, setIsGenerating] = useState(false)
+  
+  // Modals & History State
+  const [showHistoryModal, setShowHistoryModal] = useState(false)
+  const [showGuideModal, setShowGuideModal] = useState(false)
+  const [showHelpModal, setShowHelpModal] = useState(false)
+  const [historyItems, setHistoryItems] = useState<InvoiceData[]>([])
+
   const printRef = useRef<HTMLDivElement>(null)
   const printContainerRef = useRef<HTMLDivElement>(null)
   const logoInputRef = useRef<HTMLInputElement>(null)
+
+  const saveToHistory = (invoiceData: InvoiceData) => {
+    try {
+      const historyStr = localStorage.getItem('invoice-gen-history')
+      let history: InvoiceData[] = historyStr ? JSON.parse(historyStr) : []
+      history = history.filter(i => i.invoiceNumber !== invoiceData.invoiceNumber)
+      history.unshift({ ...invoiceData })
+      history = history.slice(0, 15)
+      localStorage.setItem('invoice-gen-history', JSON.stringify(history))
+    } catch {}
+  }
+
+  const loadHistory = () => {
+    try {
+      const historyStr = localStorage.getItem('invoice-gen-history')
+      if (historyStr) setHistoryItems(JSON.parse(historyStr))
+    } catch {}
+    setShowHistoryModal(true)
+  }
 
   const set = <K extends keyof InvoiceData>(key: K, val: InvoiceData[K]) =>
     setData(prev => ({ ...prev, [key]: val }))
@@ -157,13 +182,17 @@ export default function InvoiceCreator() {
   const handlePrint = useReactToPrint({
     content: () => printRef.current,
     documentTitle: `Invoice-${data.invoiceNumber}`,
-    onBeforeGetContent: () => new Promise<void>(resolve => setTimeout(resolve, 300)),
+    onBeforeGetContent: () => {
+      saveToHistory(data)
+      return new Promise<void>(resolve => setTimeout(resolve, 300))
+    },
   })
 
   const sym = getCurrencySymbol(data.currency)
   const balanceDue = Math.max(0, data.total - data.amountPaid)
 
   const downloadPDF = async () => {
+    saveToHistory(data)
     if (!printRef.current || !printContainerRef.current || isGenerating) return
     setIsGenerating(true)
     const toastId = toast.loading('Generating PDF…')
@@ -281,10 +310,10 @@ export default function InvoiceCreator() {
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6 text-sm text-gray-500">
-            <a href="#" className="hover:text-gray-800 transition">Help</a>
-            <a href="#" className="hover:text-gray-800 transition">History</a>
-            <a href="#" className="hover:text-gray-800 transition">Invoicing Guide</a>
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-500">
+            <button onClick={() => setShowHelpModal(true)} className="hover:text-gray-800 transition">Help</button>
+            <button onClick={loadHistory} className="hover:text-gray-800 transition">History</button>
+            <button onClick={() => setShowGuideModal(true)} className="hover:text-gray-800 transition">Invoicing Guide</button>
           </nav>
 
           {/* Right Actions */}
@@ -356,24 +385,6 @@ export default function InvoiceCreator() {
         </div>
       )}
 
-      {/* ── BANNER ── */}
-      {showBanner && (
-        <div className="bg-white border-b border-gray-100 print:hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 relative">
-            <button
-              onClick={() => setShowBanner(false)}
-              className="absolute top-4 right-4 text-gray-300 hover:text-gray-500 transition p-1"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-0.5">Free Invoice Template</h1>
-            <p className="text-green-600 font-semibold text-sm mb-1">Create professional invoices with one click!</p>
-            <p className="text-xs sm:text-sm text-gray-500 max-w-xl leading-relaxed">
-              Create, customize, and download professional invoices as PDF directly from your browser. Free forever.
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* ── MAIN: INVOICE CARD + SIDEBAR ── */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 pb-28 lg:pb-6 print:hidden">
@@ -865,7 +876,15 @@ export default function InvoiceCreator() {
             {/* Resources */}
             <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Resources</h3>
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 flex flex-col items-start">
+                <button onClick={() => setShowGuideModal(true)} className="flex items-center gap-1.5 text-xs text-green-600 hover:text-green-700 hover:underline transition">
+                  <span className="w-1 h-1 rounded-full bg-green-400 shrink-0" />
+                  Invoicing Guide
+                </button>
+                <button onClick={() => setShowHelpModal(true)} className="flex items-center gap-1.5 text-xs text-green-600 hover:text-green-700 hover:underline transition">
+                  <span className="w-1 h-1 rounded-full bg-green-400 shrink-0" />
+                  Help & FAQ
+                </button>
                 {['Invoice Template', 'Credit Note Template', 'Quote Template', 'Purchase Order'].map(lbl => (
                   <a key={lbl} href="#" className="flex items-center gap-1.5 text-xs text-green-600 hover:text-green-700 hover:underline transition">
                     <span className="w-1 h-1 rounded-full bg-green-400 shrink-0" />
@@ -891,6 +910,167 @@ export default function InvoiceCreator() {
           </div>{/* end sidebar */}
         </div>
       </div>
+
+      {/* ── FOOTER ── */}
+      <footer className="bg-white border-t border-gray-200 mt-8 print:hidden pb-28 lg:pb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            <div className="lg:col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-6 h-6 rounded-md bg-green-500 flex items-center justify-center">
+                  <FileText className="w-3 h-3 text-white" />
+                </div>
+                <span className="font-bold text-gray-800 text-lg">invoice-gen.net</span>
+              </div>
+              <p className="text-sm text-gray-500 leading-relaxed max-w-lg mb-4">
+                Invoice-Gen is a completely free online invoice generator designed for freelancers, entrepreneurs, and small businesses to create professional invoices easily and instantly. With a clean and user-friendly interface, you can enter your business and client details, add items, and generate a polished invoice within seconds. The platform allows you to preview your invoice and download it as a high-quality PDF without any signup, subscription, or hidden fees.
+              </p>
+              <p className="text-sm text-gray-500 leading-relaxed max-w-lg mb-4">
+                Built for simplicity and speed, Invoice-Gen requires no technical knowledge and works seamlessly across desktop and mobile devices. It is a 100% free tool — no login required, no payment needed, and no limitations on usage.
+              </p>
+              <p className="text-sm text-gray-500 leading-relaxed max-w-lg">
+                Your privacy is our priority. Invoice-Gen does not store any of your personal or invoice data on servers. All information is processed securely inside your browser, ensuring complete control and confidentiality. Whether you are a freelancer sending invoices to clients, a startup managing billing, or a small business owner handling transactions, Invoice-Gen provides a fast, secure, and reliable solution for your invoicing needs.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-bold text-gray-900 mb-4">Resources</h4>
+              <ul className="space-y-2 text-sm text-gray-500">
+                <li><button onClick={() => setShowGuideModal(true)} className="hover:text-green-600 transition">Invoicing Guide</button></li>
+                <li><button onClick={() => setShowHelpModal(true)} className="hover:text-green-600 transition">Help & FAQ</button></li>
+                <li><a href="#" className="hover:text-green-600 transition">Invoice Templates</a></li>
+                <li><a href="#" className="hover:text-green-600 transition">Receipt Generator</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-bold text-gray-900 mb-4">Company</h4>
+              <ul className="space-y-2 text-sm text-gray-500">
+                <li><a href="mailto:support@invoice-gen.net" className="hover:text-green-600 transition">Contact Us</a></li>
+                <li><a href="#" className="hover:text-green-600 transition">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-green-600 transition">Terms of Service</a></li>
+                <li><a href="#" className="hover:text-green-600 transition">About Us</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
+            <p>&copy; {new Date().getFullYear()} invoice-gen.net. All rights reserved.</p>
+            <p>Created with simplicity and privacy in mind.</p>
+          </div>
+        </div>
+      </footer>
+
+      {/* ── MODALS ── */}
+      {showHistoryModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[80vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
+              <h3 className="font-bold text-lg text-gray-900">Recent Invoices</h3>
+              <button onClick={() => setShowHistoryModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-4 overflow-y-auto flex-1 bg-gray-50">
+              {historyItems.length === 0 ? (
+                <div className="text-center py-8 text-gray-500 text-sm">No recent invoices found in your browser.</div>
+              ) : (
+                <div className="space-y-2">
+                  {historyItems.map((inv, i) => (
+                    <button 
+                      key={i} 
+                      onClick={() => { setData(inv); setShowHistoryModal(false); toast.success(`Loaded Invoice #${inv.invoiceNumber}`) }}
+                      className="w-full text-left bg-white p-4 rounded-xl border border-gray-200 hover:border-green-400 hover:shadow-sm transition flex justify-between items-center group"
+                    >
+                      <div>
+                        <div className="font-bold text-sm text-gray-900 group-hover:text-green-600 transition flex items-center gap-2">
+                          <FileText className="w-3.5 h-3.5 text-gray-400 group-hover:text-green-500" />
+                          Invoice #{inv.invoiceNumber}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1 pl-5.5">{inv.clientName || 'Unnamed Client'} • <span className="font-medium text-gray-700">{getCurrencySymbol(inv.currency)}{inv.total.toFixed(2)}</span></div>
+                      </div>
+                      <div className="text-xs font-medium text-gray-400">{inv.invoiceDate}</div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="px-5 py-3 border-t border-gray-100 bg-white shrink-0">
+              <p className="text-[11px] text-gray-400 text-center leading-relaxed">Your invoice history is saved temporarily and securely inside your local browser storage. It is never uploaded to any servers.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showGuideModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h3 className="font-bold text-lg text-gray-900">How to Generate an Invoice</h3>
+              <button onClick={() => setShowGuideModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-5">
+              <div className="flex gap-4 items-start">
+                <div className="w-7 h-7 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-sm border border-green-200">1</div>
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900">Add Your Details & Logo</h4>
+                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">Upload your business logo and enter your company information in the "From" section. These add a professional touch to your invoice.</p>
+                </div>
+              </div>
+              <div className="flex gap-4 items-start">
+                <div className="w-7 h-7 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-sm border border-green-200">2</div>
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900">Client Information</h4>
+                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">Fill out the "Bill To" section with your client's details. Don't forget to set the invoice date and due date.</p>
+                </div>
+              </div>
+              <div className="flex gap-4 items-start">
+                <div className="w-7 h-7 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-sm border border-green-200">3</div>
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900">List Your Services & Items</h4>
+                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">Add line items for the services provided. Include quantity, price, and descriptions. Taxes and discounts will be calculated automatically.</p>
+                </div>
+              </div>
+              <div className="flex gap-4 items-start">
+                <div className="w-7 h-7 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-sm border border-green-200">4</div>
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900">Download or Print PDF</h4>
+                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">Review everything, tweak the brand color in the Settings, and hit "Download PDF" (or Print) to generate your high-quality document instantly!</p>
+                </div>
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+              <button onClick={() => setShowGuideModal(false)} className="px-5 py-2 mt-1 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition shadow-sm active:scale-95">Got it, let's start!</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showHelpModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+              <h3 className="font-bold text-lg text-gray-900">Help & Privacy Check</h3>
+              <button onClick={() => setShowHelpModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
+            </div>
+            <div className="p-6 space-y-5">
+              <div>
+                <h4 className="text-sm font-bold text-gray-900 flex items-center gap-1.5"><FileText className="w-4 h-4 text-green-500"/> Is this really free?</h4>
+                <p className="text-sm text-gray-500 mt-1 leading-relaxed">Yes, 100% free forever. No watermarks, no hidden fees, and no sign-up is required to download your invoices.</p>
+              </div>
+              <div className="pt-1">
+                <h4 className="text-sm font-bold text-gray-900 flex items-center gap-1.5"><Settings2 className="w-4 h-4 text-green-500"/> Is my data secure?</h4>
+                <p className="text-sm text-gray-500 mt-1 leading-relaxed">Absolutely. All data (including client info and totals) is stored locally securely inside your browser. We never upload or view your invoice data.</p>
+              </div>
+              <div className="pt-1">
+                <h4 className="text-sm font-bold text-gray-900 flex items-center gap-1.5"><RefreshCw className="w-4 h-4 text-green-500"/> Need more support?</h4>
+                <p className="text-sm text-gray-500 mt-1 leading-relaxed">If you need advanced tracking, a dedicated account setup, or have a feature request, get in touch with our team below.</p>
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
+              <a href="mailto:support@invoice-gen.net" className="text-sm font-bold text-green-600 hover:text-green-700 transition flex items-center gap-1">Contact Support</a>
+              <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 text-sm font-bold rounded-lg transition active:scale-95">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── MOBILE STICKY BOTTOM BAR ── */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-3 flex gap-3 shadow-[0_-4px_24px_rgba(0,0,0,0.1)] print:hidden">
