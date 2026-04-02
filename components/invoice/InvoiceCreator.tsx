@@ -105,7 +105,7 @@ function calcAll(items: InvoiceItem[], discount: number, taxRate: number, shippi
 }
 
 const inputBase =
-  'w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all bg-white'
+  'w-full bg-slate-50/50 hover:bg-slate-50 border border-slate-200/60 rounded-xl px-4 py-3 text-[13px] text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all duration-300 shadow-sm hover:shadow-md'
 
 function cls(...parts: (string | undefined | false)[]) {
   return parts.filter(Boolean).join(' ')
@@ -395,7 +395,7 @@ export default function InvoiceCreator() {
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
 
           {/* ═══════════════════════ INVOICE CARD ═══════════════════════ */}
-          <div className="w-full lg:flex-1 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="w-full lg:flex-1 bg-white rounded-[24px] shadow-xl shadow-slate-200/40 border border-slate-100/60 overflow-hidden ring-1 ring-slate-900/5">
 
             {/* ── Header: Logo + INVOICE title ── */}
             <div className="p-4 sm:p-8">
@@ -453,11 +453,11 @@ export default function InvoiceCreator() {
 
               {/* Sender */}
               <div className="mb-4">
-                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">From</label>
+                <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">From</label>
                 <textarea
                   value={data.senderInfo}
                   onChange={e => set('senderInfo', e.target.value)}
-                  placeholder="Your name, company, email, phone, address..."
+                  placeholder="e.g., Your Company Name, Your Name, Address..."
                   rows={3}
                   className={cls(inputBase, 'resize-none')}
                 />
@@ -470,21 +470,21 @@ export default function InvoiceCreator() {
                 {/* Left */}
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Bill To</label>
+                    <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">Bill To</label>
                     <textarea
                       value={data.clientName}
                       onChange={e => set('clientName', e.target.value)}
-                      placeholder="Client name, company, address..."
+                      placeholder="e.g., Client Name, Company Name, Address..."
                       rows={3}
                       className={cls(inputBase, 'resize-none')}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Ship To</label>
+                    <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">Ship To</label>
                     <textarea
                       value={data.clientAddress}
                       onChange={e => set('clientAddress', e.target.value)}
-                      placeholder="Shipping address (optional)"
+                      placeholder="e.g., Client Shipping Address (optional)"
                       rows={2}
                       className={cls(inputBase, 'resize-none')}
                     />
@@ -500,7 +500,7 @@ export default function InvoiceCreator() {
                     { label: 'PO Number',     key: 'poNumber',     type: 'text', placeholder: 'PO-0001' },
                   ].map(({ label, key, type, placeholder }) => (
                     <div key={key}>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">{label}</label>
+                      <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">{label}</label>
                       <input
                         type={type}
                         value={(data as any)[key]}
@@ -548,13 +548,13 @@ export default function InvoiceCreator() {
                         <input
                           value={item.name}
                           onChange={e => updateItem(item.id, { name: e.target.value })}
-                          placeholder="Description of item/service..."
+                          placeholder="e.g., Web Design, Consulting..."
                           className={inputBase}
                         />
                         <input
                           value={item.description}
                           onChange={e => updateItem(item.id, { description: e.target.value })}
-                          placeholder="Details (optional)"
+                          placeholder="e.g., Includes 5 custom pages..."
                           className={cls(inputBase, 'mt-1.5 text-xs')}
                         />
                       </div>
@@ -594,7 +594,7 @@ export default function InvoiceCreator() {
                         <input
                           value={item.name}
                           onChange={e => updateItem(item.id, { name: e.target.value })}
-                          placeholder="Item description..."
+                          placeholder="e.g., Web Design, Consulting..."
                           className={cls(inputBase, 'flex-1 bg-white')}
                         />
                         <button
@@ -611,7 +611,7 @@ export default function InvoiceCreator() {
                         <input
                           value={item.description}
                           onChange={e => updateItem(item.id, { description: e.target.value })}
-                          placeholder="Additional details (optional)"
+                          placeholder="e.g., Includes 5 custom pages..."
                           className={cls(inputBase, 'text-xs bg-white')}
                         />
                       </div>
@@ -619,7 +619,7 @@ export default function InvoiceCreator() {
                       {/* Qty / Rate / Amount row */}
                       <div className="grid grid-cols-3 gap-0 px-3 pb-3 pt-2">
                         <div className="pr-2">
-                          <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Qty</label>
+                          <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">Qty</label>
                           <input
                             type="number" min="1" step="1"
                             value={item.quantity}
@@ -628,7 +628,7 @@ export default function InvoiceCreator() {
                           />
                         </div>
                         <div className="px-1">
-                          <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Rate</label>
+                          <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">Rate</label>
                           <input
                             type="number" min="0" step="0.01"
                             value={item.unitPrice}
@@ -637,7 +637,7 @@ export default function InvoiceCreator() {
                           />
                         </div>
                         <div className="pl-2 flex flex-col justify-end">
-                          <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Amount</label>
+                          <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">Amount</label>
                           <div
                             className="h-10 flex items-center justify-end px-3 rounded-lg text-sm font-bold border"
                             style={{ color: data.brandColor, borderColor: `${data.brandColor}30`, background: `${data.brandColor}08` }}
@@ -656,7 +656,7 @@ export default function InvoiceCreator() {
               <div className="px-4 sm:px-8 pb-5">
                 <button
                   onClick={addItem}
-                  className="flex items-center gap-2 text-sm font-semibold text-green-600 border-2 border-dashed border-green-300 hover:border-green-400 hover:bg-green-50 rounded-xl px-4 py-2.5 transition w-full sm:w-auto justify-center sm:justify-start"
+                  className="flex items-center gap-2 text-sm font-bold text-blue-600 bg-blue-50/50 hover:bg-blue-50 border border-blue-200/60 rounded-xl px-5 py-3 shadow-sm hover:shadow transition-all duration-300 w-full justify-center"
                 >
                   <Plus className="w-4 h-4" /> Add Line Item
                 </button>
@@ -670,22 +670,22 @@ export default function InvoiceCreator() {
                 {/* Notes + Terms */}
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Notes</label>
+                    <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">Notes</label>
                     <textarea
                       value={data.notes}
                       onChange={e => set('notes', e.target.value)}
                       rows={3}
-                      placeholder="Any relevant notes for the client..."
+                      placeholder="e.g., Please make checks payable to Your Company..."
                       className={cls(inputBase, 'resize-none')}
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Terms</label>
+                    <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">Terms</label>
                     <textarea
                       value={data.terms}
                       onChange={e => set('terms', e.target.value)}
                       rows={3}
-                      placeholder="Payment terms, late fees, delivery schedule..."
+                      placeholder="e.g., Payment due within 30 days. Late fees apply."
                       className={cls(inputBase, 'resize-none')}
                     />
                   </div>
@@ -802,7 +802,7 @@ export default function InvoiceCreator() {
               <button
                 onClick={downloadPDF}
                 disabled={isGenerating}
-                className="w-full flex items-center justify-center gap-2 py-3 text-sm font-bold text-white rounded-xl transition shadow-md hover:opacity-90 active:scale-95 disabled:opacity-60"
+                className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-2xl transition hover:-translate-y-0.5 shadow-[0_8px_16px_-6px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_20px_-8px_rgba(0,0,0,0.4)] active:translate-y-0 disabled:opacity-60"
                 style={{ background: data.brandColor }}
               >
                 {isGenerating
