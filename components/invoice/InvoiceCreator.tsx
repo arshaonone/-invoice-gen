@@ -488,21 +488,31 @@ export default function InvoiceCreator() {
                 {/* Left */}
                 <div className="space-y-3">
                   <div>
-                    <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">Bill To</label>
-                    <textarea
+                    <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">Bill To / Client Details</label>
+                    <input
                       value={data.clientName}
                       onChange={e => set('clientName', e.target.value)}
-                      placeholder="e.g., Client Name, Company Name, Address..."
-                      rows={3}
-                      className={cls(inputBase, 'resize-none')}
+                      placeholder="e.g. Client Name"
+                      className={cls(inputBase, 'mb-2 font-semibold')}
                     />
-                  </div>
-                  <div>
-                    <label className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider pl-1">Ship To</label>
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      <input
+                        value={data.clientPhone || ''}
+                        onChange={e => set('clientPhone', e.target.value)}
+                        placeholder="Phone Number"
+                        className={cls(inputBase)}
+                      />
+                      <input
+                        value={data.clientEmail || ''}
+                        onChange={e => set('clientEmail', e.target.value)}
+                        placeholder="Email Address"
+                        className={cls(inputBase)}
+                      />
+                    </div>
                     <textarea
                       value={data.clientAddress}
                       onChange={e => set('clientAddress', e.target.value)}
-                      placeholder="e.g., Client Shipping Address (optional)"
+                      placeholder="e.g. 123 Anywhere St., Any City"
                       rows={2}
                       className={cls(inputBase, 'resize-none')}
                     />
@@ -1217,118 +1227,161 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
   function PrintableInvoice({ data }, ref) {
     const sym = getCurrencySymbol(data.currency)
     const balanceDue = Math.max(0, data.total - data.amountPaid)
-    const c = data.brandColor
+    // Use the dynamic brand color, defaulting to a highly professional corporate blue like the image
+    const c = data.brandColor || '#3B82F6'
 
     return (
-      <div ref={ref} style={{ fontFamily: '"Inter", "Helvetica Neue", Helvetica, Arial, sans-serif', background: '#fff', color: '#1e293b', minHeight: '297mm', padding: '50px 60px', boxSizing: 'border-box', fontSize: 13, borderTop: `8px solid ${c}` }}>
-        {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40 }}>
-          <div style={{ maxWidth: '50%' }}>
+      <div ref={ref} style={{ fontFamily: '"Plus Jakarta Sans", "Inter", sans-serif', background: '#fff', color: '#1e293b', minHeight: '1122px', width: '794px', padding: '60px 50px', boxSizing: 'border-box', fontSize: 13, position: 'relative' }}>
+        
+        {/* Header Block */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, maxWidth: '50%' }}>
             {data.senderLogo
-              ? <img src={data.senderLogo} alt="Logo" style={{ height: 64, objectFit: 'contain', marginBottom: 16 }} />
+              ? <img src={data.senderLogo} alt="Logo" style={{ height: 48, objectFit: 'contain' }} />
               : data.senderInfo && (
-                <div style={{ width: 56, height: 56, borderRadius: 12, background: c, color: '#fff', fontWeight: 800, fontSize: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                <div style={{ width: 44, height: 44, borderRadius: '50%', background: c, color: '#fff', fontWeight: 800, fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {data.senderInfo[0]?.toUpperCase()}
                 </div>
               )
             }
-            <div style={{ color: '#475569', whiteSpace: 'pre-line', lineHeight: 1.6, fontSize: 14 }}>{data.senderInfo}</div>
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 42, fontWeight: 800, letterSpacing: 4, color: '#0f172a', textTransform: 'uppercase' }}>INVOICE</div>
-            <div style={{ color: '#64748b', marginTop: 4, fontSize: 16 }}>#{data.invoiceNumber}</div>
-            <div style={{ marginTop: 20, lineHeight: 1.8, fontSize: 13 }}>
-              {([ data.invoiceDate ? ['Invoice Date', fmtDate(data.invoiceDate)] : null,
-                  data.dueDate ? ['Due Date', fmtDate(data.dueDate)] : null,
-                  data.paymentTerms ? ['Payment Terms', data.paymentTerms] : null,
-                  data.poNumber ? ['PO Number', data.poNumber] : null,
-              ].filter((x): x is string[] => x !== null)).map(([label, val]) => (
-                <div key={label} style={{ display: 'flex', justifyContent: 'flex-end', gap: 16 }}>
-                  <span style={{ color: '#64748b' }}>{label}:</span>
-                  <span style={{ fontWeight: 600, color: '#0f172a', minWidth: 120, textAlign: 'right' }}>{val}</span>
-                </div>
-              ))}
+            <div style={{ color: '#0f172a', whiteSpace: 'pre-line', lineHeight: 1.4, fontSize: 18, fontWeight: 800 }}>
+              {data.senderInfo || 'YOUR COMPANY'}
             </div>
+          </div>
+          <div>
+            <div style={{ fontSize: 44, fontWeight: 900, color: c, textTransform: 'uppercase', letterSpacing: 2 }}>INVOICE</div>
           </div>
         </div>
 
-        {/* Client Info Grid */}
-        <div style={{ display: 'flex', gap: 40, marginBottom: 40, paddingTop: 32, borderTop: '1px solid #f1f5f9' }}>
-          {data.clientName && (
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: c, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8 }}>BILLED TO</div>
-              <div style={{ whiteSpace: 'pre-line', color: '#0f172a', lineHeight: 1.6, fontSize: 14, fontWeight: 500 }}>{data.clientName}</div>
-            </div>
-          )}
-          {data.clientAddress && (
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: c, textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8 }}>SHIPPED TO</div>
-              <div style={{ whiteSpace: 'pre-line', color: '#0f172a', lineHeight: 1.6, fontSize: 14, fontWeight: 500 }}>{data.clientAddress}</div>
-            </div>
-          )}
+        {/* Split Divider & Website */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 40 }}>
+          <div style={{ height: 3, width: 80, background: c }}></div>
+          <div style={{ height: 1, flex: 1, background: '#cbd5e1' }}></div>
+          <div style={{ paddingLeft: 16, fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1 }}>
+            invoice-gen.net
+          </div>
         </div>
 
-        {/* Items table */}
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 32, tableLayout: 'fixed' }}>
-          <thead>
-            <tr style={{ background: '#f8fafc' }}>
-              <th style={{ padding: '12px 16px', textAlign: 'left', fontWeight: 600, fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', width: '50%' }}>Description</th>
-              <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 600, fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>Qty</th>
-              <th style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600, fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>Rate</th>
-              <th style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600, fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.items.map((item, i) => (
-              <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '16px', verticalAlign: 'top' }}>
-                  <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>{item.name || '—'}</div>
-                  {item.description && <div style={{ color: '#64748b', fontSize: 12, marginTop: 4, lineHeight: 1.5 }}>{item.description}</div>}
-                </td>
-                <td style={{ padding: '16px', textAlign: 'center', color: '#475569', verticalAlign: 'top' }}>{item.quantity}</td>
-                <td style={{ padding: '16px', textAlign: 'right', color: '#475569', verticalAlign: 'top' }}>{sym}{item.unitPrice.toFixed(2)}</td>
-                <td style={{ padding: '16px', textAlign: 'right', fontWeight: 600, color: '#0f172a', verticalAlign: 'top' }}>{sym}{item.total.toFixed(2)}</td>
+        {/* Info Grid */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 30 }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, color: '#64748b', marginBottom: 6 }}>Invoice to :</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginBottom: 10 }}>{data.clientName || 'Client Name'}</div>
+            {data.clientAddress && <div style={{ whiteSpace: 'pre-line', color: '#64748b', lineHeight: 1.6, fontSize: 12 }}>{data.clientAddress}</div>}
+          </div>
+          <div style={{ textAlign: 'right', flex: 1 }}>
+            <div style={{ fontSize: 16, fontWeight: 'bold', color: '#0f172a', marginBottom: 6 }}>Invoice no : <span style={{ fontWeight: 800 }}>{data.invoiceNumber || '12345'}</span></div>
+            <div style={{ fontSize: 14, color: '#64748b' }}>{data.invoiceDate ? fmtDate(data.invoiceDate) : 'Date'}</div>
+            {data.dueDate && <div style={{ fontSize: 13, color: '#94a3b8', marginTop: 4 }}>Due: {fmtDate(data.dueDate)}</div>}
+          </div>
+        </div>
+
+        {/* Items Table */}
+        <div style={{ minHeight: '350px' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 20, tableLayout: 'fixed' }}>
+            <thead>
+              <tr style={{ background: c, color: '#fff' }}>
+                <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', width: '10%' }}>NO</th>
+                <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', width: '45%' }}>DESCRIPTION</th>
+                <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', width: '15%' }}>QTY</th>
+                <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', width: '15%' }}>PRICE</th>
+                <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', width: '15%' }}>TOTAL</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.items.map((item, i) => (
+                <tr key={item.id} style={{ background: i % 2 === 1 ? `${c}12` : 'transparent' }}>
+                  <td style={{ padding: '10px 16px', textAlign: 'center', color: '#475569', fontSize: 12 }}>{i + 1}</td>
+                  <td style={{ padding: '10px 16px', color: '#0f172a', fontSize: 13, fontWeight: 500 }}>
+                    {item.name || '—'}
+                    {item.description && <div style={{ color: '#64748b', fontSize: 11, marginTop: 2, fontWeight: 400 }}>{item.description}</div>}
+                  </td>
+                  <td style={{ padding: '10px 16px', textAlign: 'center', color: '#475569', fontSize: 12 }}>{item.quantity}</td>
+                  <td style={{ padding: '10px 16px', textAlign: 'right', color: '#475569', fontSize: 12 }}>{sym}{item.unitPrice.toFixed(2)}</td>
+                  <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 600, color: '#0f172a', fontSize: 12 }}>{sym}{item.total.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-        {/* Totals + Notes */}
-        <div style={{ display: 'flex', gap: 48, justifyItems: 'space-between', alignItems: 'flex-start' }}>
-          <div style={{ flex: 1, paddingTop: 16 }}>
-            {data.notes && <div style={{ marginBottom: 24 }}><div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Notes</div><div style={{ color: '#475569', fontSize: 13, whiteSpace: 'pre-line', lineHeight: 1.6 }}>{data.notes}</div></div>}
-            {data.terms && <div><div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Terms & Conditions</div><div style={{ color: '#475569', fontSize: 13, whiteSpace: 'pre-line', lineHeight: 1.6 }}>{data.terms}</div></div>}
-          </div>
-          <div style={{ minWidth: 280, background: '#f8fafc', padding: 24, borderRadius: 12 }}>
+        {/* Totals Section */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
+          <div style={{ minWidth: 280 }}>
             {([
-              { label: 'Subtotal', val: `${sym}${data.subtotal.toFixed(2)}` },
-              data.taxRate  > 0 ? { label: `Tax (${data.taxRate}%)`, val: `${sym}${data.taxAmount.toFixed(2)}` } : null,
-              data.discount > 0 ? { label: 'Discount', val: `-${sym}${data.discount.toFixed(2)}` } : null,
-              data.shipping > 0 ? { label: 'Shipping', val: `${sym}${data.shipping.toFixed(2)}` } : null,
+              { label: 'Sub Total :', val: `${sym}${data.subtotal.toFixed(2)}` },
+              data.taxRate  > 0 ? { label: `Tax ${data.taxRate}% :`, val: `${sym}${data.taxAmount.toFixed(2)}` } : null,
+              data.discount > 0 ? { label: 'Discount :', val: `-${sym}${data.discount.toFixed(2)}` } : null,
+              data.shipping > 0 ? { label: 'Shipping :', val: `${sym}${data.shipping.toFixed(2)}` } : null,
             ].filter((x): x is { label: string; val: string } => x !== null)).map(({ label, val }) => (
-              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', color: '#475569', fontSize: 13 }}>
-                <span>{label}</span><span style={{ fontWeight: 500 }}>{val}</span>
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 16px', color: '#475569', fontSize: 13 }}>
+                <span style={{ textAlign: 'right', flex: 1, paddingRight: 24, fontWeight: 500 }}>{label}</span>
+                <span style={{ fontWeight: 600, color: '#0f172a', minWidth: 80, textAlign: 'right' }}>{val}</span>
               </div>
             ))}
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0 8px 0', fontWeight: 600, fontSize: 15, color: '#0f172a', borderTop: '1px solid #cbd5e1', marginTop: 12 }}>
-              <span>Total</span><span>{sym}{data.total.toFixed(2)}</span>
-            </div>
-            {data.amountPaid > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', color: '#475569', fontSize: 14 }}>
-                <span>Amount Paid</span><span>{sym}{data.amountPaid.toFixed(2)}</span>
+          </div>
+        </div>
+
+        {/* Payment Method / Grand Total row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40 }}>
+          <div style={{ maxWidth: '45%' }}>
+            {data.notes && (
+              <>
+                <div style={{ background: c, color: '#fff', fontSize: 12, fontWeight: 800, padding: '8px 16px', display: 'inline-block', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
+                  PAYMENT METHOD :
+                </div>
+                <div style={{ color: '#1e293b', fontSize: 13, whiteSpace: 'pre-line', lineHeight: 1.6 }}>{data.notes}</div>
+                <div style={{ height: 1, width: '100%', background: '#cbd5e1', marginTop: 16 }}></div>
+              </>
+            )}
+          </div>
+          <div style={{ width: 340, background: c, color: '#fff', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>GRAND TOTAL :</span>
+            <span style={{ fontSize: 16, fontWeight: 800 }}>{sym}{data.total.toFixed(2)}</span>
+          </div>
+        </div>
+
+        {/* Terms and Signatures */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
+          <div style={{ flex: 1, paddingRight: 40 }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', marginBottom: 16 }}>Thank you for business with us!</div>
+            {data.terms && (
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: '#0f172a', marginBottom: 6 }}>Term and Conditions :</div>
+                <div style={{ fontSize: 12, color: '#64748b', whiteSpace: 'pre-line', lineHeight: 1.6 }}>{data.terms}</div>
               </div>
             )}
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '16px 0 0 0', fontWeight: 800, fontSize: 18, color: c, borderTop: '2px solid #cbd5e1', marginTop: 8 }}>
-              <span>Balance Due</span><span>{sym}{balanceDue.toFixed(2)}</span>
+          </div>
+          {data.footerNote && (
+            <div style={{ textAlign: 'center', width: 200 }}>
+              <div style={{ fontFamily: 'cursive, "Times New Roman", serif', fontSize: 24, color: '#94a3b8', marginBottom: 8, opacity: 0.6 }}>Signature</div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#0f172a' }}>{data.footerNote}</div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer (Absolute Bottom) */}
+        <div style={{ position: 'absolute', bottom: 40, left: 50, right: 50 }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+             <div style={{ height: 3, width: 80, background: c }}></div>
+             <div style={{ height: 1, flex: 1, background: '#cbd5e1' }}></div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#64748b', fontSize: 11 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              {data.clientPhone || '123-456-7890'}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+              {data.clientEmail || 'hello@reallygreatsite.com'}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              {data.clientAddress ? data.clientAddress.split('\n')[0] : '123 Anywhere St., Any City'}
             </div>
           </div>
         </div>
 
-        {data.footerNote && (
-          <div style={{ marginTop: 64, paddingTop: 24, borderTop: '1px solid #e2e8f0', textAlign: 'center', color: '#94a3b8', fontSize: 12, letterSpacing: 0.5 }}>
-            {data.footerNote}
-          </div>
-        )}
       </div>
     )
   }
