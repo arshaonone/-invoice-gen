@@ -266,9 +266,9 @@ export default function InvoiceCreator() {
       const imgH = canvas.height
       const scaledH = (imgH * pdfW) / imgW // mm height of full content
 
-      if (scaledH <= pdfH) {
-        // Fits on one page
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfW, scaledH, undefined, 'FAST')
+      if (scaledH <= pdfH + 2) {
+        // Fits on one page (allow tiny 2mm overflow due to rounding)
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfW, Math.min(scaledH, pdfH), undefined, 'FAST')
       } else {
         // Multi-page: slice canvas into A4-sized chunks
         const pxPerPage = Math.floor((pdfH / scaledH) * imgH)
@@ -276,6 +276,7 @@ export default function InvoiceCreator() {
         let page = 0
         while (yPx < imgH) {
           const sliceH = Math.min(pxPerPage, imgH - yPx)
+          if (sliceH < 10 && page > 0) break; // Ignore tiny slivers that create blank pages
           const pageCanvas = document.createElement('canvas')
           pageCanvas.width = imgW
           pageCanvas.height = sliceH
