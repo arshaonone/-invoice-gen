@@ -1042,14 +1042,14 @@ export default function InvoiceCreator() {
                 <div className="w-7 h-7 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-sm border border-green-200">1</div>
                 <div>
                   <h4 className="text-sm font-bold text-gray-900">Add Your Details & Logo</h4>
-                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">Upload your business logo and enter your company information in the "From" section. These add a professional touch to your invoice.</p>
+                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">Upload your business logo and enter your company information in the &quot;From&quot; section. These add a professional touch to your invoice.</p>
                 </div>
               </div>
               <div className="flex gap-4 items-start">
                 <div className="w-7 h-7 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-sm border border-green-200">2</div>
                 <div>
                   <h4 className="text-sm font-bold text-gray-900">Client Information</h4>
-                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">Fill out the "Bill To" section with your client's details. Don't forget to set the invoice date and due date.</p>
+                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">Fill out the &quot;Bill To&quot; section with your client&apos;s details. Don&apos;t forget to set the invoice date and due date.</p>
                 </div>
               </div>
               <div className="flex gap-4 items-start">
@@ -1063,12 +1063,12 @@ export default function InvoiceCreator() {
                 <div className="w-7 h-7 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 shadow-sm border border-green-200">4</div>
                 <div>
                   <h4 className="text-sm font-bold text-gray-900">Download or Print PDF</h4>
-                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">Review everything, tweak the brand color in the Settings, and hit "Download PDF" (or Print) to generate your high-quality document instantly!</p>
+                  <p className="text-sm text-gray-500 mt-1 leading-relaxed">Review everything, tweak the brand color in the Settings, and hit &quot;Download PDF&quot; (or Print) to generate your high-quality document instantly!</p>
                 </div>
               </div>
             </div>
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
-              <button onClick={() => setShowGuideModal(false)} className="px-5 py-2 mt-1 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition shadow-sm active:scale-95">Got it, let's start!</button>
+              <button onClick={() => setShowGuideModal(false)} className="px-5 py-2 mt-1 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition shadow-sm active:scale-95">Got it, let&apos;s start!</button>
             </div>
           </div>
         </div>
@@ -1096,7 +1096,7 @@ export default function InvoiceCreator() {
               </div>
               <div className="pt-1">
                 <h4 className="text-sm font-bold text-gray-900">How do I download my invoice?</h4>
-                <p className="text-sm text-gray-500 mt-1 leading-relaxed">Simply click the "Download PDF" button at the top or bottom of the screen once you finish editing.</p>
+                <p className="text-sm text-gray-500 mt-1 leading-relaxed">Simply click the &quot;Download PDF&quot; button at the top or bottom of the screen once you finish editing.</p>
               </div>
             </div>
             <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
