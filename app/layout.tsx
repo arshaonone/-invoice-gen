@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
-import { Inter, Poppins } from 'next/font/google'
+import { Outfit, Plus_Jakarta_Sans } from 'next/font/google'
 import Script from 'next/script'
 import './globals.css'
 import { Providers } from '@/components/Providers'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
-const poppins = Poppins({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-poppins' })
+const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' })
+const jakarta = Plus_Jakarta_Sans({ subsets: ['latin'], variable: '--font-jakarta' })
 
 export const metadata: Metadata = {
   title: { default: 'invoice-gen.net — Free Online Invoice Generator', template: '%s | invoice-gen.net' },
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${poppins.variable} font-sans antialiased`} style={{ top: '0px' }}>
+      <body className={`${outfit.variable} ${jakarta.variable} font-sans antialiased`} style={{ top: '0px' }}>
         <Providers>{children}</Providers>
       </body>
     </html>
