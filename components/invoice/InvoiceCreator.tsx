@@ -1246,7 +1246,7 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
               )
             }
             <div style={{ color: '#0f172a', whiteSpace: 'pre-line', lineHeight: 1.4, fontSize: 18, fontWeight: 800 }}>
-              {data.senderInfo || 'YOUR COMPANY'}
+              {data.senderInfo}
             </div>
           </div>
           <div>
@@ -1258,21 +1258,19 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 40 }}>
           <div style={{ height: 3, width: 80, background: c }}></div>
           <div style={{ height: 1, flex: 1, background: '#cbd5e1' }}></div>
-          <div style={{ paddingLeft: 16, fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1 }}>
-            invoice-gen.net
-          </div>
+
         </div>
 
         {/* Info Grid */}
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 30 }}>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 13, color: '#64748b', marginBottom: 6 }}>Invoice to :</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginBottom: 10 }}>{data.clientName || 'Client Name'}</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginBottom: 10 }}>{data.clientName}</div>
             {data.clientAddress && <div style={{ whiteSpace: 'pre-line', color: '#64748b', lineHeight: 1.6, fontSize: 12 }}>{data.clientAddress}</div>}
           </div>
           <div style={{ textAlign: 'right', flex: 1 }}>
-            <div style={{ fontSize: 16, fontWeight: 'bold', color: '#0f172a', marginBottom: 6 }}>Invoice no : <span style={{ fontWeight: 800 }}>{data.invoiceNumber || '12345'}</span></div>
-            <div style={{ fontSize: 14, color: '#64748b' }}>{data.invoiceDate ? fmtDate(data.invoiceDate) : 'Date'}</div>
+            <div style={{ fontSize: 16, fontWeight: 'bold', color: '#0f172a', marginBottom: 6 }}>Invoice no : <span style={{ fontWeight: 800 }}>{data.invoiceNumber}</span></div>
+            <div style={{ fontSize: 14, color: '#64748b' }}>{data.invoiceDate ? fmtDate(data.invoiceDate) : ''}</div>
             {data.dueDate && <div style={{ fontSize: 13, color: '#94a3b8', marginTop: 4 }}>Due: {fmtDate(data.dueDate)}</div>}
           </div>
         </div>
@@ -1368,18 +1366,24 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
              <div style={{ height: 1, flex: 1, background: '#cbd5e1' }}></div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#64748b', fontSize: 11 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-              {data.clientPhone || '123-456-7890'}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
-              {data.clientEmail || 'hello@reallygreatsite.com'}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-              {data.clientAddress ? data.clientAddress.split('\n')[0] : '123 Anywhere St., Any City'}
-            </div>
+            {data.clientPhone && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                {data.clientPhone}
+              </div>
+            )}
+            {data.clientEmail && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                {data.clientEmail}
+              </div>
+            )}
+            {data.clientAddress && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                {data.clientAddress.split('\n')[0]}
+              </div>
+            )}
           </div>
         </div>
 
