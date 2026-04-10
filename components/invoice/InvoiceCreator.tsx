@@ -1220,174 +1220,198 @@ export default function InvoiceCreator() {
    PRINTABLE INVOICE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function fmtDate(d: string) {
-  try { return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) }
-  catch { return d }
+  try {
+    const date = new Date(d + 'T12:00:00')
+    const mm = String(date.getMonth() + 1).padStart(2, '0')
+    const dd = String(date.getDate()).padStart(2, '0')
+    const yyyy = date.getFullYear()
+    return \`\${mm}/\${dd}/\${yyyy}\`
+  } catch { return d }
 }
 
 const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>(
   function PrintableInvoice({ data }, ref) {
     const sym = getCurrencySymbol(data.currency)
-    const balanceDue = Math.max(0, data.total - data.amountPaid)
-    // Use the dynamic brand color, defaulting to a highly professional corporate blue like the image
-    const c = data.brandColor || '#3B82F6'
 
     return (
-      <div ref={ref} style={{ fontFamily: '"Plus Jakarta Sans", "Inter", sans-serif', background: '#fff', color: '#1e293b', minHeight: '1122px', width: '794px', padding: '60px 50px', boxSizing: 'border-box', fontSize: 13, position: 'relative' }}>
+      <div ref={ref} style={{ fontFamily: 'Inter, system-ui, sans-serif', background: '#fff', color: '#101828', minHeight: '1122px', width: '794px', padding: '80px 70px', boxSizing: 'border-box', fontSize: 13, position: 'relative' }}>
         
         {/* Header Block */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, maxWidth: '50%' }}>
-            {data.senderLogo
-              ? <img src={data.senderLogo} alt="Logo" style={{ height: 48, objectFit: 'contain' }} />
-              : data.senderInfo && (
-                <div style={{ width: 44, height: 44, borderRadius: '50%', background: c, color: '#fff', fontWeight: 800, fontSize: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {data.senderInfo[0]?.toUpperCase()}
-                </div>
-              )
-            }
-            <div style={{ color: '#0f172a', whiteSpace: 'pre-line', lineHeight: 1.4, fontSize: 18, fontWeight: 800 }}>
-              {data.senderInfo}
+        <div style={{ textAlign: 'center', marginBottom: 50 }}>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#101828', letterSpacing: '0.05em' }}>INVOICE</div>
+        </div>
+
+        {/* Contact info grid */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 50, color: '#344054', lineHeight: '1.6' }}>
+          {/* Left Column */}
+          <div style={{ flex: 1, whiteSpace: 'pre-line' }}>
+            {data.senderInfo || 
+              (data.senderName + '\n' + data.senderAddress).trim() ||
+              'Business name\nStreet address\nCity, State Zip code'}
+          </div>
+
+          {/* Right Column */}
+          <div style={{ flex: 1, textAlign: 'right' }}>
+            {(data.senderPhone || data.senderEmail) ? (
+              <>
+                {data.senderPhone && <div>{data.senderPhone}</div>}
+                {data.senderEmail && <div>{data.senderEmail}</div>}
+              </>
+            ) : (
+              <>
+                <div>123-456-7890</div>
+                <div>johndoe123@gmail.com</div>
+                <div>john-doe.com</div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Boxed Bill To & Invoice details */}
+        <div style={{ background: '#f8fafc', padding: '30px', margin: '0 -30px 50px -30px', display: 'flex', justifyContent: 'space-between' }}>
+          {/* Bill to */}
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 700, color: '#101828', marginBottom: 12 }}>Bill to</div>
+            <div style={{ color: '#344054', lineHeight: '1.6' }}>
+              <div>{data.clientName || 'Client name'}</div>
+              <div style={{ whiteSpace: 'pre-line' }}>{data.clientAddress || '1234 Main Street\nCity, State 09001'}</div>
             </div>
           </div>
-          <div>
-            <div style={{ fontSize: 44, fontWeight: 900, color: c, textTransform: 'uppercase', letterSpacing: 2 }}>INVOICE</div>
+          
+          {/* Invoice details */}
+          <div style={{ flex: 1, paddingLeft: 40 }}>
+            <div style={{ fontWeight: 700, color: '#101828', marginBottom: 12 }}>Invoice details</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(100px, max-content) 1fr', rowGap: 8, columnGap: 16, color: '#344054' }}>
+              <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2, display: 'inline-block' }}>Invoice</div>
+              <div style={{ paddingBottom: 2 }}>{data.invoiceNumber ? \`#\${data.invoiceNumber}\` : '#12345'}</div>
+              
+              {data.paymentTerms && (
+                <>
+                  <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Terms</div>
+                  <div style={{ paddingBottom: 2 }}>{data.paymentTerms}</div>
+                </>
+              )}
+              {!data.paymentTerms && (
+                <>
+                  <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Terms</div>
+                  <div style={{ paddingBottom: 2 }}>Net 30</div>
+                </>
+              )}
+
+              <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Invoice date</div>
+              <div style={{ paddingBottom: 2 }}>{data.invoiceDate ? fmtDate(data.invoiceDate) : '08/20/2024'}</div>
+              
+              {data.dueDate && (
+                <>
+                  <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Due date</div>
+                  <div style={{ paddingBottom: 2 }}>{fmtDate(data.dueDate)}</div>
+                </>
+              )}
+              {!data.dueDate && (
+                <>
+                  <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Due date</div>
+                  <div style={{ paddingBottom: 2 }}>09/20/2024</div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Split Divider & Website */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 40 }}>
-          <div style={{ height: 3, width: 80, background: c }}></div>
-          <div style={{ height: 1, flex: 1, background: '#cbd5e1' }}></div>
-
-        </div>
-
-        {/* Info Grid */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 30 }}>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 13, color: '#64748b', marginBottom: 6 }}>Invoice to :</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginBottom: 10 }}>{data.clientName}</div>
-            {data.clientAddress && <div style={{ whiteSpace: 'pre-line', color: '#64748b', lineHeight: 1.6, fontSize: 12 }}>{data.clientAddress}</div>}
-          </div>
-          <div style={{ textAlign: 'right', flex: 1 }}>
-            <div style={{ fontSize: 16, fontWeight: 'bold', color: '#0f172a', marginBottom: 6 }}>Invoice no : <span style={{ fontWeight: 800 }}>{data.invoiceNumber}</span></div>
-            <div style={{ fontSize: 14, color: '#64748b' }}>{data.invoiceDate ? fmtDate(data.invoiceDate) : ''}</div>
-            {data.dueDate && <div style={{ fontSize: 13, color: '#94a3b8', marginTop: 4 }}>Due: {fmtDate(data.dueDate)}</div>}
-          </div>
-        </div>
-
-        {/* Items Table */}
-        <div style={{ minHeight: '350px' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 20, tableLayout: 'fixed' }}>
+        {/* Table layout */}
+        <div style={{ minHeight: '300px', marginBottom: 40 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
-              <tr style={{ background: c, color: '#fff' }}>
-                <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', width: '10%' }}>NO</th>
-                <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', width: '45%' }}>DESCRIPTION</th>
-                <th style={{ padding: '10px 16px', textAlign: 'center', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', width: '15%' }}>QTY</th>
-                <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', width: '15%' }}>PRICE</th>
-                <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', width: '15%' }}>TOTAL</th>
+              <tr style={{ borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
+                <th style={{ padding: '16px 0', fontWeight: 700, color: '#101828', width: '50%' }}>Product/Services</th>
+                <th style={{ padding: '16px 0', fontWeight: 700, color: '#101828', textAlign: 'center' }}>Qty/Hrs</th>
+                <th style={{ padding: '16px 0', fontWeight: 700, color: '#101828', textAlign: 'center' }}>Rate</th>
+                <th style={{ padding: '16px 0', fontWeight: 700, color: '#101828', textAlign: 'right' }}>Amount</th>
               </tr>
             </thead>
             <tbody>
-              {data.items.map((item, i) => (
-                <tr key={item.id} style={{ background: i % 2 === 1 ? `${c}12` : 'transparent' }}>
-                  <td style={{ padding: '10px 16px', textAlign: 'center', color: '#475569', fontSize: 12 }}>{i + 1}</td>
-                  <td style={{ padding: '10px 16px', color: '#0f172a', fontSize: 13, fontWeight: 500 }}>
-                    {item.name || '—'}
-                    {item.description && <div style={{ color: '#64748b', fontSize: 11, marginTop: 2, fontWeight: 400 }}>{item.description}</div>}
-                  </td>
-                  <td style={{ padding: '10px 16px', textAlign: 'center', color: '#475569', fontSize: 12 }}>{item.quantity}</td>
-                  <td style={{ padding: '10px 16px', textAlign: 'right', color: '#475569', fontSize: 12 }}>{sym}{item.unitPrice.toFixed(2)}</td>
-                  <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 600, color: '#0f172a', fontSize: 12 }}>{sym}{item.total.toFixed(2)}</td>
-                </tr>
-              ))}
+              {data.items.length === 0 ? (
+                <>
+                 <tr>
+                   <td style={{ padding: '24px 0', color: '#344054' }}>Description of product or service</td>
+                   <td style={{ padding: '24px 0', color: '#344054', textAlign: 'center' }}>3</td>
+                   <td style={{ padding: '24px 0', color: '#344054', textAlign: 'center' }}>{sym}125.00</td>
+                   <td style={{ padding: '24px 0', color: '#344054', textAlign: 'right' }}>{sym}375.00</td>
+                 </tr>
+                 <tr>
+                   <td style={{ padding: '16px 0', borderBottom: '1px solid #e2e8f0', color: '#344054' }}>Description of product or service</td>
+                   <td style={{ padding: '16px 0', borderBottom: '1px solid #e2e8f0', color: '#344054', textAlign: 'center' }}>10</td>
+                   <td style={{ padding: '16px 0', borderBottom: '1px solid #e2e8f0', color: '#344054', textAlign: 'center' }}>{sym}75.00</td>
+                   <td style={{ padding: '16px 0', borderBottom: '1px solid #e2e8f0', color: '#344054', textAlign: 'right' }}>{sym}750.00</td>
+                 </tr>
+                </>
+              ) : (
+                data.items.map((item, idx) => (
+                  <tr key={item.id}>
+                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054' }}>
+                      {item.name || 'Description of product or service'}
+                      {item.description && <div style={{ fontSize: 12, marginTop: 4, color: '#64748b' }}>{item.description}</div>}
+                    </td>
+                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'center' }}>{item.quantity}</td>
+                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'center' }}>{sym}{item.unitPrice.toFixed(2)}</td>
+                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'right' }}>{sym}{item.total.toFixed(2)}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Totals Section */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 24 }}>
-          <div style={{ minWidth: 280 }}>
-            {([
-              { label: 'Sub Total :', val: `${sym}${data.subtotal.toFixed(2)}` },
-              data.taxRate  > 0 ? { label: `Tax ${data.taxRate}% :`, val: `${sym}${data.taxAmount.toFixed(2)}` } : null,
-              data.discount > 0 ? { label: 'Discount :', val: `-${sym}${data.discount.toFixed(2)}` } : null,
-              data.shipping > 0 ? { label: 'Shipping :', val: `${sym}${data.shipping.toFixed(2)}` } : null,
-            ].filter((x): x is { label: string; val: string } => x !== null)).map(({ label, val }) => (
-              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 16px', color: '#475569', fontSize: 13 }}>
-                <span style={{ textAlign: 'right', flex: 1, paddingRight: 24, fontWeight: 500 }}>{label}</span>
-                <span style={{ fontWeight: 600, color: '#0f172a', minWidth: 80, textAlign: 'right' }}>{val}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Payment Method / Grand Total row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40 }}>
-          <div style={{ maxWidth: '45%' }}>
-            {data.notes && (
-              <>
-                <div style={{ background: c, color: '#fff', fontSize: 12, fontWeight: 800, padding: '8px 16px', display: 'inline-block', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 12 }}>
-                  PAYMENT METHOD :
-                </div>
-                <div style={{ color: '#1e293b', fontSize: 13, whiteSpace: 'pre-line', lineHeight: 1.6 }}>{data.notes}</div>
-                <div style={{ height: 1, width: '100%', background: '#cbd5e1', marginTop: 16 }}></div>
-              </>
-            )}
-          </div>
-          <div style={{ width: 340, background: c, color: '#fff', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>GRAND TOTAL :</span>
-            <span style={{ fontSize: 16, fontWeight: 800 }}>{sym}{data.total.toFixed(2)}</span>
-          </div>
-        </div>
-
-        {/* Terms and Signatures */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 40 }}>
-          <div style={{ flex: 1, paddingRight: 40 }}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', marginBottom: 16 }}>Thank you for business with us!</div>
-            {data.terms && (
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: '#0f172a', marginBottom: 6 }}>Term and Conditions :</div>
-                <div style={{ fontSize: 12, color: '#64748b', whiteSpace: 'pre-line', lineHeight: 1.6 }}>{data.terms}</div>
-              </div>
-            )}
-          </div>
-          {data.footerNote && (
-            <div style={{ textAlign: 'center', width: 200 }}>
-              <div style={{ fontFamily: 'cursive, "Times New Roman", serif', fontSize: 24, color: '#94a3b8', marginBottom: 8, opacity: 0.6 }}>Signature</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: '#0f172a' }}>{data.footerNote}</div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 40 }}>
+          <div style={{ width: 220, display: 'flex', flexDirection: 'column', gap: 14, color: '#101828', fontWeight: 700 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Subtotal</span>
+              <span style={{ fontWeight: 400, color: '#344054' }}>{sym}{data.subtotal.toFixed(2)}</span>
             </div>
-          )}
+            {data.taxRate > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>Sales tax</span>
+                <span style={{ fontWeight: 400, color: '#344054' }}>{sym}{data.taxAmount.toFixed(2)}</span>
+              </div>
+            )}
+            {data.shipping > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>Shipping</span>
+                <span style={{ fontWeight: 400, color: '#344054' }}>{sym}{data.shipping.toFixed(2)}</span>
+              </div>
+            )}
+            {data.discount > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>Discount</span>
+                <span style={{ fontWeight: 400, color: '#344054' }}>-{sym}{data.discount.toFixed(2)}</span>
+              </div>
+            )}
+            
+            {/* Total Block */}
+            <div style={{ borderTop: '1px solid #101828', paddingTop: 16, marginTop: 4, display: 'flex', justifyContent: 'space-between', color: '#101828' }}>
+              <span>Total</span>
+              <span style={{ fontWeight: 400, color: '#344054' }}>{sym}{data.total.toFixed(2)}</span>
+            </div>
+            {data.amountPaid > 0 && (
+              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 14, display: 'flex', justifyContent: 'space-between', color: '#101828' }}>
+                <span>Balance Due</span>
+                <span style={{ fontWeight: 400, color: '#344054' }}>{sym}{Math.max(0, data.total - data.amountPaid).toFixed(2)}</span>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Footer (Absolute Bottom) */}
-        <div style={{ position: 'absolute', bottom: 40, left: 50, right: 50 }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-             <div style={{ height: 3, width: 80, background: c }}></div>
-             <div style={{ height: 1, flex: 1, background: '#cbd5e1' }}></div>
+        {/* Any extra notes */}
+        {(data.notes || data.terms || data.footerNote) && (
+          <div style={{ color: '#64748b', fontSize: 11, lineHeight: '1.6', position: 'absolute', bottom: 50, left: 70, right: 70 }}>
+             {data.notes && <div style={{ marginBottom: 12 }}><strong>Notes:</strong> {data.notes}</div>}
+             {data.terms && <div style={{ marginBottom: 12 }}><strong>Terms:</strong> {data.terms}</div>}
+             {data.footerNote && <div>{data.footerNote}</div>}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#64748b', fontSize: 11 }}>
-            {data.clientPhone && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                {data.clientPhone}
-              </div>
-            )}
-            {data.clientEmail && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
-                {data.clientEmail}
-              </div>
-            )}
-            {data.clientAddress && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                {data.clientAddress.split('\n')[0]}
-              </div>
-            )}
-          </div>
-        </div>
+        )}
 
       </div>
     )
   }
 )
+
