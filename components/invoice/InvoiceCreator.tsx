@@ -1225,7 +1225,7 @@ function fmtDate(d: string) {
     const mm = String(date.getMonth() + 1).padStart(2, '0')
     const dd = String(date.getDate()).padStart(2, '0')
     const yyyy = date.getFullYear()
-    return \`\${mm}/\${dd}/\${yyyy}\`
+    return `${mm}/${dd}/${yyyy}`
   } catch { return d }
 }
 
@@ -1283,7 +1283,7 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
             <div style={{ fontWeight: 700, color: '#101828', marginBottom: 12 }}>Invoice details</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(100px, max-content) 1fr', rowGap: 8, columnGap: 16, color: '#344054' }}>
               <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2, display: 'inline-block' }}>Invoice</div>
-              <div style={{ paddingBottom: 2 }}>{data.invoiceNumber ? \`#\${data.invoiceNumber}\` : '#12345'}</div>
+              <div style={{ paddingBottom: 2 }}>{data.invoiceNumber ? `#${data.invoiceNumber}` : '#12345'}</div>
               
               {data.paymentTerms && (
                 <>
