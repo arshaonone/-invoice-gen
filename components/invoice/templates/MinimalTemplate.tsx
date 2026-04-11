@@ -11,7 +11,10 @@ export default function MinimalTemplate({ data }: { data: InvoiceData }) {
       <div className="flex justify-between items-start mb-12">
         <div>
           {data.senderLogo ? (
-            <img src={data.senderLogo} alt="Logo" className="h-14 object-contain mb-3" />
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={data.senderLogo} alt="Logo" className="h-14 object-contain mb-3" />
+            </>
           ) : (
             <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg font-bold mb-3" style={{ backgroundColor: sym }}>
               {data.senderName?.[0]?.toUpperCase() ?? 'A'}

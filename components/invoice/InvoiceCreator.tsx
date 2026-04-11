@@ -424,6 +424,7 @@ export default function InvoiceCreator() {
                 <div>
                   {data.senderLogo ? (
                     <div className="relative group inline-block">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={data.senderLogo}
                         alt="Logo"

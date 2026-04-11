@@ -25,16 +25,17 @@ export default function InvoiceHistoryClient() {
   const [status, setStatus]     = useState('all')
   const [deleting, setDeleting] = useState<string | null>(null)
 
-  const load = async () => {
-    setLoading(true)
-    const params = status !== 'all' ? `?status=${status}` : ''
-    const res  = await fetch(`/api/invoices${params}`)
-    const data = await res.json()
-    setInvoices(data.invoices ?? [])
-    setLoading(false)
-  }
-
-  useEffect(() => { load() }, [status])
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true)
+      const params = status !== 'all' ? `?status=${status}` : ''
+      const res  = await fetch(`/api/invoices${params}`)
+      const data = await res.json()
+      setInvoices(data.invoices ?? [])
+      setLoading(false)
+    }
+    load()
+  }, [status])
 
   const filtered = invoices.filter(inv =>
     inv.clientName.toLowerCase().includes(search.toLowerCase()) ||

@@ -12,7 +12,10 @@ export default function BoldTemplate({ data }: { data: InvoiceData }) {
         <div className="flex justify-between items-start">
           <div>
             {data.senderLogo ? (
-              <img src={data.senderLogo} alt="Logo" className="h-12 object-contain mb-4" />
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={data.senderLogo} alt="Logo" className="h-12 object-contain mb-4" />
+              </>
             ) : (
               <div className="text-2xl font-black mb-1" style={{ color: c }}>{data.senderName}</div>
             )}
