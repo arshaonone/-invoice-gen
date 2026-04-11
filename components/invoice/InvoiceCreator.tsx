@@ -213,33 +213,43 @@ export default function InvoiceCreator() {
   const balanceDue = Math.max(0, data.total - data.amountPaid)
 
   const downloadPDF = async () => {
+    if (isGenerating) return
+    if (!printRef.current || !printContainerRef.current) {
+      toast.error('PDF renderer not ready. Please try again in a moment.')
+      return
+    }
     saveToHistory(data)
-    if (!printRef.current || !printContainerRef.current || isGenerating) return
     setIsGenerating(true)
     const toastId = toast.loading('Generating PDF…')
     const container = printContainerRef.current
+    // Snapshot the element reference before going async
+    const printEl = printRef.current
     try {
       const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
         import('jspdf'),
         import('html2canvas'),
       ])
 
-      // Reveal the container securely so html2canvas can render it.
-      // We use absolute positioning with zIndex -10 instead of fixed/-9999px
-      // because mobile browsers (especially iOS Safari) will cull/clip elements completely off-screen,
-      // resulting in blank canvases or JS errors during generation.
-      container.style.display = 'block'
-      container.style.position = 'absolute'
-      container.style.left = '0'
+      // Reveal the container so html2canvas can render it.
+      // Use position:fixed with visibility:hidden instead of display:none
+      // so the browser still lays out the element (required for html2canvas)
+      // while keeping it invisible to the user.
+      container.style.position = 'fixed'
       container.style.top = '0'
+      container.style.left = '0'
       container.style.width = '794px'
-      container.style.zIndex = '-10'
+      container.style.height = 'auto'
+      container.style.visibility = 'hidden'
+      container.style.zIndex = '-9999'
+      container.style.display = 'block'
+      container.style.overflow = 'visible'
+      container.style.pointerEvents = 'none'
 
       // Wait for fonts/images to settle and browser to paint
-      await new Promise(r => setTimeout(r, 400))
+      await new Promise(r => setTimeout(r, 500))
 
-      const canvas = await html2canvas(printRef.current, {
-        scale: 3, // Increased to 3 for ultra-HD massive quality
+      const canvas = await html2canvas(printEl, {
+        scale: 3, // Ultra-HD quality
         useCORS: true,
         allowTaint: true,
         logging: false,
@@ -251,12 +261,16 @@ export default function InvoiceCreator() {
       // Hide again
       container.style.display = 'none'
       container.style.position = ''
-      container.style.left = ''
       container.style.top = ''
+      container.style.left = ''
       container.style.width = ''
+      container.style.height = ''
+      container.style.visibility = ''
       container.style.zIndex = ''
+      container.style.overflow = ''
+      container.style.pointerEvents = ''
 
-      // Use PNG for completely lossless crisp text compression, hitting 1MB+ sizes
+      // Use PNG for lossless crisp text
       const imgData = canvas.toDataURL('image/png')
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
 
@@ -264,19 +278,17 @@ export default function InvoiceCreator() {
       const pdfH = pdf.internal.pageSize.getHeight()
       const imgW = canvas.width
       const imgH = canvas.height
-      const scaledH = (imgH * pdfW) / imgW // mm height of full content
+      const scaledH = (imgH * pdfW) / imgW
 
       if (scaledH <= pdfH + 2) {
-        // Fits on one page (allow tiny 2mm overflow due to rounding)
         pdf.addImage(imgData, 'PNG', 0, 0, pdfW, Math.min(scaledH, pdfH), undefined, 'FAST')
       } else {
-        // Multi-page: slice canvas into A4-sized chunks
         const pxPerPage = Math.floor((pdfH / scaledH) * imgH)
         let yPx = 0
         let page = 0
         while (yPx < imgH) {
           const sliceH = Math.min(pxPerPage, imgH - yPx)
-          if (sliceH < 10 && page > 0) break; // Ignore tiny slivers that create blank pages
+          if (sliceH < 10 && page > 0) break
           const pageCanvas = document.createElement('canvas')
           pageCanvas.width = imgW
           pageCanvas.height = sliceH
@@ -291,8 +303,6 @@ export default function InvoiceCreator() {
 
       const fileName = `Invoice-${data.invoiceNumber}.pdf`
       const pdfBlob = pdf.output('blob')
-      
-      // Robust download approach using Blob and temporary anchor
       const blobUrl = URL.createObjectURL(pdfBlob)
       const link = document.createElement('a')
       link.href = blobUrl
@@ -300,15 +310,16 @@ export default function InvoiceCreator() {
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
-      
       setTimeout(() => URL.revokeObjectURL(blobUrl), 2000)
 
       toast.success('PDF downloaded!', { id: toastId })
     } catch (err) {
       console.error('PDF generation error:', err)
-      // Ensure container is hidden on error
+      // Ensure container is always hidden on error
       container.style.display = 'none'
-      toast.error('Failed to generate PDF', { id: toastId })
+      container.style.position = ''
+      container.style.visibility = ''
+      toast.error('Failed to generate PDF. Check the browser console for details.', { id: toastId })
     } finally {
       setIsGenerating(false)
     }
