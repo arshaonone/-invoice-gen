@@ -549,7 +549,6 @@ export default function InvoiceCreator() {
                   ))}
                 </div>
               </div>
-            </div>
 
             {/* ── CARD: LINE ITEMS ── */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
@@ -697,7 +696,6 @@ export default function InvoiceCreator() {
                 >
                   <Plus className="w-4 h-4" /> Add Line Item
                 </button>
-              </div>
               </div>
             </div>
 
