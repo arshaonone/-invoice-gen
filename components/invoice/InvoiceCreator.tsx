@@ -105,7 +105,7 @@ function calcAll(items: InvoiceItem[], discount: number, taxRate: number, shippi
 }
 
 const inputBase =
-  'w-full bg-slate-50/70 hover:bg-slate-100 border-0 rounded-xl px-4 py-3.5 text-[15px] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all duration-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)]'
+  'w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-300 shadow-sm'
 
 function cls(...parts: (string | undefined | false)[]) {
   return parts.filter(Boolean).join(' ')
