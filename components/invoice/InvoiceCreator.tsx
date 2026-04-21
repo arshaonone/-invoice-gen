@@ -1253,8 +1253,8 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
           {/* Left Column */}
           <div style={{ flex: 1, whiteSpace: 'pre-line' }}>
             {data.senderInfo || 
-              (data.senderName + '\n' + data.senderAddress).trim() ||
-              'Business name\nStreet address\nCity, State Zip code'}
+              (data.senderName || data.senderAddress ? (data.senderName + '\n' + data.senderAddress).trim() : null) ||
+              <span style={{ color: '#cbd5e1' }}>_______________________<br/>_______________________<br/>_______________________</span>}
           </div>
 
           {/* Right Column */}
@@ -1265,11 +1265,10 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
                 {data.senderEmail && <div>{data.senderEmail}</div>}
               </>
             ) : (
-              <>
-                <div>123-456-7890</div>
-                <div>johndoe123@gmail.com</div>
-                <div>john-doe.com</div>
-              </>
+              <div style={{ color: '#cbd5e1' }}>
+                <div>_______________________</div>
+                <div>_______________________</div>
+              </div>
             )}
           </div>
         </div>
@@ -1280,8 +1279,8 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
           <div style={{ flex: 1 }}>
             <div style={{ fontWeight: 700, color: '#101828', marginBottom: 12 }}>Bill to</div>
             <div style={{ color: '#344054', lineHeight: '1.6' }}>
-              <div>{data.clientName || 'Client name'}</div>
-              <div style={{ whiteSpace: 'pre-line' }}>{data.clientAddress || '1234 Main Street\nCity, State 09001'}</div>
+              <div>{data.clientName || <span style={{ color: '#cbd5e1' }}>_______________________</span>}</div>
+              <div style={{ whiteSpace: 'pre-line' }}>{data.clientAddress || <span style={{ color: '#cbd5e1' }}>_______________________<br/>_______________________</span>}</div>
             </div>
           </div>
           
@@ -1290,36 +1289,16 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
             <div style={{ fontWeight: 700, color: '#101828', marginBottom: 12 }}>Invoice details</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(100px, max-content) 1fr', rowGap: 8, columnGap: 16, color: '#344054' }}>
               <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2, display: 'inline-block' }}>Invoice</div>
-              <div style={{ paddingBottom: 2 }}>{data.invoiceNumber ? `#${data.invoiceNumber}` : '#12345'}</div>
+              <div style={{ paddingBottom: 2 }}>{data.invoiceNumber ? `#${data.invoiceNumber}` : <span style={{ color: '#cbd5e1' }}>_______</span>}</div>
               
-              {data.paymentTerms && (
-                <>
-                  <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Terms</div>
-                  <div style={{ paddingBottom: 2 }}>{data.paymentTerms}</div>
-                </>
-              )}
-              {!data.paymentTerms && (
-                <>
-                  <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Terms</div>
-                  <div style={{ paddingBottom: 2 }}>Net 30</div>
-                </>
-              )}
+              <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Terms</div>
+              <div style={{ paddingBottom: 2 }}>{data.paymentTerms || <span style={{ color: '#cbd5e1' }}>_______</span>}</div>
 
               <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Invoice date</div>
-              <div style={{ paddingBottom: 2 }}>{data.invoiceDate ? fmtDate(data.invoiceDate) : '08/20/2024'}</div>
+              <div style={{ paddingBottom: 2 }}>{data.invoiceDate ? fmtDate(data.invoiceDate) : <span style={{ color: '#cbd5e1' }}>__/__/____</span>}</div>
               
-              {data.dueDate && (
-                <>
-                  <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Due date</div>
-                  <div style={{ paddingBottom: 2 }}>{fmtDate(data.dueDate)}</div>
-                </>
-              )}
-              {!data.dueDate && (
-                <>
-                  <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Due date</div>
-                  <div style={{ paddingBottom: 2 }}>09/20/2024</div>
-                </>
-              )}
+              <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Due date</div>
+              <div style={{ paddingBottom: 2 }}>{data.dueDate ? fmtDate(data.dueDate) : <span style={{ color: '#cbd5e1' }}>__/__/____</span>}</div>
             </div>
           </div>
         </div>
@@ -1337,30 +1316,28 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
             </thead>
             <tbody>
               {data.items.length === 0 ? (
-                <>
                  <tr>
-                   <td style={{ padding: '24px 0', color: '#344054' }}>Description of product or service</td>
-                   <td style={{ padding: '24px 0', color: '#344054', textAlign: 'center' }}>3</td>
-                   <td style={{ padding: '24px 0', color: '#344054', textAlign: 'center' }}>{sym}125.00</td>
-                   <td style={{ padding: '24px 0', color: '#344054', textAlign: 'right' }}>{sym}375.00</td>
+                   <td style={{ padding: '24px 0', color: '#cbd5e1' }}>________________________________________</td>
+                   <td style={{ padding: '24px 0', color: '#cbd5e1', textAlign: 'center' }}>___</td>
+                   <td style={{ padding: '24px 0', color: '#cbd5e1', textAlign: 'center' }}>_____</td>
+                   <td style={{ padding: '24px 0', color: '#cbd5e1', textAlign: 'right' }}>_____</td>
                  </tr>
-                 <tr>
-                   <td style={{ padding: '16px 0', borderBottom: '1px solid #e2e8f0', color: '#344054' }}>Description of product or service</td>
-                   <td style={{ padding: '16px 0', borderBottom: '1px solid #e2e8f0', color: '#344054', textAlign: 'center' }}>10</td>
-                   <td style={{ padding: '16px 0', borderBottom: '1px solid #e2e8f0', color: '#344054', textAlign: 'center' }}>{sym}75.00</td>
-                   <td style={{ padding: '16px 0', borderBottom: '1px solid #e2e8f0', color: '#344054', textAlign: 'right' }}>{sym}750.00</td>
-                 </tr>
-                </>
               ) : (
                 data.items.map((item, idx) => (
                   <tr key={item.id}>
                     <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054' }}>
-                      {item.name || 'Description of product or service'}
+                      {item.name || <span style={{ color: '#cbd5e1' }}>________________________________________</span>}
                       {item.description && <div style={{ fontSize: 12, marginTop: 4, color: '#64748b' }}>{item.description}</div>}
                     </td>
-                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'center' }}>{item.quantity}</td>
-                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'center' }}>{sym}{item.unitPrice.toFixed(2)}</td>
-                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'right' }}>{sym}{item.total.toFixed(2)}</td>
+                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'center' }}>
+                      {item.quantity || <span style={{ color: '#cbd5e1' }}>___</span>}
+                    </td>
+                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'center' }}>
+                      {item.unitPrice ? `${sym}${item.unitPrice.toFixed(2)}` : <span style={{ color: '#cbd5e1' }}>_____</span>}
+                    </td>
+                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'right' }}>
+                      {item.total ? `${sym}${item.total.toFixed(2)}` : <span style={{ color: '#cbd5e1' }}>_____</span>}
+                    </td>
                   </tr>
                 ))
               )}
