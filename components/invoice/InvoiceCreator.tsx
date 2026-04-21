@@ -105,7 +105,7 @@ function calcAll(items: InvoiceItem[], discount: number, taxRate: number, shippi
 }
 
 const inputBase =
-  'w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 text-[15px] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm'
+  'w-full bg-slate-50/70 hover:bg-slate-100 border-0 rounded-xl px-4 py-3.5 text-[15px] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all duration-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.03)]'
 
 function cls(...parts: (string | undefined | false)[]) {
   return parts.filter(Boolean).join(' ')
@@ -321,7 +321,7 @@ export default function InvoiceCreator() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f2f5] font-sans relative z-0">
+    <div className="min-h-screen bg-[#f0f2f5] font-sans relative z-0 pb-28 lg:pb-0">
 
       {/* ── TOP NAV ── */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40 print:hidden shadow-sm">
@@ -965,8 +965,8 @@ export default function InvoiceCreator() {
       </div>
 
       {/* ── FOOTER ── */}
-      <footer className="bg-white border-t border-gray-200 mt-8 print:hidden pb-28 lg:pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+      <footer className="bg-white border-t border-gray-200 mt-8 print:hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-6">
           {/* TRUST STATEMENT */}
           <div className="mb-12 bg-green-50 border border-green-100 rounded-xl p-4 sm:p-6 text-center max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 shadow-sm">
             <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
@@ -1201,23 +1201,23 @@ export default function InvoiceCreator() {
         </div>
       )}
 
-      {/* ── MOBILE STICKY BOTTOM BAR ── */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-3 flex gap-3 shadow-[0_-4px_24px_rgba(0,0,0,0.1)] print:hidden">
+      {/* ── MOBILE STICKY BOTTOM BAR (FLOATING ISLAND) ── */}
+      <div className="lg:hidden fixed bottom-6 left-4 right-4 z-50 bg-white/80 backdrop-blur-xl border border-white/40 p-2.5 rounded-[20px] flex gap-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.12)] print:hidden">
         <button
           onClick={handlePrint}
-          className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition active:scale-95"
+          className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-gray-700 bg-white border border-gray-200/60 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition shadow-sm"
         >
           <Printer className="w-4 h-4" /> Print
         </button>
         <button
           onClick={downloadPDF}
           disabled={isGenerating}
-          className="flex-[2] flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-xl transition active:scale-95 shadow-lg disabled:opacity-60"
+          className="flex-[2] flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-xl active:scale-[0.98] transition shadow-sm disabled:opacity-60"
           style={{ background: data.brandColor }}
         >
           {isGenerating
-            ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating…</>
-            : <><Download className="w-4 h-4" /> Download PDF</>}
+            ? <><Loader2 className="w-4 h-4 animate-spin" /> Wait…</>
+            : <><Download className="w-4 h-4" /> Save PDF</>}
         </button>
       </div>
 
