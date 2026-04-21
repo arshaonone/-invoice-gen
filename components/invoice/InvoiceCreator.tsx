@@ -1240,157 +1240,180 @@ const PrintableInvoice = React.forwardRef<HTMLDivElement, { data: InvoiceData }>
   function PrintableInvoice({ data }, ref) {
     const sym = getCurrencySymbol(data.currency)
 
+    // Helper to format address or multi-line text nicely
+    const renderMultiline = (text: string | undefined) => {
+      if (!text) return null
+      return text.split('\n').map((line, i) => (
+        <div key={i}>{line}</div>
+      ))
+    }
+
+    // Filter out empty items
+    const validItems = data.items.filter(i => i.name || i.quantity || i.unitPrice || i.total)
+
     return (
-      <div ref={ref} style={{ fontFamily: 'Inter, system-ui, sans-serif', background: '#fff', color: '#101828', minHeight: '1122px', width: '794px', padding: '80px 70px', boxSizing: 'border-box', fontSize: 13, position: 'relative' }}>
+      <div ref={ref} style={{ fontFamily: 'Georgia, serif', background: '#fff', color: '#111', minHeight: '1122px', width: '794px', padding: '80px 70px', boxSizing: 'border-box', fontSize: 13, position: 'relative' }}>
         
         {/* Header Block */}
-        <div style={{ textAlign: 'center', marginBottom: 50 }}>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#101828', letterSpacing: '0.05em' }}>INVOICE</div>
+        <div style={{ textAlign: 'right', marginBottom: 60, fontFamily: 'Inter, sans-serif' }}>
+          <div style={{ fontSize: 36, fontWeight: 800, color: '#000', letterSpacing: '0.15em', textTransform: 'uppercase' }}>INVOICE</div>
+          {data.invoiceNumber && (
+            <div style={{ fontSize: 14, fontWeight: 600, color: '#333', marginTop: 8 }}>#{data.invoiceNumber}</div>
+          )}
         </div>
 
         {/* Contact info grid */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 50, color: '#344054', lineHeight: '1.6' }}>
-          {/* Left Column */}
-          <div style={{ flex: 1, whiteSpace: 'pre-line' }}>
-            {data.senderInfo || 
-              (data.senderName || data.senderAddress ? (data.senderName + '\n' + data.senderAddress).trim() : null) ||
-              <span style={{ color: '#cbd5e1' }}>_______________________<br/>_______________________<br/>_______________________</span>}
-          </div>
-
-          {/* Right Column */}
-          <div style={{ flex: 1, textAlign: 'right' }}>
-            {(data.senderPhone || data.senderEmail) ? (
-              <>
-                {data.senderPhone && <div>{data.senderPhone}</div>}
-                {data.senderEmail && <div>{data.senderEmail}</div>}
-              </>
-            ) : (
-              <div style={{ color: '#cbd5e1' }}>
-                <div>_______________________</div>
-                <div>_______________________</div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Boxed Bill To & Invoice details */}
-        <div style={{ background: '#f8fafc', padding: '30px', margin: '0 -30px 50px -30px', display: 'flex', justifyContent: 'space-between' }}>
-          {/* Bill to */}
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 700, color: '#101828', marginBottom: 12 }}>Bill to</div>
-            <div style={{ color: '#344054', lineHeight: '1.6' }}>
-              <div>{data.clientName || <span style={{ color: '#cbd5e1' }}>_______________________</span>}</div>
-              <div style={{ whiteSpace: 'pre-line' }}>{data.clientAddress || <span style={{ color: '#cbd5e1' }}>_______________________<br/>_______________________</span>}</div>
-            </div>
-          </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '12px 0', marginBottom: 60, color: '#444', lineHeight: '1.6' }}>
           
-          {/* Invoice details */}
-          <div style={{ flex: 1, paddingLeft: 40 }}>
-            <div style={{ fontWeight: 700, color: '#101828', marginBottom: 12 }}>Invoice details</div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(100px, max-content) 1fr', rowGap: 8, columnGap: 16, color: '#344054' }}>
-              <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2, display: 'inline-block' }}>Invoice</div>
-              <div style={{ paddingBottom: 2 }}>{data.invoiceNumber ? `#${data.invoiceNumber}` : <span style={{ color: '#cbd5e1' }}>_______</span>}</div>
-              
-              <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Terms</div>
-              <div style={{ paddingBottom: 2 }}>{data.paymentTerms || <span style={{ color: '#cbd5e1' }}>_______</span>}</div>
+          {/* BILLED TO */}
+          {(data.clientName || data.clientCompany || data.clientAddress || data.clientPhone || data.clientEmail) && (
+            <>
+              <div style={{ fontWeight: 700, color: '#000', fontFamily: 'Inter, sans-serif', fontSize: 11, letterSpacing: '0.1em', paddingTop: 2 }}>BILLED TO:</div>
+              <div>
+                {data.clientName && <div style={{ color: '#111' }}>{data.clientName}</div>}
+                {data.clientCompany && <div style={{ color: '#111' }}>{data.clientCompany}</div>}
+                {data.clientAddress && renderMultiline(data.clientAddress)}
+                {data.clientPhone && <div>{data.clientPhone}</div>}
+                {data.clientEmail && <div>{data.clientEmail}</div>}
+              </div>
+            </>
+          )}
 
-              <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Invoice date</div>
-              <div style={{ paddingBottom: 2 }}>{data.invoiceDate ? fmtDate(data.invoiceDate) : <span style={{ color: '#cbd5e1' }}>__/__/____</span>}</div>
+          {/* Spacer if both exist */}
+          {(data.clientName || data.clientCompany || data.clientAddress) && (data.senderName || data.senderAddress || data.senderInfo) && (
+            <div style={{ gridColumn: '1 / -1', height: 12 }}></div>
+          )}
+
+          {/* PAY TO */}
+          {(data.senderName || data.senderAddress || data.senderPhone || data.senderEmail || data.senderInfo) && (
+            <>
+              <div style={{ fontWeight: 700, color: '#000', fontFamily: 'Inter, sans-serif', fontSize: 11, letterSpacing: '0.1em', paddingTop: 2 }}>PAY TO:</div>
+              <div>
+                {data.senderInfo ? (
+                  renderMultiline(data.senderInfo)
+                ) : (
+                  <>
+                    {data.senderName && <div style={{ color: '#111' }}>{data.senderName}</div>}
+                    {data.senderAddress && renderMultiline(data.senderAddress)}
+                    {data.senderPhone && <div>{data.senderPhone}</div>}
+                    {data.senderEmail && <div>{data.senderEmail}</div>}
+                  </>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Dates & Terms (mapped like Bank details in demo) */}
+          {(data.invoiceDate || data.dueDate || data.paymentTerms || data.poNumber) && (
+            <>
+              <div style={{ gridColumn: '1 / -1', height: 16 }}></div>
               
-              <div style={{ borderBottom: '1px solid #94a3b8', paddingBottom: 2 }}>Due date</div>
-              <div style={{ paddingBottom: 2 }}>{data.dueDate ? fmtDate(data.dueDate) : <span style={{ color: '#cbd5e1' }}>__/__/____</span>}</div>
-            </div>
-          </div>
+              {data.invoiceDate && (
+                <>
+                  <div style={{ color: '#000', fontFamily: 'Inter, sans-serif', fontSize: 11 }}>Date</div>
+                  <div>{fmtDate(data.invoiceDate)}</div>
+                </>
+              )}
+              {data.dueDate && (
+                <>
+                  <div style={{ color: '#000', fontFamily: 'Inter, sans-serif', fontSize: 11 }}>Due Date</div>
+                  <div>{fmtDate(data.dueDate)}</div>
+                </>
+              )}
+              {data.paymentTerms && (
+                <>
+                  <div style={{ color: '#000', fontFamily: 'Inter, sans-serif', fontSize: 11 }}>Terms</div>
+                  <div>{data.paymentTerms}</div>
+                </>
+              )}
+              {data.poNumber && (
+                <>
+                  <div style={{ color: '#000', fontFamily: 'Inter, sans-serif', fontSize: 11 }}>PO Number</div>
+                  <div>{data.poNumber}</div>
+                </>
+              )}
+            </>
+          )}
         </div>
 
         {/* Table layout */}
         <div style={{ minHeight: '300px', marginBottom: 40 }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontFamily: 'Inter, sans-serif', fontSize: 11 }}>
             <thead>
-              <tr style={{ borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0' }}>
-                <th style={{ padding: '16px 0', fontWeight: 700, color: '#101828', width: '50%' }}>Product/Services</th>
-                <th style={{ padding: '16px 0', fontWeight: 700, color: '#101828', textAlign: 'center' }}>Qty/Hrs</th>
-                <th style={{ padding: '16px 0', fontWeight: 700, color: '#101828', textAlign: 'center' }}>Rate</th>
-                <th style={{ padding: '16px 0', fontWeight: 700, color: '#101828', textAlign: 'right' }}>Amount</th>
+              <tr style={{ borderTop: '2px solid #000', borderBottom: '2px solid #000' }}>
+                <th style={{ padding: '12px 0', fontWeight: 800, color: '#000', width: '50%', letterSpacing: '0.1em' }}>DESCRIPTION</th>
+                <th style={{ padding: '12px 0', fontWeight: 800, color: '#000', textAlign: 'center', letterSpacing: '0.1em' }}>RATE</th>
+                <th style={{ padding: '12px 0', fontWeight: 800, color: '#000', textAlign: 'center', letterSpacing: '0.1em' }}>HOURS/QTY</th>
+                <th style={{ padding: '12px 0', fontWeight: 800, color: '#000', textAlign: 'right', letterSpacing: '0.1em' }}>AMOUNT</th>
               </tr>
             </thead>
-            <tbody>
-              {data.items.length === 0 ? (
-                 <tr>
-                   <td style={{ padding: '24px 0', color: '#cbd5e1' }}>________________________________________</td>
-                   <td style={{ padding: '24px 0', color: '#cbd5e1', textAlign: 'center' }}>___</td>
-                   <td style={{ padding: '24px 0', color: '#cbd5e1', textAlign: 'center' }}>_____</td>
-                   <td style={{ padding: '24px 0', color: '#cbd5e1', textAlign: 'right' }}>_____</td>
-                 </tr>
-              ) : (
-                data.items.map((item, idx) => (
-                  <tr key={item.id}>
-                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054' }}>
-                      {item.name || <span style={{ color: '#cbd5e1' }}>________________________________________</span>}
-                      {item.description && <div style={{ fontSize: 12, marginTop: 4, color: '#64748b' }}>{item.description}</div>}
-                    </td>
-                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'center' }}>
-                      {item.quantity || <span style={{ color: '#cbd5e1' }}>___</span>}
-                    </td>
-                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'center' }}>
-                      {item.unitPrice ? `${sym}${item.unitPrice.toFixed(2)}` : <span style={{ color: '#cbd5e1' }}>_____</span>}
-                    </td>
-                    <td style={{ padding: '20px 0', borderBottom: idx === data.items.length - 1 ? '1px solid #e2e8f0' : 'none', color: '#344054', textAlign: 'right' }}>
-                      {item.total ? `${sym}${item.total.toFixed(2)}` : <span style={{ color: '#cbd5e1' }}>_____</span>}
-                    </td>
-                  </tr>
-                ))
-              )}
+            <tbody style={{ fontFamily: 'Georgia, serif', fontSize: 13, color: '#444' }}>
+              {validItems.length > 0 && validItems.map((item, idx) => (
+                <tr key={item.id} style={{ borderBottom: '1px solid #e5e5e5' }}>
+                  <td style={{ padding: '16px 0', color: '#111' }}>
+                    {item.name}
+                    {item.description && <div style={{ fontSize: 12, marginTop: 4, color: '#666', fontFamily: 'Georgia, serif' }}>{item.description}</div>}
+                  </td>
+                  <td style={{ padding: '16px 0', textAlign: 'center' }}>{item.unitPrice ? `${sym}${item.unitPrice.toFixed(2)}` : ''}</td>
+                  <td style={{ padding: '16px 0', textAlign: 'center' }}>{item.quantity || ''}</td>
+                  <td style={{ padding: '16px 0', textAlign: 'right' }}>{item.total ? `${sym}${item.total.toFixed(2)}` : ''}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
-        </div>
 
-        {/* Totals Section */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 40 }}>
-          <div style={{ width: 220, display: 'flex', flexDirection: 'column', gap: 14, color: '#101828', fontWeight: 700 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Subtotal</span>
-              <span style={{ fontWeight: 400, color: '#344054' }}>{sym}{data.subtotal.toFixed(2)}</span>
+          {/* Totals Section */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 2 }}>
+            <div style={{ width: 300, display: 'flex', flexDirection: 'column', color: '#444', fontFamily: 'Georgia, serif', fontSize: 13 }}>
+              
+              <div style={{ borderTop: '2px solid #000', paddingTop: 16, paddingBottom: 8, display: 'flex', justifyContent: 'space-between' }}>
+                <span>Sub-Total</span>
+                <span style={{ color: '#111' }}>{sym}{data.subtotal.toFixed(2)}</span>
+              </div>
+              
+              {data.taxRate > 0 && (
+                <div style={{ paddingBottom: 8, display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Sales Tax ({data.taxRate}%)</span>
+                  <span style={{ color: '#111' }}>{sym}{data.taxAmount.toFixed(2)}</span>
+                </div>
+              )}
+              
+              {data.shipping > 0 && (
+                <div style={{ paddingBottom: 8, display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Shipping</span>
+                  <span style={{ color: '#111' }}>{sym}{data.shipping.toFixed(2)}</span>
+                </div>
+              )}
+              
+              {data.discount > 0 && (
+                <div style={{ paddingBottom: 8, display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Discount</span>
+                  <span style={{ color: '#111' }}>-{sym}{data.discount.toFixed(2)}</span>
+                </div>
+              )}
+              
+              {/* Total Block */}
+              <div style={{ borderTop: '1px solid #e5e5e5', borderBottom: '2px solid #000', padding: '16px 0', marginTop: 8, display: 'flex', justifyContent: 'space-between', color: '#000', fontFamily: 'Inter, sans-serif', fontSize: 13, fontWeight: 800, letterSpacing: '0.1em' }}>
+                <span style={{ textTransform: 'uppercase' }}>Total</span>
+                <span>{sym}{data.total.toFixed(2)}</span>
+              </div>
+              
+              {data.amountPaid > 0 && (
+                <div style={{ paddingTop: 16, display: 'flex', justifyContent: 'space-between', color: '#000', fontFamily: 'Inter, sans-serif', fontSize: 11, fontWeight: 700 }}>
+                  <span style={{ textTransform: 'uppercase' }}>Balance Due</span>
+                  <span>{sym}{Math.max(0, data.total - data.amountPaid).toFixed(2)}</span>
+                </div>
+              )}
             </div>
-            {data.taxRate > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Sales tax</span>
-                <span style={{ fontWeight: 400, color: '#344054' }}>{sym}{data.taxAmount.toFixed(2)}</span>
-              </div>
-            )}
-            {data.shipping > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Shipping</span>
-                <span style={{ fontWeight: 400, color: '#344054' }}>{sym}{data.shipping.toFixed(2)}</span>
-              </div>
-            )}
-            {data.discount > 0 && (
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Discount</span>
-                <span style={{ fontWeight: 400, color: '#344054' }}>-{sym}{data.discount.toFixed(2)}</span>
-              </div>
-            )}
-            
-            {/* Total Block */}
-            <div style={{ borderTop: '1px solid #101828', paddingTop: 16, marginTop: 4, display: 'flex', justifyContent: 'space-between', color: '#101828' }}>
-              <span>Total</span>
-              <span style={{ fontWeight: 400, color: '#344054' }}>{sym}{data.total.toFixed(2)}</span>
-            </div>
-            {data.amountPaid > 0 && (
-              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: 14, display: 'flex', justifyContent: 'space-between', color: '#101828' }}>
-                <span>Balance Due</span>
-                <span style={{ fontWeight: 400, color: '#344054' }}>{sym}{Math.max(0, data.total - data.amountPaid).toFixed(2)}</span>
-              </div>
-            )}
           </div>
         </div>
 
         {/* Any extra notes */}
         {(data.notes || data.terms || data.footerNote) && (
-          <div style={{ color: '#64748b', fontSize: 11, lineHeight: '1.6', position: 'absolute', bottom: 50, left: 70, right: 70 }}>
-             {data.notes && <div style={{ marginBottom: 12 }}><strong>Notes:</strong> {data.notes}</div>}
-             {data.terms && <div style={{ marginBottom: 12 }}><strong>Terms:</strong> {data.terms}</div>}
-             {data.footerNote && <div>{data.footerNote}</div>}
+          <div style={{ color: '#555', fontSize: 12, lineHeight: '1.6', position: 'absolute', bottom: 60, left: 70, right: 70, fontFamily: 'Georgia, serif' }}>
+             {data.notes && <div style={{ marginBottom: 12 }}>{renderMultiline(data.notes)}</div>}
+             {data.terms && <div style={{ marginBottom: 12 }}>{renderMultiline(data.terms)}</div>}
+             {data.footerNote && <div>{renderMultiline(data.footerNote)}</div>}
           </div>
         )}
 
