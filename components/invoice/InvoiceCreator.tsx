@@ -491,64 +491,61 @@ export default function InvoiceCreator() {
               </div>
             </div>
 
-            {/* ── CARD: Client & Dates ── */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* ── CARD: Client Details ── */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6 space-y-4">
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Client Details</h3>
+              <input
+                value={data.clientName}
+                onChange={e => set('clientName', e.target.value)}
+                placeholder="Client / Company Name"
+                className={cls(inputBase, 'font-semibold')}
+              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input
+                  value={data.clientPhone || ''}
+                  onChange={e => set('clientPhone', e.target.value)}
+                  placeholder="Phone Number"
+                  className={inputBase}
+                />
+                <input
+                  value={data.clientEmail || ''}
+                  onChange={e => set('clientEmail', e.target.value)}
+                  placeholder="Email Address"
+                  className={inputBase}
+                />
+              </div>
+              <textarea
+                value={data.clientAddress}
+                onChange={e => set('clientAddress', e.target.value)}
+                placeholder="Client Address (Street, City, Country)"
+                rows={2}
+                className={cls(inputBase, 'resize-none')}
+              />
+            </div>
 
-                {/* Left */}
-                <div className="space-y-4">
-                  <div>
-                    <label className="flex items-center gap-1.5 text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Client Details</label>
+            {/* ── CARD: Invoice Dates & Meta ── */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6">
+              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Invoice Details</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  { label: 'Invoice Date',   key: 'invoiceDate',  type: 'date' },
+                  { label: 'Due Date',       key: 'dueDate',      type: 'date' },
+                  { label: 'Payment Terms',  key: 'paymentTerms', type: 'text', placeholder: 'e.g. Net 30' },
+                  { label: 'PO Number',      key: 'poNumber',     type: 'text', placeholder: 'PO-0001' },
+                ].map(({ label, key, type, placeholder }) => (
+                  <div key={key}>
+                    <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">{label}</label>
                     <input
-                      value={data.clientName}
-                      onChange={e => set('clientName', e.target.value)}
-                      placeholder="e.g. Client Name"
-                      className={cls(inputBase, 'mb-2 font-semibold')}
-                    />
-                    <div className="grid grid-cols-2 gap-2 mb-2">
-                      <input
-                        value={data.clientPhone || ''}
-                        onChange={e => set('clientPhone', e.target.value)}
-                        placeholder="Phone Number"
-                        className={cls(inputBase)}
-                      />
-                      <input
-                        value={data.clientEmail || ''}
-                        onChange={e => set('clientEmail', e.target.value)}
-                        placeholder="Email Address"
-                        className={cls(inputBase)}
-                      />
-                    </div>
-                    <textarea
-                      value={data.clientAddress}
-                      onChange={e => set('clientAddress', e.target.value)}
-                      placeholder="e.g. 123 Anywhere St., Any City"
-                      rows={2}
-                      className={cls(inputBase, 'resize-none')}
+                      type={type}
+                      value={(data as any)[key]}
+                      onChange={e => set(key as keyof InvoiceData, e.target.value)}
+                      placeholder={placeholder ?? label}
+                      className={inputBase}
                     />
                   </div>
-                </div>
-
-                {/* Right: date fields — 2-col grid on mobile, stacked label+input on sm */}
-                <div className="grid grid-cols-2 sm:grid-cols-1 gap-3">
-                  {[
-                    { label: 'Date',          key: 'invoiceDate',  type: 'date' },
-                    { label: 'Due Date',      key: 'dueDate',      type: 'date' },
-                    { label: 'Payment Terms', key: 'paymentTerms', type: 'text', placeholder: 'e.g. Net 30' },
-                    { label: 'PO Number',     key: 'poNumber',     type: 'text', placeholder: 'PO-0001' },
-                  ].map(({ label, key, type, placeholder }) => (
-                    <div key={key}>
-                      <label className="flex items-center gap-1.5 text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">{label}</label>
-                      <input
-                        type={type}
-                        value={(data as any)[key]}
-                        onChange={e => set(key as keyof InvoiceData, e.target.value)}
-                        placeholder={placeholder ?? label}
-                        className={inputBase}
-                      />
-                    </div>
-                  ))}
-                </div>
+                ))}
               </div>
+            </div>
 
             {/* ── CARD: LINE ITEMS ── */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
@@ -926,8 +923,8 @@ export default function InvoiceCreator() {
               </div>
             </div>
 
-            {/* Resources */}
-            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+            {/* Resources — desktop sidebar only */}
+            <div className="hidden lg:block bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Resources</h3>
               <div className="space-y-1.5 flex flex-col items-start">
                 <button onClick={() => setShowGuideModal(true)} className="flex items-center gap-1.5 text-xs text-green-600 hover:text-green-700 hover:underline transition">
@@ -947,7 +944,7 @@ export default function InvoiceCreator() {
               </div>
             </div>
 
-            {/* Reset */}
+            {/* Reset — desktop sidebar only */}
             <button
               onClick={() => {
                 if (confirm('Reset the form? All data will be lost.')) {
@@ -955,7 +952,7 @@ export default function InvoiceCreator() {
                   toast.success('Form reset!')
                 }
               }}
-              className="text-xs text-gray-400 hover:text-red-500 flex items-center justify-center gap-1.5 transition py-1"
+              className="hidden lg:flex text-xs text-gray-400 hover:text-red-500 items-center justify-center gap-1.5 transition py-1"
             >
               <RotateCcw className="w-3 h-3" /> Start over
             </button>
