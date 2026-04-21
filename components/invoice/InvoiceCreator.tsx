@@ -225,10 +225,10 @@ export default function InvoiceCreator() {
     // Snapshot the element reference before going async
     const printEl = printRef.current
     try {
-      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
-        import('jspdf'),
-        import('html2canvas'),
-      ])
+      const jsPDFModule = await import('jspdf')
+      const jsPDF = jsPDFModule.default || (jsPDFModule as any).jsPDF
+      const html2canvasModule = await import('html2canvas')
+      const html2canvas = html2canvasModule.default || html2canvasModule
 
       // Reveal the container so html2canvas can render it.
       // Use position:fixed with visibility:hidden instead of display:none
@@ -249,9 +249,8 @@ export default function InvoiceCreator() {
       await new Promise(r => setTimeout(r, 500))
 
       const canvas = await html2canvas(printEl, {
-        scale: 3, // Ultra-HD quality
+        scale: 2, // Scale 2 is much safer for mobile devices/iOS Safari memory limits
         useCORS: true,
-        allowTaint: true,
         logging: false,
         backgroundColor: '#ffffff',
         width: 794,
