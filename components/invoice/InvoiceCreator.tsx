@@ -235,12 +235,10 @@ export default function InvoiceCreator() {
       // so the browser still lays out the element (required for html2canvas)
       // while keeping it invisible to the user.
       container.style.position = 'fixed'
-      container.style.top = '0'
-      container.style.left = '0'
+      container.style.top = '-9999px'
+      container.style.left = '-9999px'
       container.style.width = '794px'
       container.style.height = 'auto'
-      container.style.visibility = 'hidden'
-      container.style.zIndex = '-9999'
       container.style.display = 'block'
       container.style.overflow = 'visible'
       container.style.pointerEvents = 'none'
@@ -264,8 +262,6 @@ export default function InvoiceCreator() {
       container.style.left = ''
       container.style.width = ''
       container.style.height = ''
-      container.style.visibility = ''
-      container.style.zIndex = ''
       container.style.overflow = ''
       container.style.pointerEvents = ''
 
