@@ -981,7 +981,6 @@ export default function InvoiceCreator() {
                 <PrintableInvoice data={data} />
               </div>
             </div>
-            </div>
           </div>
 
           {/* Preview footer bar */}
