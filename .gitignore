@@ -34,3 +34,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# Backup files
+components/invoice/InvoiceCreator_git.tsx
+components/invoice/InvoiceCreator.tsx.tmp

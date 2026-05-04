@@ -342,86 +342,62 @@ export default function InvoiceCreator() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f4f7] font-sans relative z-0 pb-28 lg:pb-0">
+    <div className="min-h-screen font-sans relative z-0 pb-28 lg:pb-0" style={{ background: 'linear-gradient(135deg, #f0f4ff 0%, #f8faff 50%, #f0f7ff 100%)' }}>
 
       {/* ── TOP NAV ── */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40 print:hidden shadow-sm">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 h-14 flex items-center justify-between gap-2">
+      <header className="sticky top-0 z-40 print:hidden" style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(99,102,241,0.12)', boxShadow: '0 1px 24px rgba(99,102,241,0.08)' }}>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
 
           {/* Brand */}
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm shrink-0">
-              <FileText className="w-4 h-4 text-white" />
+          <div className="flex items-center gap-2.5 shrink-0">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shrink-0" style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}>
+              <FileText className="w-4.5 h-4.5 text-white" style={{ width: 18, height: 18 }} />
             </div>
-            <span className="font-bold text-gray-900 text-sm">
-              invoice-<span className="text-indigo-600">gen</span>
-              <span className="text-gray-400 font-normal">.net</span>
+            <span className="font-black text-gray-900 text-[15px] tracking-tight">
+              invoice-<span style={{ color: '#6366f1' }}>gen</span><span className="text-gray-400 font-normal text-sm">.net</span>
             </span>
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-gray-500">
-            <button onClick={() => setShowHelpModal(true)} className="hover:text-gray-800 transition">Help</button>
-            <button onClick={loadHistory} className="hover:text-gray-800 transition">History</button>
-            <button onClick={() => setShowGuideModal(true)} className="hover:text-gray-800 transition">Guide</button>
-            <Link
-              href="/pricing"
-              className="flex items-center gap-1.5 text-indigo-600 font-semibold hover:text-indigo-700 transition"
-            >
-              <Tag className="w-3.5 h-3.5" />
-              Pricing
+          <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
+            <button onClick={() => setShowHelpModal(true)} className="px-3 py-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all">Help</button>
+            <button onClick={loadHistory} className="px-3 py-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all">History</button>
+            <button onClick={() => setShowGuideModal(true)} className="px-3 py-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all">Guide</button>
+            <Link href="/pricing" className="flex items-center gap-1.5 px-3 py-2 rounded-lg font-semibold transition-all" style={{ color: '#6366f1' }}>
+              <Tag className="w-3.5 h-3.5" />Pricing
             </Link>
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-1.5">
-            {/* Mobile: History icon */}
-            <button
-              onClick={loadHistory}
-              className="md:hidden w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-lg transition"
-              title="History"
-            >
+          <div className="flex items-center gap-2">
+            <button onClick={loadHistory} className="md:hidden w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-xl transition" title="History">
               <RefreshCw className="w-4 h-4" />
             </button>
-
-            {/* Mobile: Pricing link */}
-            <Link
-              href="/pricing"
-              className="md:hidden w-9 h-9 flex items-center justify-center text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
-              title="Pricing"
-            >
+            <Link href="/pricing" className="md:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-indigo-50 transition" style={{ color: '#6366f1' }} title="Pricing">
               <Tag className="w-4 h-4" />
             </Link>
-
-            {/* Login button */}
             <button
-              className="hidden sm:flex items-center gap-1.5 text-[13px] font-semibold text-gray-700 bg-white border border-gray-200 rounded-lg px-3 hover:bg-gray-50 hover:text-indigo-600 hover:border-indigo-300 transition shadow-sm h-9"
-              title="Log In"
+              className="hidden sm:flex items-center gap-1.5 text-[13px] font-semibold rounded-xl px-3 h-9 border transition-all shadow-sm"
+              style={{ color: '#374151', background: 'white', borderColor: '#e5e7eb' }}
               onClick={() => toast('Login coming soon! 🔐', { icon: '🚀' })}
             >
-              <LogIn className="w-3.5 h-3.5" />
-              Log In
+              <LogIn className="w-3.5 h-3.5" /> Log In
             </button>
-
-            {/* Settings */}
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="flex items-center gap-1.5 text-[13px] font-medium text-gray-700 bg-white border border-gray-200 rounded-lg px-2 sm:px-3 hover:bg-gray-50 hover:text-gray-900 transition shadow-sm h-9 min-w-[36px] justify-center"
-              title="Settings"
+              className="flex items-center gap-1.5 text-[13px] font-medium rounded-xl px-2 sm:px-3 h-9 min-w-[36px] justify-center border transition-all shadow-sm"
+              style={{ color: '#374151', background: 'white', borderColor: '#e5e7eb' }}
             >
               <Settings2 className="w-4 h-4 shrink-0" />
               <span className="hidden sm:inline">Settings</span>
             </button>
-
-            {/* Download — hidden on mobile (bottom bar handles it) */}
             <button
               onClick={downloadPDF}
               disabled={isGenerating}
-              className="hidden sm:flex items-center gap-1.5 px-4 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 rounded-lg transition shadow-sm h-9"
+              className="hidden sm:flex items-center gap-2 px-4 text-[13px] font-bold text-white rounded-xl h-9 transition-all shadow-lg disabled:opacity-60 active:scale-95"
+              style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)', boxShadow: '0 4px 14px rgba(99,102,241,0.4)' }}
             >
-              {isGenerating
-                ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating…</>
-                : <><Download className="w-3.5 h-3.5" /> Download PDF</>}
+              {isGenerating ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating…</> : <><Download className="w-3.5 h-3.5" /> Download PDF</>}
             </button>
           </div>
         </div>
@@ -429,41 +405,30 @@ export default function InvoiceCreator() {
 
       {/* ── SETTINGS PANEL ── */}
       {showSettings && (
-        <div className="bg-slate-50 border-b border-slate-200 print:hidden">
+        <div className="print:hidden" style={{ background: 'rgba(249,250,255,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(99,102,241,0.1)' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap gap-4 items-center">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">Settings</span>
-
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#6366f1' }}>⚙ Settings</span>
             <label className="flex items-center gap-2 text-xs text-gray-600">
-              <span className="font-medium text-gray-700">Currency</span>
+              <span className="font-semibold text-gray-700">Currency</span>
               <div className="relative">
-                <select
-                  value={data.currency}
-                  onChange={e => set('currency', e.target.value)}
-                  className="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 pr-7 bg-white text-gray-700 focus:outline-none focus:border-blue-400 appearance-none cursor-pointer"
+                <select value={data.currency} onChange={e => set('currency', e.target.value)}
+                  className="text-xs border rounded-xl px-2.5 py-1.5 pr-7 bg-white text-gray-700 focus:outline-none appearance-none cursor-pointer"
+                  style={{ borderColor: 'rgba(99,102,241,0.3)' }}
                 >
-                  {CURRENCIES.map(c => (
-                    <option key={c.code} value={c.code}>{c.code} – {c.symbol}</option>
-                  ))}
+                  {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} – {c.symbol}</option>)}
                 </select>
                 <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
               </div>
             </label>
-
             <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
-              <span className="font-medium text-gray-700">Brand Color</span>
-              <input
-                type="color"
-                value={data.brandColor}
-                onChange={e => set('brandColor', e.target.value)}
-                className="w-8 h-8 rounded-lg cursor-pointer border border-gray-200 p-0.5 bg-white"
+              <span className="font-semibold text-gray-700">Brand Color</span>
+              <input type="color" value={data.brandColor} onChange={e => set('brandColor', e.target.value)}
+                className="w-8 h-8 rounded-xl cursor-pointer border-2 p-0.5 bg-white"
+                style={{ borderColor: 'rgba(99,102,241,0.3)' }}
               />
-              <span className="font-mono text-gray-400">{data.brandColor}</span>
+              <span className="font-mono text-indigo-400 text-[11px]">{data.brandColor}</span>
             </label>
-
-            <button
-              onClick={() => setShowSettings(false)}
-              className="ml-auto text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1 transition"
-            >
+            <button onClick={() => setShowSettings(false)} className="ml-auto text-xs text-gray-400 hover:text-red-500 flex items-center gap-1 transition">
               <X className="w-3.5 h-3.5" /> Close
             </button>
           </div>
@@ -972,7 +937,7 @@ export default function InvoiceCreator() {
         <div
           ref={previewPanelRef}
           className={`flex-col sticky bg-slate-200 w-full lg:w-[42%] ${showMobilePreview ? 'flex' : 'hidden lg:flex'}`}
-          style={{ top: 56, height: 'calc(100vh - 56px)' }}
+          style={{ top: 64, height: 'calc(100vh - 64px)' }}
         >
           {/* Preview toolbar */}
           <div className="px-4 py-2.5 bg-white border-b border-gray-200 flex items-center justify-between shrink-0 shadow-sm">
@@ -1016,6 +981,7 @@ export default function InvoiceCreator() {
                 <PrintableInvoice data={data} />
               </div>
             </div>
+            </div>
           </div>
 
           {/* Preview footer bar */}
@@ -1028,62 +994,17 @@ export default function InvoiceCreator() {
               <RotateCcw className="w-3 h-3" /> Reset
             </button>
           </div>
-        </div>      </div>
+        </div>
+      </div>
 
-
-      <footer className="bg-white border-t border-gray-200 mt-8 print:hidden">
-        {/* ── FOOTER ── */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-6">
-          {/* TRUST STATEMENT */}
-          <div className="mb-12 bg-green-50 border border-green-100 rounded-xl p-4 sm:p-6 text-center max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 shadow-sm">
-            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
-              <Settings2 className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <h4 className="font-bold text-gray-900 text-sm sm:text-base">No data is stored on our servers.</h4>
-              <p className="text-sm text-gray-600 mt-0.5">All information remains secure in your browser.</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            <div className="lg:col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 rounded-md bg-green-500 flex items-center justify-center">
-                  <FileText className="w-3 h-3 text-white" />
-                </div>
-                <span className="font-bold text-gray-800 text-lg">invoice-gen.net</span>
-              </div>
-              <p className="text-sm text-gray-500 leading-relaxed max-w-sm mb-4">
-                The ultimately simple and free invoice generator for freelancers and small businesses. Create, customize, and download professional PDF invoices in seconds. No sign-up required.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="font-bold text-gray-900 mb-4">Resources</h4>
-              <ul className="space-y-2 text-sm text-gray-500">
-                <li><button onClick={() => setShowGuideModal(true)} className="hover:text-green-600 transition text-left">Invoicing Guide</button></li>
-                <li><button onClick={() => setShowHelpModal(true)} className="hover:text-green-600 transition text-left">Help & FAQ</button></li>
-                <li><a href="#" className="hover:text-green-600 transition">Invoice Templates</a></li>
-                <li><a href="#" className="hover:text-green-600 transition">Receipt Generator</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-bold text-gray-900 mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-gray-500">
-                <li><a href="mailto:support@invoice-gen.net" className="hover:text-green-600 transition">Contact Us</a></li>
-                <li><button onClick={() => setShowPrivacyModal(true)} className="hover:text-green-600 transition text-left">Privacy Policy</button></li>
-                <li><button onClick={() => setShowTermsModal(true)} className="hover:text-green-600 transition text-left">Terms of Service</button></li>
-                <li><button onClick={() => setShowAboutModal(true)} className="hover:text-green-600 transition text-left">About Us</button></li>
-              </ul>
-            </div>
-          </div>
-          <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
-            <p>&copy; {new Date().getFullYear()} Invoice-Gen.net — A Product of Ever Legit LLC. All Rights Reserved.</p>
-            <p className="flex items-center gap-1.5 flex-wrap">Developed with <Heart className="w-3.5 h-3.5 text-red-500 fill-current shrink-0" /> by <a href="https://www.instagram.com/arshaonone" target="_blank" rel="noopener noreferrer" className="font-semibold text-gray-500 hover:text-green-600 transition">Ashikur Rahman Shaon</a></p>
-          </div>
+      <footer className="print:hidden" style={{ borderTop: '1px solid rgba(99,102,241,0.1)', background: 'rgba(255,255,255,0.7)' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-center">
+          <p className="text-xs text-gray-400 text-center">
+            &copy; 2019&ndash;{new Date().getFullYear()} <span className="font-semibold text-gray-500">invoice-gen.net</span>. All rights reserved.
+          </p>
         </div>
       </footer>
+
 
       {/* ── MODALS ── */}
       {showHistoryModal && (
