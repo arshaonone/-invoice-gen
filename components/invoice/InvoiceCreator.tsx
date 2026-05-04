@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import React from 'react'
+import Link from 'next/link'
 import { useReactToPrint } from 'react-to-print'
 import toast from 'react-hot-toast'
 import {
   Plus, Trash2, Download, Printer, RotateCcw, FileText,
-  ChevronDown, X, Upload, RefreshCw, Settings2, Loader2, Heart
+  ChevronDown, X, Upload, RefreshCw, Settings2, Loader2, Heart,
+  LogIn, Tag, Building2, User, Eye, EyeOff
 } from 'lucide-react'
 import { getCurrencySymbol, CURRENCIES } from '@/lib/utils'
 
@@ -119,6 +121,7 @@ export default function InvoiceCreator() {
   const [showSettings, setShowSettings] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [showMobilePreview, setShowMobilePreview] = useState(false)
 
   React.useEffect(() => {
     setMounted(true)
@@ -149,6 +152,20 @@ export default function InvoiceCreator() {
   const printRef = useRef<HTMLDivElement>(null)
   const printContainerRef = useRef<HTMLDivElement>(null)
   const logoInputRef = useRef<HTMLInputElement>(null)
+  const previewPanelRef = useRef<HTMLDivElement>(null)
+  const [previewScale, setPreviewScale] = useState(0.55)
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (previewPanelRef.current) {
+        const w = previewPanelRef.current.clientWidth - 48
+        setPreviewScale(Math.min(Math.max(w / 794, 0.35), 0.9))
+      }
+    }
+    updateScale()
+    window.addEventListener('resize', updateScale)
+    return () => window.removeEventListener('resize', updateScale)
+  }, [])
 
   const saveToHistory = (invoiceData: InvoiceData) => {
     try {
@@ -333,20 +350,27 @@ export default function InvoiceCreator() {
 
           {/* Brand */}
           <div className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center shadow-sm shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm shrink-0">
               <FileText className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold text-gray-900 text-sm">
-              invoice-<span className="text-green-500">gen</span>
+              invoice-<span className="text-indigo-600">gen</span>
               <span className="text-gray-400 font-normal">.net</span>
             </span>
           </div>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-gray-500">
+          <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-gray-500">
             <button onClick={() => setShowHelpModal(true)} className="hover:text-gray-800 transition">Help</button>
             <button onClick={loadHistory} className="hover:text-gray-800 transition">History</button>
-            <button onClick={() => setShowGuideModal(true)} className="hover:text-gray-800 transition">Invoicing Guide</button>
+            <button onClick={() => setShowGuideModal(true)} className="hover:text-gray-800 transition">Guide</button>
+            <Link
+              href="/pricing"
+              className="flex items-center gap-1.5 text-indigo-600 font-semibold hover:text-indigo-700 transition"
+            >
+              <Tag className="w-3.5 h-3.5" />
+              Pricing
+            </Link>
           </nav>
 
           {/* Right Actions */}
@@ -358,6 +382,25 @@ export default function InvoiceCreator() {
               title="History"
             >
               <RefreshCw className="w-4 h-4" />
+            </button>
+
+            {/* Mobile: Pricing link */}
+            <Link
+              href="/pricing"
+              className="md:hidden w-9 h-9 flex items-center justify-center text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+              title="Pricing"
+            >
+              <Tag className="w-4 h-4" />
+            </Link>
+
+            {/* Login button */}
+            <button
+              className="hidden sm:flex items-center gap-1.5 text-[13px] font-semibold text-gray-700 bg-white border border-gray-200 rounded-lg px-3 hover:bg-gray-50 hover:text-indigo-600 hover:border-indigo-300 transition shadow-sm h-9"
+              title="Log In"
+              onClick={() => toast('Login coming soon! 🔐', { icon: '🚀' })}
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              Log In
             </button>
 
             {/* Settings */}
@@ -374,7 +417,7 @@ export default function InvoiceCreator() {
             <button
               onClick={downloadPDF}
               disabled={isGenerating}
-              className="hidden sm:flex items-center gap-1.5 px-4 text-[13px] font-semibold text-white bg-green-500 hover:bg-green-600 disabled:opacity-60 rounded-lg transition shadow-sm h-9"
+              className="hidden sm:flex items-center gap-1.5 px-4 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 rounded-lg transition shadow-sm h-9"
             >
               {isGenerating
                 ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating…</>
@@ -428,16 +471,24 @@ export default function InvoiceCreator() {
       )}
 
 
-      {/* ── MAIN: INVOICE CARD + SIDEBAR ── */}
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 py-3 sm:py-6 pb-28 lg:pb-6 print:hidden">
-        <div className="flex flex-col lg:flex-row gap-3 sm:gap-6 items-start">
+      {/* ── MAIN: TWO-COLUMN LAYOUT ── */}
+      <div className="flex print:hidden flex-col lg:flex-row items-start" style={{ minHeight: 'calc(100vh - 56px)' }}>
 
-          {/* ═══════════════════════ INVOICE BUILDER ═══════════════════════ */}
-          <div className="w-full lg:flex-1 space-y-6">
+        {/* ═══════════ LEFT PANEL: FORM ═══════════ */}
+        <div className={`w-full lg:w-[58%] lg:border-r border-gray-200 ${showMobilePreview ? 'hidden lg:block' : 'block'}`}>
+          <div className="max-w-2xl mx-auto px-3 sm:px-6 py-4 sm:py-6 pb-28 lg:pb-10 space-y-6">
 
             {/* ── CARD: Branding & Header ── */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6">
-              <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider">Branding & Invoice Details</h3>
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: data.brandColor }}>
+                  <Building2 className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Sender / Company</h3>
+                  <p className="text-[11px] text-gray-400 mt-0.5">Your business details & invoice branding</p>
+                </div>
+              </div>
               <div className="flex items-start justify-between gap-4 mb-5">
 
                 {/* Logo */}
@@ -491,22 +542,70 @@ export default function InvoiceCreator() {
                 </div>
               </div>
 
-              {/* Sender */}
-              <div className="mb-2">
-                <label className="flex items-center gap-1.5 text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Sender Details</label>
-                <textarea
-                  value={data.senderInfo}
-                  onChange={e => set('senderInfo', e.target.value)}
-                  placeholder="e.g., Your Name, Your Company, Address..."
-                  rows={3}
-                  className={cls(inputBase, 'resize-none')}
+              {/* Company Name */}
+              <div className="mb-3">
+                <label className="flex items-center gap-1.5 text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Company Name</label>
+                <input
+                  value={data.senderName}
+                  onChange={e => set('senderName', e.target.value)}
+                  placeholder="Your Company / Business Name"
+                  className={inputBase}
                 />
+              </div>
+
+              {/* Sender structured fields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Your Name / Contact</label>
+                  <input
+                    value={data.senderInfo}
+                    onChange={e => set('senderInfo', e.target.value)}
+                    placeholder="e.g., John Doe"
+                    className={inputBase}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Email</label>
+                  <input
+                    type="email"
+                    value={data.senderEmail}
+                    onChange={e => set('senderEmail', e.target.value)}
+                    placeholder="your@email.com"
+                    className={inputBase}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Phone</label>
+                  <input
+                    value={data.senderPhone}
+                    onChange={e => set('senderPhone', e.target.value)}
+                    placeholder="+1 555 000 0000"
+                    className={inputBase}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Address</label>
+                  <input
+                    value={data.senderAddress}
+                    onChange={e => set('senderAddress', e.target.value)}
+                    placeholder="Street, City, Country"
+                    className={inputBase}
+                  />
+                </div>
               </div>
             </div>
 
             {/* ── CARD: Client Details ── */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6 space-y-4">
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Client Details</h3>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shrink-0">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Billed To / Payer</h3>
+                  <p className="text-[11px] text-gray-400 mt-0.5">Client or customer receiving this invoice</p>
+                </div>
+              </div>
               <input
                 value={data.clientName}
                 onChange={e => set('clientName', e.target.value)}
@@ -857,135 +956,83 @@ export default function InvoiceCreator() {
               />
             </div>
 
-          </div>{/* end invoice card */}
+          </div>{/* end invoice card / space-y-6 cards container */}
 
-          {/* ═══════════════════════ SIDEBAR ═══════════════════════ */}
-          <div className="w-full lg:w-52 shrink-0 flex flex-col gap-3">
+          {/* Mobile reset */}
+          <button
+            onClick={() => { if (confirm('Reset the form? All data will be lost.')) { setData(defaultData()); toast.success('Form reset!') } }}
+            className="lg:hidden text-xs text-gray-400 hover:text-red-500 flex items-center justify-center gap-1.5 transition py-1 w-full"
+          >
+            <RotateCcw className="w-3 h-3" /> Start over
+          </button>
 
-            {/* Desktop: Download + Print */}
-            <div className="hidden lg:flex flex-col gap-2">
+        </div>
+
+        {/* ═══════════ RIGHT PANEL: LIVE PREVIEW ═══════════ */}
+        <div
+          ref={previewPanelRef}
+          className={`flex-col sticky bg-slate-200 w-full lg:w-[42%] ${showMobilePreview ? 'flex' : 'hidden lg:flex'}`}
+          style={{ top: 56, height: 'calc(100vh - 56px)' }}
+        >
+          {/* Preview toolbar */}
+          <div className="px-4 py-2.5 bg-white border-b border-gray-200 flex items-center justify-between shrink-0 shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              </span>
+              <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">Live Preview</span>
+              <span className="text-[10px] text-gray-400 font-medium">Updates as you type</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={handlePrint}
+                className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+              >
+                <Printer className="w-3 h-3" /> Print
+              </button>
               <button
                 onClick={downloadPDF}
                 disabled={isGenerating}
-                className="w-full flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-2xl transition hover:-translate-y-0.5 shadow-[0_8px_16px_-6px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_20px_-8px_rgba(0,0,0,0.4)] active:translate-y-0 disabled:opacity-60"
-                style={{ background: data.brandColor }}
+                className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 rounded-lg transition shadow-sm"
               >
                 {isGenerating
-                  ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating…</>
-                  : <><Download className="w-4 h-4" /> Download</>}
-              </button>
-              <button
-                onClick={handlePrint}
-                className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition"
-              >
-                <Printer className="w-4 h-4" /> Print
+                  ? <><Loader2 className="w-3 h-3 animate-spin" /> Generating…</>
+                  : <><Download className="w-3 h-3" /> Download PDF</>}
               </button>
             </div>
+          </div>
 
-            {/* Settings panel */}
-            <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-4 shadow-sm">
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide">Invoice Settings</h3>
-
-              {/* Currency */}
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1.5">Currency</label>
-                <div className="relative group">
-                  <select
-                    value={data.currency}
-                    onChange={e => set('currency', e.target.value)}
-                    className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 pr-8 bg-white text-gray-700 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 appearance-none cursor-pointer hover:border-gray-300 transition shadow-sm"
-                  >
-                    {CURRENCIES.map(c => (
-                      <option key={c.code} value={c.code}>{c.code} – {c.symbol}</option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none group-hover:text-gray-500 transition" />
-                </div>
-              </div>
-
-              {/* Brand Color */}
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1.5">Brand Color</label>
-                <div className="flex bg-white border border-gray-200 rounded-lg overflow-hidden focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition shadow-sm hover:border-gray-300">
-                  <div className="relative w-10 shrink-0 border-r border-gray-200 bg-gray-50 cursor-pointer overflow-hidden group">
-                    <input
-                      type="color"
-                      value={data.brandColor}
-                      onChange={e => set('brandColor', e.target.value)}
-                      className="absolute inset-0 w-[200%] h-[200%] -translate-x-1/4 -translate-y-1/4 cursor-pointer opacity-0 z-10"
-                    />
-                    <div className="absolute inset-0 m-1.5 rounded shadow-sm border border-black/10 group-hover:scale-105 transition-transform" style={{ background: data.brandColor }}></div>
-                  </div>
-                  <input
-                    type="text"
-                    value={data.brandColor}
-                    onChange={e => { if (/^#[0-9a-fA-F]{0,6}$/.test(e.target.value)) set('brandColor', e.target.value) }}
-                    className="flex-1 text-sm uppercase px-3 py-2 border-none font-mono focus:outline-none focus:ring-0 bg-transparent text-gray-700"
-                    maxLength={7}
-                  />
-                </div>
-              </div>
-
-              {/* Invoice # */}
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1.5">Invoice #</label>
-                <div className="flex bg-white border border-gray-200 rounded-lg overflow-hidden focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition shadow-sm hover:border-gray-300">
-                  <input
-                    value={data.invoiceNumber}
-                    onChange={e => set('invoiceNumber', e.target.value)}
-                    className="flex-1 text-sm px-3 py-2 border-none focus:outline-none focus:ring-0 bg-transparent text-gray-700"
-                  />
-                  <button
-                    onClick={() => set('invoiceNumber', String(Math.floor(Math.random() * 9000) + 1000))}
-                    className="px-3 text-gray-400 hover:text-blue-500 bg-gray-50 border-l border-gray-200 transition"
-                    title="Generate random invoice number"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Resources — desktop sidebar only */}
-            <div className="hidden lg:block bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-              <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Resources</h3>
-              <div className="space-y-1.5 flex flex-col items-start">
-                <button onClick={() => setShowGuideModal(true)} className="flex items-center gap-1.5 text-xs text-green-600 hover:text-green-700 hover:underline transition">
-                  <span className="w-1 h-1 rounded-full bg-green-400 shrink-0" />
-                  Invoicing Guide
-                </button>
-                <button onClick={() => setShowHelpModal(true)} className="flex items-center gap-1.5 text-xs text-green-600 hover:text-green-700 hover:underline transition">
-                  <span className="w-1 h-1 rounded-full bg-green-400 shrink-0" />
-                  Help & FAQ
-                </button>
-                {['Invoice Template', 'Credit Note Template', 'Quote Template', 'Purchase Order'].map(lbl => (
-                  <a key={lbl} href="#" className="flex items-center gap-1.5 text-xs text-green-600 hover:text-green-700 hover:underline transition">
-                    <span className="w-1 h-1 rounded-full bg-green-400 shrink-0" />
-                    {lbl}
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {/* Reset — desktop sidebar only */}
-            <button
-              onClick={() => {
-                if (confirm('Reset the form? All data will be lost.')) {
-                  setData(defaultData())
-                  toast.success('Form reset!')
-                }
+          {/* Scrollable preview area */}
+          <div className="flex-1 overflow-y-auto flex justify-center items-start py-6 px-6">
+            <div
+              className="shadow-2xl shadow-black/25 rounded-sm bg-white overflow-hidden"
+              style={{
+                width: `${794 * previewScale}px`,
+                minHeight: `${1122 * previewScale}px`,
               }}
-              className="hidden lg:flex text-xs text-gray-400 hover:text-red-500 items-center justify-center gap-1.5 transition py-1"
             >
-              <RotateCcw className="w-3 h-3" /> Start over
+              <div style={{ transform: `scale(${previewScale})`, transformOrigin: 'top left', width: 794, pointerEvents: 'none' }}>
+                <PrintableInvoice data={data} />
+              </div>
+            </div>
+          </div>
+
+          {/* Preview footer bar */}
+          <div className="px-4 py-2 bg-white border-t border-gray-200 flex items-center justify-between shrink-0">
+            <span className="text-[10px] text-gray-400">A4 format · {Math.round(previewScale * 100)}% zoom</span>
+            <button
+              onClick={() => { if (confirm('Reset the form? All data will be lost.')) { setData(defaultData()); toast.success('Form reset!') } }}
+              className="flex items-center gap-1 text-[10px] text-gray-400 hover:text-red-500 transition"
+            >
+              <RotateCcw className="w-3 h-3" /> Reset
             </button>
+          </div>
+        </div>      </div>
 
-          </div>{/* end sidebar */}
-        </div>
-      </div>
 
-      {/* ── FOOTER ── */}
       <footer className="bg-white border-t border-gray-200 mt-8 print:hidden">
+        {/* ── FOOTER ── */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-6">
           {/* TRUST STATEMENT */}
           <div className="mb-12 bg-green-50 border border-green-100 rounded-xl p-4 sm:p-6 text-center max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 shadow-sm">
@@ -1226,10 +1273,18 @@ export default function InvoiceCreator() {
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
         <div className="bg-white/90 backdrop-blur-xl border-t border-gray-200/80 px-3 py-3 flex gap-2 shadow-[0_-4px_24px_rgba(0,0,0,0.08)]">
-          {/* Print — icon+label */}
+          {/* Preview toggle */}
+          <button
+            onClick={() => setShowMobilePreview(p => !p)}
+            className="flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 active:bg-gray-200 rounded-2xl transition shrink-0 min-w-[58px]"
+          >
+            {showMobilePreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            <span>{showMobilePreview ? 'Form' : 'Preview'}</span>
+          </button>
+          {/* Print */}
           <button
             onClick={handlePrint}
-            className="flex items-center justify-center gap-2 px-4 py-3.5 text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 active:bg-gray-200 rounded-2xl transition shrink-0"
+            className="flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 active:bg-gray-200 rounded-2xl transition shrink-0 min-w-[52px]"
           >
             <Printer className="w-4 h-4" />
             <span>Print</span>
