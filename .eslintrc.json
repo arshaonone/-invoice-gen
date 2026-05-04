@@ -1,3 +1,10 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "@next/next/no-img-element": "off"
+  },
+  "ignorePatterns": [
+    "components/invoice/InvoiceCreator_git.tsx",
+    "components/invoice/InvoiceCreator.tsx.tmp"
+  ]
 }
