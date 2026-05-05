@@ -619,7 +619,6 @@ export default function InvoiceCreator() {
                     value={data.invoiceDate}
                     onChange={e => set('invoiceDate', e.target.value)}
                     className={dateInputClass}
-                    style={{ colorScheme: 'light', WebkitAppearance: 'auto', appearance: 'auto' } as React.CSSProperties}
                   />
                 </div>
                 {/* Due Date */}
@@ -630,7 +629,6 @@ export default function InvoiceCreator() {
                     value={data.dueDate}
                     onChange={e => set('dueDate', e.target.value)}
                     className={dateInputClass}
-                    style={{ colorScheme: 'light', WebkitAppearance: 'auto', appearance: 'auto' } as React.CSSProperties}
                   />
                 </div>
                 {/* Payment Terms */}
