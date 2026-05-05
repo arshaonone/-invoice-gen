@@ -1,6 +1,5 @@
 'use client'
 import { useState, useRef, useEffect, useCallback } from 'react'
-import Link from 'next/link'
 import { useReactToPrint } from 'react-to-print'
 import toast from 'react-hot-toast'
 import { Plus, Trash2, Download, Printer, RefreshCw, FileText, Loader2 } from 'lucide-react'
@@ -216,10 +215,10 @@ export default function InvoiceCreator() {
       {/* Brand header */}
       <div style={{textAlign:'center',marginBottom:'2rem'}}>
         <div style={{display:'inline-block',background:'rgba(255,255,255,0.5)',backdropFilter:'blur(8px)',padding:'1rem 2rem',borderRadius:'4rem',boxShadow:'0 8px 20px rgba(0,0,0,0.04)'}}>
-          <Link href="/" style={{display:'inline-flex',alignItems:'center',gap:12,fontWeight:800,fontSize:'2rem',background:'linear-gradient(125deg,#0b3b4f,#1f6e8c)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',textDecoration:'none',letterSpacing:'-0.3px'}}>
+          <a href="/" style={{display:'inline-flex',alignItems:'center',gap:12,fontWeight:800,fontSize:'2rem',background:'linear-gradient(125deg,#0b3b4f,#1f6e8c)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',textDecoration:'none',letterSpacing:'-0.3px'}}>
             <FileText size={32} color="#1f6e8c" style={{flexShrink:0}}/>
             invoice-gen.net
-          </Link>
+          </a>
           <p style={{fontWeight:500,color:'#3c6e8f',fontSize:'0.85rem',marginTop:6}}>Intelligent invoicing · real-time preview · save &amp; manage drafts</p>
         </div>
       </div>
