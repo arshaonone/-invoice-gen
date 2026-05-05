@@ -123,12 +123,14 @@ function calcAll(items: InvoiceItem[], discount: number, taxRate: number, shippi
 }
 
 const inputBase =
-  'w-full bg-white border border-gray-200 rounded-xl px-3.5 py-3 text-[14px] text-gray-800 placeholder-gray-400 focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 shadow-sm hover:border-gray-300 min-h-[46px]'
+  'w-full rounded-xl px-3.5 py-3 text-[14px] text-white/90 placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-indigo-400/40 transition-all duration-200 min-h-[46px]'
 
 const dateInputClass =
-  'w-full bg-white border border-gray-200 rounded-xl px-3.5 py-3 text-[14px] text-gray-800 focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 shadow-sm hover:border-gray-300 min-h-[46px] cursor-pointer'
+  'w-full rounded-xl px-3.5 py-3 text-[14px] text-white/90 focus:outline-none focus:ring-2 focus:ring-indigo-400/40 transition-all duration-200 min-h-[46px] cursor-pointer'
 
-const labelBase = 'block text-[11px] font-bold text-gray-500 mb-1.5 uppercase tracking-widest'
+const labelBase = 'block text-[11px] font-bold text-white/50 mb-1.5 uppercase tracking-widest'
+
+const gi: React.CSSProperties = { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.14)', color: '#e0e7ff' }
 
 function cls(...parts: (string | undefined | false)[]) {
   return parts.filter(Boolean).join(' ')
@@ -363,51 +365,37 @@ export default function InvoiceCreator() {
   }
 
   return (
-    <div className="min-h-screen font-sans relative z-0 pb-28 lg:pb-0" style={{ background: 'linear-gradient(135deg, #f0f4ff 0%, #f8faff 50%, #f0f7ff 100%)' }}>
+    <div className="min-h-screen font-sans relative z-0 pb-28 lg:pb-0" style={{ background: 'linear-gradient(135deg,#0f0c29 0%,#1a1040 35%,#0d1b4b 70%,#0f0c29 100%)' }}>
 
       {/* ── TOP NAV ── */}
-      <header className="sticky top-0 z-40 print:hidden" style={{ background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(99,102,241,0.12)', boxShadow: '0 1px 24px rgba(99,102,241,0.08)' }}>
+      <header className="sticky top-0 z-40 print:hidden" style={{ background: 'rgba(15,12,41,0.72)', backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)', borderBottom: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 2px 32px rgba(0,0,0,0.35)' }}>
         <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
-
           {/* Brand */}
           <div className="flex items-center gap-2.5 shrink-0">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shrink-0" style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shrink-0" style={{ background: 'linear-gradient(135deg,#818cf8,#6366f1)', boxShadow: '0 0 20px rgba(99,102,241,0.5)' }}>
               <FileText className="w-4.5 h-4.5 text-white" style={{ width: 18, height: 18 }} />
             </div>
-            <span className="font-black text-gray-900 text-[15px] tracking-tight">
-              invoice-<span style={{ color: '#6366f1' }}>gen</span><span className="text-gray-400 font-normal text-sm">.net</span>
+            <span className="font-black text-white text-[15px] tracking-tight">
+              invoice-<span style={{ color: '#a5b4fc' }}>gen</span><span className="text-white/30 font-normal text-sm">.net</span>
             </span>
           </div>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
-            <button onClick={() => setShowHelpModal(true)} className="px-3 py-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all">Help</button>
-            <button onClick={loadHistory} className="px-3 py-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all">History</button>
-            <button onClick={() => setShowGuideModal(true)} className="px-3 py-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all">Guide</button>
-            <Link href="/pricing" className="flex items-center gap-1.5 px-3 py-2 rounded-lg font-semibold transition-all" style={{ color: '#6366f1' }}>
-              <Tag className="w-3.5 h-3.5" />Pricing
-            </Link>
+            <button onClick={() => setShowHelpModal(true)} className="px-3 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all">Help</button>
+            <button onClick={loadHistory} className="px-3 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all">History</button>
+            <button onClick={() => setShowGuideModal(true)} className="px-3 py-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all">Guide</button>
           </nav>
 
           {/* Right Actions */}
           <div className="flex items-center gap-2">
-            <button onClick={loadHistory} className="md:hidden w-9 h-9 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-xl transition" title="History">
+            <button onClick={loadHistory} className="md:hidden w-9 h-9 flex items-center justify-center text-white/60 hover:bg-white/10 rounded-xl transition" title="History">
               <RefreshCw className="w-4 h-4" />
-            </button>
-            <Link href="/pricing" className="md:hidden w-9 h-9 flex items-center justify-center rounded-xl hover:bg-indigo-50 transition" style={{ color: '#6366f1' }} title="Pricing">
-              <Tag className="w-4 h-4" />
-            </Link>
-            <button
-              className="hidden sm:flex items-center gap-1.5 text-[13px] font-semibold rounded-xl px-3 h-9 border transition-all shadow-sm"
-              style={{ color: '#374151', background: 'white', borderColor: '#e5e7eb' }}
-              onClick={() => toast('Login coming soon! 🔐', { icon: '🚀' })}
-            >
-              <LogIn className="w-3.5 h-3.5" /> Log In
             </button>
             <button
               onClick={() => setShowSettings(!showSettings)}
-              className="flex items-center gap-1.5 text-[13px] font-medium rounded-xl px-2 sm:px-3 h-9 min-w-[36px] justify-center border transition-all shadow-sm"
-              style={{ color: '#374151', background: 'white', borderColor: '#e5e7eb' }}
+              className="flex items-center gap-1.5 text-[13px] font-medium rounded-xl px-2 sm:px-3 h-9 min-w-[36px] justify-center transition-all"
+              style={{ color: 'rgba(255,255,255,0.85)', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)' }}
             >
               <Settings2 className="w-4 h-4 shrink-0" />
               <span className="hidden sm:inline">Settings</span>
@@ -416,7 +404,7 @@ export default function InvoiceCreator() {
               onClick={downloadPDF}
               disabled={isGenerating}
               className="hidden sm:flex items-center gap-2 px-4 text-[13px] font-bold text-white rounded-xl h-9 transition-all shadow-lg disabled:opacity-60 active:scale-95"
-              style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)', boxShadow: '0 4px 14px rgba(99,102,241,0.4)' }}
+              style={{ background: 'linear-gradient(135deg,#818cf8,#6366f1)', boxShadow: '0 4px 20px rgba(99,102,241,0.5)' }}
             >
               {isGenerating ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating…</> : <><Download className="w-3.5 h-3.5" /> Download PDF</>}
             </button>
@@ -426,30 +414,30 @@ export default function InvoiceCreator() {
 
       {/* ── SETTINGS PANEL ── */}
       {showSettings && (
-        <div className="print:hidden" style={{ background: 'rgba(249,250,255,0.97)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(99,102,241,0.1)' }}>
+        <div className="print:hidden" style={{ background: 'rgba(10,8,30,0.85)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap gap-x-5 gap-y-3 items-center">
-            <span className="text-xs font-bold uppercase tracking-widest w-full sm:w-auto" style={{ color: '#6366f1' }}>⚙ Settings</span>
-            <label className="flex items-center gap-2 text-xs text-gray-600">
-              <span className="font-semibold text-gray-700">Currency</span>
+            <span className="text-xs font-bold uppercase tracking-widest w-full sm:w-auto" style={{ color: '#a5b4fc' }}>⚙ Settings</span>
+            <label className="flex items-center gap-2 text-xs text-white/60">
+              <span className="font-semibold text-white/80">Currency</span>
               <div className="relative">
                 <select value={data.currency} onChange={e => set('currency', e.target.value)}
-                  className="text-sm border rounded-xl px-3 py-2 pr-8 bg-white text-gray-700 focus:outline-none appearance-none cursor-pointer min-h-[40px]"
-                  style={{ borderColor: 'rgba(99,102,241,0.3)' }}
+                  className="text-sm rounded-xl px-3 py-2 pr-8 focus:outline-none appearance-none cursor-pointer min-h-[40px]"
+                  style={{ background: 'rgba(255,255,255,0.12)', color: '#e0e7ff', border: '1px solid rgba(255,255,255,0.15)' }}
                 >
-                  {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} – {c.symbol}</option>)}
+                  {CURRENCIES.map(c => <option key={c.code} value={c.code} style={{ background: '#1a1040', color: '#e0e7ff' }}>{c.code} – {c.symbol}</option>)}
                 </select>
-                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/40 pointer-events-none" />
               </div>
             </label>
-            <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
-              <span className="font-semibold text-gray-700">Brand Color</span>
+            <label className="flex items-center gap-2 text-xs text-white/60 cursor-pointer">
+              <span className="font-semibold text-white/80">Brand Color</span>
               <input type="color" value={data.brandColor} onChange={e => set('brandColor', e.target.value)}
-                className="w-10 h-10 rounded-xl cursor-pointer border-2 p-0.5 bg-white"
-                style={{ borderColor: 'rgba(99,102,241,0.3)' }}
+                className="w-10 h-10 rounded-xl cursor-pointer border-2 p-0.5"
+                style={{ background: 'transparent', borderColor: 'rgba(255,255,255,0.2)' }}
               />
-              <span className="font-mono text-indigo-400 text-[11px]">{data.brandColor}</span>
+              <span className="font-mono text-indigo-300 text-[11px]">{data.brandColor}</span>
             </label>
-            <button onClick={() => setShowSettings(false)} className="ml-auto text-xs text-gray-400 hover:text-red-500 flex items-center gap-1.5 transition min-h-[36px] px-2">
+            <button onClick={() => setShowSettings(false)} className="ml-auto text-xs text-white/40 hover:text-red-400 flex items-center gap-1.5 transition min-h-[36px] px-2">
               <X className="w-4 h-4" /> Close
             </button>
           </div>
@@ -458,14 +446,14 @@ export default function InvoiceCreator() {
 
 
       {/* ── MAIN: TWO-COLUMN LAYOUT ── */}
-      <div className="flex print:hidden flex-col lg:flex-row items-start" style={{ minHeight: 'calc(100vh - 64px)' }}>
+      <div className="flex print:hidden flex-col lg:flex-row items-stretch" style={{ minHeight: 'calc(100vh - 64px)' }}>
 
         {/* ═══════════ LEFT PANEL: FORM ═══════════ */}
-        <div className={`w-full lg:w-[58%] lg:border-r border-gray-200 ${showMobilePreview ? 'hidden lg:block' : 'block'}`}>
-          <div className="w-full px-4 sm:px-8 py-5 sm:py-7 pb-28 lg:pb-12 space-y-5">
+        <div className={`w-full lg:w-1/2 ${showMobilePreview ? 'hidden lg:block' : 'block'}`} style={{ borderRight: '1px solid rgba(255,255,255,0.07)' }}>
+          <div className="w-full px-4 sm:px-6 py-5 sm:py-7 pb-28 lg:pb-12 space-y-4">
 
             {/* ── CARD: Sender / Company ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_4px_24px_rgba(99,102,241,0.08)] overflow-hidden">
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 8px 32px rgba(0,0,0,0.24)' }}>
               {/* Card header stripe */}
               <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg,#6366f1,#8b5cf6,#06b6d4)' }} />
               <div className="p-5 sm:p-6">
@@ -474,8 +462,8 @@ export default function InvoiceCreator() {
                     <Building2 className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-wider">Your Business</h3>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Sender details &amp; invoice branding</p>
+                    <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Your Business</h3>
+                    <p className="text-[11px] text-white/40 mt-0.5">Sender details &amp; invoice branding</p>
                   </div>
                 </div>
 
@@ -490,22 +478,28 @@ export default function InvoiceCreator() {
                       </div>
                     ) : (
                       <button onClick={() => logoInputRef.current?.click()}
-                        className="h-16 w-32 sm:h-20 sm:w-44 border-2 border-dashed border-indigo-200 rounded-xl flex flex-col items-center justify-center gap-1.5 text-indigo-300 hover:border-indigo-400 hover:text-indigo-500 hover:bg-indigo-50 active:bg-indigo-50 transition-all">
+                        className="h-16 w-32 sm:h-20 sm:w-44 rounded-xl flex flex-col items-center justify-center gap-1.5 transition-all border-2 border-dashed"
+                        style={{ borderColor: 'rgba(165,180,252,0.3)', color: 'rgba(165,180,252,0.6)', background: 'rgba(99,102,241,0.08)' }}
+                        onMouseOver={e => (e.currentTarget.style.borderColor = 'rgba(165,180,252,0.7)')}
+                        onMouseOut={e => (e.currentTarget.style.borderColor = 'rgba(165,180,252,0.3)')}>
                         <Upload className="w-5 h-5" />
                         <span className="text-xs font-semibold">Upload Logo</span>
-                        <span className="text-[10px] text-indigo-200">PNG, JPG, SVG</span>
+                        <span style={{ fontSize: 10, color: 'rgba(165,180,252,0.4)' }}>PNG, JPG, SVG</span>
                       </button>
                     )}
                     <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogo} />
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <h2 className="text-2xl sm:text-4xl font-black tracking-widest uppercase" style={{ color: data.brandColor }}>INVOICE</h2>
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-widest uppercase" style={{ color: data.brandColor, textShadow: `0 0 30px ${data.brandColor}88` }}>INVOICE</h2>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-sm text-gray-400 font-bold">#</span>
+                      <span className="text-sm text-white/40 font-bold">#</span>
                       <input value={data.invoiceNumber} onChange={e => set('invoiceNumber', e.target.value)}
-                        className="w-20 sm:w-24 border border-gray-200 rounded-lg px-2 py-2 text-sm text-right font-bold focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition min-h-[40px] bg-gray-50"
+                        className="w-20 sm:w-24 rounded-lg px-2 py-2 text-sm text-right font-bold focus:outline-none focus:ring-2 focus:ring-indigo-400/40 transition min-h-[40px]"
+                        style={gi}
                         placeholder="001" />
-                      <button onClick={() => set('invoiceNumber', String(Math.floor(Math.random() * 9000) + 1000))} title="Auto-generate" className="text-gray-300 hover:text-indigo-500 transition p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center rounded-lg hover:bg-indigo-50">
+                      <button onClick={() => set('invoiceNumber', String(Math.floor(Math.random() * 9000) + 1000))} title="Auto-generate"
+                        className="text-white/30 hover:text-indigo-400 transition p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center rounded-lg"
+                        style={{ background: 'rgba(255,255,255,0.06)' }}>
                         <RefreshCw className="w-3.5 h-3.5" />
                       </button>
                     </div>
@@ -515,124 +509,124 @@ export default function InvoiceCreator() {
                 {/* Company Name */}
                 <div className="mb-3">
                   <label className={labelBase}>Company / Business Name</label>
-                  <input value={data.senderName} onChange={e => set('senderName', e.target.value)} placeholder="e.g., Acme Corp Ltd." className={cls(inputBase, 'font-semibold')} />
+                  <input value={data.senderName} onChange={e => set('senderName', e.target.value)} placeholder="e.g., Acme Corp Ltd." className={cls(inputBase, 'font-semibold')} style={gi} />
                 </div>
 
                 {/* Row 1 */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                   <div><label className={labelBase}>Your Name / Contact</label>
-                    <input value={data.senderInfo} onChange={e => set('senderInfo', e.target.value)} placeholder="e.g., John Doe" className={inputBase} /></div>
+                    <input value={data.senderInfo} onChange={e => set('senderInfo', e.target.value)} placeholder="e.g., John Doe" className={inputBase} style={gi} /></div>
                   <div><label className={labelBase}>Email Address</label>
-                    <input type="email" value={data.senderEmail} onChange={e => set('senderEmail', e.target.value)} placeholder="hello@company.com" className={inputBase} /></div>
+                    <input type="email" value={data.senderEmail} onChange={e => set('senderEmail', e.target.value)} placeholder="hello@company.com" className={inputBase} style={gi} /></div>
                   <div><label className={labelBase}>Phone Number</label>
-                    <input value={data.senderPhone} onChange={e => set('senderPhone', e.target.value)} placeholder="+1 555 000 0000" className={inputBase} /></div>
+                    <input value={data.senderPhone} onChange={e => set('senderPhone', e.target.value)} placeholder="+1 555 000 0000" className={inputBase} style={gi} /></div>
                   <div><label className={labelBase}>Website</label>
-                    <input type="url" value={data.senderWebsite} onChange={e => set('senderWebsite', e.target.value)} placeholder="https://company.com" className={inputBase} /></div>
+                    <input type="url" value={data.senderWebsite} onChange={e => set('senderWebsite', e.target.value)} placeholder="https://company.com" className={inputBase} style={gi} /></div>
                 </div>
 
                 {/* Address */}
                 <div className="mb-3">
                   <label className={labelBase}>Business Address</label>
-                  <input value={data.senderAddress} onChange={e => set('senderAddress', e.target.value)} placeholder="Street, City, State, Country" className={inputBase} />
+                  <input value={data.senderAddress} onChange={e => set('senderAddress', e.target.value)} placeholder="Street, City, State, Country" className={inputBase} style={gi} />
                 </div>
 
                 {/* Tax ID */}
                 <div className="mb-4">
-                  <label className={labelBase}>Tax ID / VAT Number <span className="normal-case text-gray-400 font-normal tracking-normal">(optional)</span></label>
-                  <input value={data.senderTaxId} onChange={e => set('senderTaxId', e.target.value)} placeholder="e.g., VAT GB123456789" className={inputBase} />
+                  <label className={labelBase}>Tax ID / VAT Number <span className="normal-case text-white/30 font-normal tracking-normal">(optional)</span></label>
+                  <input value={data.senderTaxId} onChange={e => set('senderTaxId', e.target.value)} placeholder="e.g., VAT GB123456789" className={inputBase} style={gi} />
                 </div>
 
                 {/* Bank Details divider */}
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="flex-1 h-px bg-gray-100" />
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">Bank / Payment Details</span>
-                  <div className="flex-1 h-px bg-gray-100" />
+                  <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.08)' }} />
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>Bank / Payment Details</span>
+                  <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.08)' }} />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div><label className={labelBase}>Bank Name</label>
-                    <input value={data.senderBankName} onChange={e => set('senderBankName', e.target.value)} placeholder="e.g., Chase Bank" className={inputBase} /></div>
+                    <input value={data.senderBankName} onChange={e => set('senderBankName', e.target.value)} placeholder="e.g., Chase Bank" className={inputBase} style={gi} /></div>
                   <div><label className={labelBase}>Account / IBAN</label>
-                    <input value={data.senderAccountNumber} onChange={e => set('senderAccountNumber', e.target.value)} placeholder="e.g., GB29 NWBK 6016 1331" className={inputBase} /></div>
+                    <input value={data.senderAccountNumber} onChange={e => set('senderAccountNumber', e.target.value)} placeholder="e.g., GB29 NWBK 6016 1331" className={inputBase} style={gi} /></div>
                   <div><label className={labelBase}>SWIFT / Routing Code</label>
-                    <input value={data.senderSwift} onChange={e => set('senderSwift', e.target.value)} placeholder="e.g., CHASUS33" className={inputBase} /></div>
+                    <input value={data.senderSwift} onChange={e => set('senderSwift', e.target.value)} placeholder="e.g., CHASUS33" className={inputBase} style={gi} /></div>
                 </div>
               </div>
             </div>
 
             {/* ── CARD: Client Details ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_4px_24px_rgba(16,185,129,0.08)] overflow-hidden">
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 8px 32px rgba(0,0,0,0.24)' }}>
               <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg,#10b981,#06b6d4,#3b82f6)' }} />
               <div className="p-5 sm:p-6 space-y-3">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center shrink-0 shadow-md">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-md" style={{ background: 'linear-gradient(135deg,#10b981,#0891b2)' }}>
                     <User className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-wider">Bill To / Client</h3>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Customer receiving this invoice</p>
+                    <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Bill To / Client</h3>
+                    <p className="text-[11px] text-white/40 mt-0.5">Customer receiving this invoice</p>
                   </div>
                 </div>
                 <div><label className={labelBase}>Client / Company Name</label>
-                  <input value={data.clientName} onChange={e => set('clientName', e.target.value)} placeholder="Client or Company Name" className={cls(inputBase, 'font-semibold')} /></div>
+                  <input value={data.clientName} onChange={e => set('clientName', e.target.value)} placeholder="Client or Company Name" className={cls(inputBase, 'font-semibold')} style={gi} /></div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div><label className={labelBase}>Contact Person</label>
-                    <input value={data.clientContactPerson || ''} onChange={e => set('clientContactPerson', e.target.value)} placeholder="e.g., Jane Smith" className={inputBase} /></div>
+                    <input value={data.clientContactPerson || ''} onChange={e => set('clientContactPerson', e.target.value)} placeholder="e.g., Jane Smith" className={inputBase} style={gi} /></div>
                   <div><label className={labelBase}>Email Address</label>
-                    <input type="email" value={data.clientEmail || ''} onChange={e => set('clientEmail', e.target.value)} placeholder="client@email.com" className={inputBase} /></div>
+                    <input type="email" value={data.clientEmail || ''} onChange={e => set('clientEmail', e.target.value)} placeholder="client@email.com" className={inputBase} style={gi} /></div>
                   <div><label className={labelBase}>Phone Number</label>
-                    <input value={data.clientPhone || ''} onChange={e => set('clientPhone', e.target.value)} placeholder="+1 555 000 0000" className={inputBase} /></div>
+                    <input value={data.clientPhone || ''} onChange={e => set('clientPhone', e.target.value)} placeholder="+1 555 000 0000" className={inputBase} style={gi} /></div>
                   <div><label className={labelBase}>Website</label>
-                    <input type="url" value={data.clientWebsite || ''} onChange={e => set('clientWebsite', e.target.value)} placeholder="https://client.com" className={inputBase} /></div>
+                    <input type="url" value={data.clientWebsite || ''} onChange={e => set('clientWebsite', e.target.value)} placeholder="https://client.com" className={inputBase} style={gi} /></div>
                 </div>
                 <div><label className={labelBase}>Client Address</label>
-                  <textarea value={data.clientAddress} onChange={e => set('clientAddress', e.target.value)} placeholder="Street, City, State, Country" rows={2} className={cls(inputBase, 'resize-none')} /></div>
-                <div><label className={labelBase}>Tax ID / VAT <span className="normal-case text-gray-400 font-normal tracking-normal">(optional)</span></label>
-                  <input value={data.clientTaxId || ''} onChange={e => set('clientTaxId', e.target.value)} placeholder="e.g., VAT US987654321" className={inputBase} /></div>
+                  <textarea value={data.clientAddress} onChange={e => set('clientAddress', e.target.value)} placeholder="Street, City, State, Country" rows={2} className={cls(inputBase, 'resize-none')} style={gi} /></div>
+                <div><label className={labelBase}>Tax ID / VAT <span className="normal-case text-white/30 font-normal tracking-normal">(optional)</span></label>
+                  <input value={data.clientTaxId || ''} onChange={e => set('clientTaxId', e.target.value)} placeholder="e.g., VAT US987654321" className={inputBase} style={gi} /></div>
               </div>
             </div>
 
             {/* ── CARD: Invoice Details ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_4px_24px_rgba(99,102,241,0.07)] overflow-hidden">
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 8px 32px rgba(0,0,0,0.24)' }}>
               <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg,#f59e0b,#ef4444,#8b5cf6)' }} />
               <div className="p-5 sm:p-6">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-1.5 h-6 rounded-full" style={{ background: 'linear-gradient(180deg,#6366f1,#4f46e5)' }} />
-                  <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-wider">Invoice Details</h3>
+                  <div className="w-1.5 h-6 rounded-full" style={{ background: 'linear-gradient(180deg,#a5b4fc,#6366f1)' }} />
+                  <h3 className="text-sm font-extrabold text-white uppercase tracking-wider">Invoice Details</h3>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className={labelBase}>Invoice Date</label>
-                    <input type="date" value={data.invoiceDate} onChange={e => set('invoiceDate', e.target.value)} className={dateInputClass} />
+                    <input type="date" value={data.invoiceDate} onChange={e => set('invoiceDate', e.target.value)} className={dateInputClass} style={gi} />
                   </div>
                   <div>
                     <label className={labelBase}>Due Date</label>
-                    <input type="date" value={data.dueDate} onChange={e => set('dueDate', e.target.value)} className={dateInputClass} />
+                    <input type="date" value={data.dueDate} onChange={e => set('dueDate', e.target.value)} className={dateInputClass} style={gi} />
                   </div>
                   <div>
                     <label className={labelBase}>Payment Terms</label>
                     <div className="flex gap-1.5 mb-2 flex-wrap">
                       {['Net 15','Net 30','Net 45','Net 60'].map(t => (
                         <button key={t} onClick={() => set('paymentTerms', t)}
-                          className="text-[11px] font-bold px-2.5 py-1 rounded-lg border transition-all"
+                          className="text-[11px] font-bold px-2.5 py-1 rounded-lg transition-all"
                           style={data.paymentTerms === t
-                            ? { background: '#6366f1', color: '#fff', borderColor: '#6366f1' }
-                            : { background: '#f8f9ff', color: '#6366f1', borderColor: '#e0e7ff' }}>
+                            ? { background: '#6366f1', color: '#fff', border: '1px solid #6366f1' }
+                            : { background: 'rgba(255,255,255,0.08)', color: '#a5b4fc', border: '1px solid rgba(165,180,252,0.2)' }}>
                           {t}
                         </button>
                       ))}
                     </div>
-                    <input type="text" value={data.paymentTerms} onChange={e => set('paymentTerms', e.target.value)} placeholder="Custom terms…" className={inputBase} />
+                    <input type="text" value={data.paymentTerms} onChange={e => set('paymentTerms', e.target.value)} placeholder="Custom terms…" className={inputBase} style={gi} />
                   </div>
                   <div>
                     <label className={labelBase}>PO Number</label>
-                    <input type="text" value={data.poNumber} onChange={e => set('poNumber', e.target.value)} placeholder="e.g. PO-0001" className={inputBase} />
+                    <input type="text" value={data.poNumber} onChange={e => set('poNumber', e.target.value)} placeholder="e.g. PO-0001" className={inputBase} style={gi} />
                   </div>
                 </div>
               </div>
             </div>
 
             {/* ── CARD: LINE ITEMS ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] overflow-hidden">
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 8px 32px rgba(0,0,0,0.24)' }}>
 
               {/* Desktop table header */}
               <div
@@ -783,7 +777,8 @@ export default function InvoiceCreator() {
               <div className="px-4 sm:px-8 pb-5">
                 <button
                   onClick={addItem}
-                  className="flex items-center gap-2 text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 active:bg-blue-100 border border-blue-200 rounded-xl px-5 py-3.5 shadow-sm hover:shadow transition-all duration-200 w-full justify-center min-h-[52px]"
+                  className="flex items-center gap-2 text-sm font-bold rounded-xl px-5 py-3.5 transition-all duration-200 w-full justify-center min-h-[52px]"
+                  style={{ color: '#a5b4fc', background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(165,180,252,0.2)' }}
                 >
                   <Plus className="w-4 h-4" /> Add Line Item
                 </button>
@@ -791,48 +786,51 @@ export default function InvoiceCreator() {
             </div>
 
             {/* ── CARD: NOTES + TOTALS ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+            <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 8px 32px rgba(0,0,0,0.24)' }}>
               <div className="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <div className="space-y-5">
                   <div>
-                    <label className="flex items-center gap-1.5 text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Notes (Optional)</label>
+                    <label className="flex items-center gap-1.5 text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">Notes (Optional)</label>
                     <textarea
                       value={data.notes}
                       onChange={e => set('notes', e.target.value)}
                       rows={3}
                       placeholder="e.g., Please make checks payable to Your Company..."
                       className={cls(inputBase, 'resize-none')}
+                      style={gi}
                     />
                   </div>
                   <div>
-                    <label className="flex items-center gap-1.5 text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Terms (Optional)</label>
+                    <label className="flex items-center gap-1.5 text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">Terms (Optional)</label>
                     <textarea
                       value={data.terms}
                       onChange={e => set('terms', e.target.value)}
                       rows={3}
                       placeholder="e.g., Payment due within 30 days. Late fees apply."
                       className={cls(inputBase, 'resize-none')}
+                      style={gi}
                     />
                   </div>
                   <div>
-                    <label className="flex items-center gap-1.5 text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Footer Note (Optional)</label>
+                    <label className="flex items-center gap-1.5 text-xs font-bold text-white/50 mb-2 uppercase tracking-wider">Footer Note (Optional)</label>
                     <textarea
                       value={data.footerNote}
                       onChange={e => set('footerNote', e.target.value)}
                       rows={2}
                       placeholder="e.g., Thank you for your business!"
                       className={cls(inputBase, 'resize-none')}
+                      style={gi}
                     />
                   </div>
                 </div>
 
                 {/* Totals */}
-                <div className="rounded-2xl p-5 space-y-1" style={{ background: 'linear-gradient(145deg,#f8faff,#f0f4ff)', border: '1px solid rgba(99,102,241,0.12)' }}>
+                <div className="rounded-2xl p-5 space-y-1" style={{ background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(165,180,252,0.15)' }}>
                   {/* Subtotal */}
-                  <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                    <span className="text-sm text-gray-600 font-medium">Subtotal</span>
-                    <span className="text-sm font-semibold text-gray-900">{sym}{data.subtotal.toFixed(2)}</span>
+                  <div className="flex justify-between items-center py-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                    <span className="text-sm text-white/60 font-medium">Subtotal</span>
+                    <span className="text-sm font-semibold text-white">{sym}{data.subtotal.toFixed(2)}</span>
                   </div>
 
                   {/* Tax */}
@@ -935,30 +933,32 @@ export default function InvoiceCreator() {
         {/* ═══════════ RIGHT PANEL: LIVE PREVIEW ═══════════ */}
         <div
           ref={previewPanelRef}
-          className={`flex-col sticky w-full lg:w-[42%] ${showMobilePreview ? 'flex' : 'hidden lg:flex'}`}
-          style={{ top: 64, height: 'calc(100vh - 64px)', background: 'linear-gradient(145deg,#e8ecf8,#dde3f5)' }}
+          className={`flex-col sticky w-full lg:w-1/2 ${showMobilePreview ? 'flex' : 'hidden lg:flex'}`}
+          style={{ top: 64, height: 'calc(100vh - 64px)', background: 'rgba(10,8,30,0.6)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
         >
           {/* Preview toolbar */}
-          <div className="px-4 py-2.5 bg-white border-b border-gray-200 flex items-center justify-between shrink-0 shadow-sm">
+          <div className="px-4 py-3 flex items-center justify-between shrink-0" style={{ background: 'rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.07)', backdropFilter: 'blur(20px)' }}>
             <div className="flex items-center gap-2.5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
               </span>
-              <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">Live Preview</span>
-              <span className="text-[10px] text-gray-400 font-medium">Updates as you type</span>
+              <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Live Preview</span>
+              <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.3)' }}>Updates as you type</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <button
                 onClick={handlePrint}
-                className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
+                style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.1)' }}
               >
                 <Printer className="w-3 h-3" /> Print
               </button>
               <button
                 onClick={downloadPDF}
                 disabled={isGenerating}
-                className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 rounded-lg transition shadow-sm"
+                className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white rounded-lg transition shadow-lg disabled:opacity-60"
+                style={{ background: 'linear-gradient(135deg,#818cf8,#6366f1)', boxShadow: '0 4px 16px rgba(99,102,241,0.4)' }}
               >
                 {isGenerating
                   ? <><Loader2 className="w-3 h-3 animate-spin" /> Generating…</>
@@ -968,12 +968,13 @@ export default function InvoiceCreator() {
           </div>
 
           {/* Scrollable preview area */}
-          <div className="flex-1 overflow-y-auto flex justify-center items-start py-6 px-6">
+          <div className="flex-1 overflow-y-auto flex justify-center items-start py-8 px-4">
             <div
-              className="shadow-2xl shadow-black/25 rounded-sm bg-white overflow-hidden"
+              className="rounded-xl overflow-hidden"
               style={{
                 width: `${794 * previewScale}px`,
                 minHeight: `${1122 * previewScale}px`,
+                boxShadow: '0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)',
               }}
             >
               <div style={{ transform: `scale(${previewScale})`, transformOrigin: 'top left', width: 794, pointerEvents: 'none' }}>
@@ -983,11 +984,12 @@ export default function InvoiceCreator() {
           </div>
 
           {/* Preview footer bar */}
-          <div className="px-4 py-2 bg-white border-t border-gray-200 flex items-center justify-between shrink-0">
-            <span className="text-[10px] text-gray-400">A4 format · {Math.round(previewScale * 100)}% zoom</span>
+          <div className="px-4 py-2.5 flex items-center justify-between shrink-0" style={{ background: 'rgba(255,255,255,0.04)', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+            <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>A4 format · {Math.round(previewScale * 100)}% zoom</span>
             <button
               onClick={() => { if (confirm('Reset the form? All data will be lost.')) { setData(defaultData()); toast.success('Form reset!') } }}
-              className="flex items-center gap-1 text-[10px] text-gray-400 hover:text-red-500 transition"
+              className="flex items-center gap-1 text-[10px] transition"
+              style={{ color: 'rgba(255,255,255,0.3)' }}
             >
               <RotateCcw className="w-3 h-3" /> Reset
             </button>
@@ -995,10 +997,10 @@ export default function InvoiceCreator() {
         </div>
       </div>
 
-      <footer className="print:hidden" style={{ borderTop: '1px solid rgba(99,102,241,0.1)', background: 'rgba(255,255,255,0.7)' }}>
+      <footer className="print:hidden" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: 'rgba(10,8,30,0.5)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-center">
-          <p className="text-xs text-gray-400 text-center">
-            &copy; 2019&ndash;{new Date().getFullYear()} <span className="font-semibold text-gray-500">invoice-gen.net</span>. All rights reserved.
+          <p className="text-xs text-center" style={{ color: 'rgba(255,255,255,0.25)' }}>
+            &copy; 2019&ndash;{new Date().getFullYear()} <span className="font-semibold" style={{ color: 'rgba(255,255,255,0.4)' }}>invoice-gen.net</span>. All rights reserved.
           </p>
         </div>
       </footer>
@@ -1189,16 +1191,16 @@ export default function InvoiceCreator() {
 
       {/* ── MOBILE STICKY BOTTOM BAR ── */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 print:hidden">
-        <div className="bg-white/95 backdrop-blur-xl border-t border-gray-200 px-3 pt-2.5 flex gap-2 shadow-[0_-8px_30px_rgba(0,0,0,0.1)]"
-          style={{ paddingBottom: 'calc(0.625rem + env(safe-area-inset-bottom, 0px))' }}
+        <div className="flex gap-2 px-3 pt-2.5"
+          style={{ background: 'rgba(15,12,41,0.92)', backdropFilter: 'blur(28px)', WebkitBackdropFilter: 'blur(28px)', borderTop: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 -8px 40px rgba(0,0,0,0.5)', paddingBottom: 'calc(0.625rem + env(safe-area-inset-bottom, 0px))' }}
         >
           {/* Preview toggle */}
           <button
             onClick={() => setShowMobilePreview(p => !p)}
             className="flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-semibold rounded-2xl transition shrink-0 min-w-[60px] min-h-[54px]"
             style={showMobilePreview
-              ? { background: '#eef2ff', color: '#6366f1' }
-              : { background: '#f3f4f6', color: '#4b5563' }}
+              ? { background: 'rgba(99,102,241,0.3)', color: '#a5b4fc', border: '1px solid rgba(165,180,252,0.3)' }
+              : { background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}
           >
             {showMobilePreview ? <EyeOff className="w-4.5 h-4.5" style={{width:18,height:18}} /> : <Eye className="w-4.5 h-4.5" style={{width:18,height:18}} />}
             <span>{showMobilePreview ? 'Form' : 'Preview'}</span>
@@ -1206,7 +1208,8 @@ export default function InvoiceCreator() {
           {/* Print */}
           <button
             onClick={handlePrint}
-            className="flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 active:scale-95 rounded-2xl transition shrink-0 min-w-[54px] min-h-[54px]"
+            className="flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-semibold rounded-2xl transition shrink-0 min-w-[54px] min-h-[54px]"
+            style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}
           >
             <Printer className="w-4.5 h-4.5" style={{width:18,height:18}} />
             <span>Print</span>
@@ -1216,7 +1219,7 @@ export default function InvoiceCreator() {
             onClick={downloadPDF}
             disabled={isGenerating}
             className="flex-1 flex items-center justify-center gap-2 text-sm font-bold text-white rounded-2xl active:scale-[0.97] transition-all disabled:opacity-60 min-h-[54px]"
-            style={{ background: `linear-gradient(135deg, ${data.brandColor}, ${data.brandColor}cc)`, boxShadow: `0 4px 20px ${data.brandColor}44` }}
+            style={{ background: `linear-gradient(135deg,#818cf8,${data.brandColor})`, boxShadow: `0 4px 24px ${data.brandColor}66` }}
           >
             {isGenerating
               ? <><Loader2 className="w-5 h-5 animate-spin" /> Generating…</>
