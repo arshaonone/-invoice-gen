@@ -34,11 +34,19 @@ export interface InvoiceData {
   senderEmail: string
   senderPhone: string
   senderAddress: string
+  senderWebsite: string
+  senderTaxId: string
+  senderBankName: string
+  senderAccountNumber: string
+  senderSwift: string
   clientName: string
   clientAddress: string
   clientCompany: string
   clientEmail: string
   clientPhone: string
+  clientWebsite: string
+  clientTaxId: string
+  clientContactPerson: string
   invoiceDate: string
   paymentTerms: string
   dueDate: string
@@ -68,7 +76,7 @@ const defaultItem = (isInitial = false): InvoiceItem => ({
 
 const defaultData = (): InvoiceData => ({
   invoiceNumber: '1',
-  brandColor: '#1a73e8',
+  brandColor: '#6366f1',
   currency: 'USD',
   language: 'en',
   senderInfo: '',
@@ -77,11 +85,19 @@ const defaultData = (): InvoiceData => ({
   senderEmail: '',
   senderPhone: '',
   senderAddress: '',
+  senderWebsite: '',
+  senderTaxId: '',
+  senderBankName: '',
+  senderAccountNumber: '',
+  senderSwift: '',
   clientName: '',
   clientAddress: '',
   clientCompany: '',
   clientEmail: '',
   clientPhone: '',
+  clientWebsite: '',
+  clientTaxId: '',
+  clientContactPerson: '',
   invoiceDate: '',
   paymentTerms: '',
   dueDate: '',
@@ -107,11 +123,12 @@ function calcAll(items: InvoiceItem[], discount: number, taxRate: number, shippi
 }
 
 const inputBase =
-  'w-full bg-white border border-gray-200 rounded-xl px-3 py-3 sm:px-4 sm:py-3.5 text-[15px] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-300 shadow-sm min-h-[48px]'
+  'w-full bg-white border border-gray-200 rounded-xl px-3.5 py-3 text-[14px] text-gray-800 placeholder-gray-400 focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 shadow-sm hover:border-gray-300 min-h-[46px]'
 
-// Date-specific input: restores native picker on all browsers/mobile
 const dateInputClass =
-  'w-full bg-white border border-gray-200 rounded-xl px-3 py-3 sm:px-4 sm:py-3.5 text-[15px] text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-300 shadow-sm min-h-[48px] cursor-pointer'
+  'w-full bg-white border border-gray-200 rounded-xl px-3.5 py-3 text-[14px] text-gray-800 focus:outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 shadow-sm hover:border-gray-300 min-h-[46px] cursor-pointer'
+
+const labelBase = 'block text-[11px] font-bold text-gray-500 mb-1.5 uppercase tracking-widest'
 
 function cls(...parts: (string | undefined | false)[]) {
   return parts.filter(Boolean).join(' ')
@@ -447,211 +464,169 @@ export default function InvoiceCreator() {
         <div className={`w-full lg:w-[58%] lg:border-r border-gray-200 ${showMobilePreview ? 'hidden lg:block' : 'block'}`}>
           <div className="w-full px-4 sm:px-8 py-5 sm:py-7 pb-28 lg:pb-12 space-y-5">
 
-            {/* ── CARD: Branding & Header ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5 sm:p-6">
-              <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: data.brandColor }}>
-                  <Building2 className="w-4 h-4 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Sender / Company</h3>
-                  <p className="text-[11px] text-gray-400 mt-0.5">Your business details & invoice branding</p>
-                </div>
-              </div>
-              <div className="flex items-start justify-between gap-4 mb-5">
-
-                {/* Logo */}
-                <div>
-                  {data.senderLogo ? (
-                    <div className="relative group inline-block">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={data.senderLogo}
-                        alt="Logo"
-                        className="h-14 w-28 sm:h-20 sm:w-44 object-contain border-2 border-dashed border-gray-200 rounded-xl p-1"
-                      />
-                      <button
-                        onClick={() => set('senderLogo', '')}
-                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-400 hover:bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow"
-                      >×</button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => logoInputRef.current?.click()}
-                      className="h-14 w-28 sm:h-20 sm:w-44 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center gap-1 text-gray-400 hover:border-blue-400 hover:text-blue-400 hover:bg-blue-50 active:bg-blue-50 transition"
-                    >
-                      <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span className="text-xs font-medium">Add Logo</span>
-                    </button>
-                  )}
-                  <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogo} />
-                </div>
-
-                {/* INVOICE title */}
-                <div className="flex flex-col items-end gap-2">
-                  <h2 className="text-2xl sm:text-4xl font-black tracking-widest uppercase" style={{ color: data.brandColor }}>
-                    INVOICE
-                  </h2>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm text-gray-400">#</span>
-                    <input
-                      value={data.invoiceNumber}
-                      onChange={e => set('invoiceNumber', e.target.value)}
-                      className="w-20 sm:w-24 border border-gray-200 rounded-lg px-2 py-2 text-sm text-right font-semibold focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition min-h-[40px]"
-                      placeholder="1"
-                    />
-                    <button
-                      onClick={() => set('invoiceNumber', String(Math.floor(Math.random() * 9000) + 1000))}
-                      title="Auto-generate"
-                      className="text-gray-300 hover:text-blue-500 transition p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center"
-                    >
-                      <RefreshCw className="w-3.5 h-3.5" />
-                    </button>
+            {/* ── CARD: Sender / Company ── */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_4px_24px_rgba(99,102,241,0.08)] overflow-hidden">
+              {/* Card header stripe */}
+              <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg,#6366f1,#8b5cf6,#06b6d4)' }} />
+              <div className="p-5 sm:p-6">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-md" style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
+                    <Building2 className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-wider">Your Business</h3>
+                    <p className="text-[11px] text-gray-400 mt-0.5">Sender details &amp; invoice branding</p>
                   </div>
                 </div>
-              </div>
 
-              {/* Company Name */}
-              <div className="mb-3">
-                <label className="flex items-center gap-1.5 text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Company Name</label>
-                <input
-                  value={data.senderName}
-                  onChange={e => set('senderName', e.target.value)}
-                  placeholder="Your Company / Business Name"
-                  className={inputBase}
-                />
-              </div>
+                {/* Logo + Invoice title row */}
+                <div className="flex items-start justify-between gap-4 mb-5">
+                  <div>
+                    {data.senderLogo ? (
+                      <div className="relative group inline-block">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={data.senderLogo} alt="Logo" className="h-16 w-32 sm:h-20 sm:w-44 object-contain border-2 border-dashed border-indigo-100 rounded-xl p-1.5 bg-gray-50" />
+                        <button onClick={() => set('senderLogo', '')} className="absolute -top-2 -right-2 w-6 h-6 bg-red-400 hover:bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow">×</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => logoInputRef.current?.click()}
+                        className="h-16 w-32 sm:h-20 sm:w-44 border-2 border-dashed border-indigo-200 rounded-xl flex flex-col items-center justify-center gap-1.5 text-indigo-300 hover:border-indigo-400 hover:text-indigo-500 hover:bg-indigo-50 active:bg-indigo-50 transition-all">
+                        <Upload className="w-5 h-5" />
+                        <span className="text-xs font-semibold">Upload Logo</span>
+                        <span className="text-[10px] text-indigo-200">PNG, JPG, SVG</span>
+                      </button>
+                    )}
+                    <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogo} />
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <h2 className="text-2xl sm:text-4xl font-black tracking-widest uppercase" style={{ color: data.brandColor }}>INVOICE</h2>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm text-gray-400 font-bold">#</span>
+                      <input value={data.invoiceNumber} onChange={e => set('invoiceNumber', e.target.value)}
+                        className="w-20 sm:w-24 border border-gray-200 rounded-lg px-2 py-2 text-sm text-right font-bold focus:outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 transition min-h-[40px] bg-gray-50"
+                        placeholder="001" />
+                      <button onClick={() => set('invoiceNumber', String(Math.floor(Math.random() * 9000) + 1000))} title="Auto-generate" className="text-gray-300 hover:text-indigo-500 transition p-1.5 min-w-[32px] min-h-[32px] flex items-center justify-center rounded-lg hover:bg-indigo-50">
+                        <RefreshCw className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
-              {/* Sender structured fields */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Your Name / Contact</label>
-                  <input
-                    value={data.senderInfo}
-                    onChange={e => set('senderInfo', e.target.value)}
-                    placeholder="e.g., John Doe"
-                    className={inputBase}
-                  />
+                {/* Company Name */}
+                <div className="mb-3">
+                  <label className={labelBase}>Company / Business Name</label>
+                  <input value={data.senderName} onChange={e => set('senderName', e.target.value)} placeholder="e.g., Acme Corp Ltd." className={cls(inputBase, 'font-semibold')} />
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Email</label>
-                  <input
-                    type="email"
-                    value={data.senderEmail}
-                    onChange={e => set('senderEmail', e.target.value)}
-                    placeholder="your@email.com"
-                    className={inputBase}
-                  />
+
+                {/* Row 1 */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                  <div><label className={labelBase}>Your Name / Contact</label>
+                    <input value={data.senderInfo} onChange={e => set('senderInfo', e.target.value)} placeholder="e.g., John Doe" className={inputBase} /></div>
+                  <div><label className={labelBase}>Email Address</label>
+                    <input type="email" value={data.senderEmail} onChange={e => set('senderEmail', e.target.value)} placeholder="hello@company.com" className={inputBase} /></div>
+                  <div><label className={labelBase}>Phone Number</label>
+                    <input value={data.senderPhone} onChange={e => set('senderPhone', e.target.value)} placeholder="+1 555 000 0000" className={inputBase} /></div>
+                  <div><label className={labelBase}>Website</label>
+                    <input type="url" value={data.senderWebsite} onChange={e => set('senderWebsite', e.target.value)} placeholder="https://company.com" className={inputBase} /></div>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Phone</label>
-                  <input
-                    value={data.senderPhone}
-                    onChange={e => set('senderPhone', e.target.value)}
-                    placeholder="+1 555 000 0000"
-                    className={inputBase}
-                  />
+
+                {/* Address */}
+                <div className="mb-3">
+                  <label className={labelBase}>Business Address</label>
+                  <input value={data.senderAddress} onChange={e => set('senderAddress', e.target.value)} placeholder="Street, City, State, Country" className={inputBase} />
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Address</label>
-                  <input
-                    value={data.senderAddress}
-                    onChange={e => set('senderAddress', e.target.value)}
-                    placeholder="Street, City, Country"
-                    className={inputBase}
-                  />
+
+                {/* Tax ID */}
+                <div className="mb-4">
+                  <label className={labelBase}>Tax ID / VAT Number <span className="normal-case text-gray-400 font-normal tracking-normal">(optional)</span></label>
+                  <input value={data.senderTaxId} onChange={e => set('senderTaxId', e.target.value)} placeholder="e.g., VAT GB123456789" className={inputBase} />
+                </div>
+
+                {/* Bank Details divider */}
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex-1 h-px bg-gray-100" />
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-gray-400">Bank / Payment Details</span>
+                  <div className="flex-1 h-px bg-gray-100" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div><label className={labelBase}>Bank Name</label>
+                    <input value={data.senderBankName} onChange={e => set('senderBankName', e.target.value)} placeholder="e.g., Chase Bank" className={inputBase} /></div>
+                  <div><label className={labelBase}>Account / IBAN</label>
+                    <input value={data.senderAccountNumber} onChange={e => set('senderAccountNumber', e.target.value)} placeholder="e.g., GB29 NWBK 6016 1331" className={inputBase} /></div>
+                  <div><label className={labelBase}>SWIFT / Routing Code</label>
+                    <input value={data.senderSwift} onChange={e => set('senderSwift', e.target.value)} placeholder="e.g., CHASUS33" className={inputBase} /></div>
                 </div>
               </div>
             </div>
 
             {/* ── CARD: Client Details ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5 sm:p-6 space-y-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shrink-0">
-                  <User className="w-4 h-4 text-white" />
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_4px_24px_rgba(16,185,129,0.08)] overflow-hidden">
+              <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg,#10b981,#06b6d4,#3b82f6)' }} />
+              <div className="p-5 sm:p-6 space-y-3">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center shrink-0 shadow-md">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-wider">Bill To / Client</h3>
+                    <p className="text-[11px] text-gray-400 mt-0.5">Customer receiving this invoice</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Billed To / Payer</h3>
-                  <p className="text-[11px] text-gray-400 mt-0.5">Client or customer receiving this invoice</p>
+                <div><label className={labelBase}>Client / Company Name</label>
+                  <input value={data.clientName} onChange={e => set('clientName', e.target.value)} placeholder="Client or Company Name" className={cls(inputBase, 'font-semibold')} /></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div><label className={labelBase}>Contact Person</label>
+                    <input value={data.clientContactPerson || ''} onChange={e => set('clientContactPerson', e.target.value)} placeholder="e.g., Jane Smith" className={inputBase} /></div>
+                  <div><label className={labelBase}>Email Address</label>
+                    <input type="email" value={data.clientEmail || ''} onChange={e => set('clientEmail', e.target.value)} placeholder="client@email.com" className={inputBase} /></div>
+                  <div><label className={labelBase}>Phone Number</label>
+                    <input value={data.clientPhone || ''} onChange={e => set('clientPhone', e.target.value)} placeholder="+1 555 000 0000" className={inputBase} /></div>
+                  <div><label className={labelBase}>Website</label>
+                    <input type="url" value={data.clientWebsite || ''} onChange={e => set('clientWebsite', e.target.value)} placeholder="https://client.com" className={inputBase} /></div>
                 </div>
+                <div><label className={labelBase}>Client Address</label>
+                  <textarea value={data.clientAddress} onChange={e => set('clientAddress', e.target.value)} placeholder="Street, City, State, Country" rows={2} className={cls(inputBase, 'resize-none')} /></div>
+                <div><label className={labelBase}>Tax ID / VAT <span className="normal-case text-gray-400 font-normal tracking-normal">(optional)</span></label>
+                  <input value={data.clientTaxId || ''} onChange={e => set('clientTaxId', e.target.value)} placeholder="e.g., VAT US987654321" className={inputBase} /></div>
               </div>
-              <input
-                value={data.clientName}
-                onChange={e => set('clientName', e.target.value)}
-                placeholder="Client / Company Name"
-                className={cls(inputBase, 'font-semibold')}
-              />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <input
-                  value={data.clientPhone || ''}
-                  onChange={e => set('clientPhone', e.target.value)}
-                  placeholder="Phone Number"
-                  className={inputBase}
-                />
-                <input
-                  value={data.clientEmail || ''}
-                  onChange={e => set('clientEmail', e.target.value)}
-                  placeholder="Email Address"
-                  className={inputBase}
-                />
-              </div>
-              <textarea
-                value={data.clientAddress}
-                onChange={e => set('clientAddress', e.target.value)}
-                placeholder="Client Address (Street, City, Country)"
-                rows={2}
-                className={cls(inputBase, 'resize-none')}
-              />
             </div>
 
-            {/* ── CARD: Invoice Dates & Meta ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5 sm:p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg,#6366f1,#4f46e5)' }} />
-                <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider">Invoice Details</h3>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Invoice Date */}
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Invoice Date</label>
-                  <input
-                    type="date"
-                    value={data.invoiceDate}
-                    onChange={e => set('invoiceDate', e.target.value)}
-                    className={dateInputClass}
-                  />
+            {/* ── CARD: Invoice Details ── */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_4px_24px_rgba(99,102,241,0.07)] overflow-hidden">
+              <div className="h-1 w-full" style={{ background: 'linear-gradient(90deg,#f59e0b,#ef4444,#8b5cf6)' }} />
+              <div className="p-5 sm:p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1.5 h-6 rounded-full" style={{ background: 'linear-gradient(180deg,#6366f1,#4f46e5)' }} />
+                  <h3 className="text-sm font-extrabold text-gray-900 uppercase tracking-wider">Invoice Details</h3>
                 </div>
-                {/* Due Date */}
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Due Date</label>
-                  <input
-                    type="date"
-                    value={data.dueDate}
-                    onChange={e => set('dueDate', e.target.value)}
-                    className={dateInputClass}
-                  />
-                </div>
-                {/* Payment Terms */}
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Payment Terms</label>
-                  <input
-                    type="text"
-                    value={data.paymentTerms}
-                    onChange={e => set('paymentTerms', e.target.value)}
-                    placeholder="e.g. Net 30"
-                    className={inputBase}
-                  />
-                </div>
-                {/* PO Number */}
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">PO Number</label>
-                  <input
-                    type="text"
-                    value={data.poNumber}
-                    onChange={e => set('poNumber', e.target.value)}
-                    placeholder="PO-0001"
-                    className={inputBase}
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className={labelBase}>Invoice Date</label>
+                    <input type="date" value={data.invoiceDate} onChange={e => set('invoiceDate', e.target.value)} className={dateInputClass} />
+                  </div>
+                  <div>
+                    <label className={labelBase}>Due Date</label>
+                    <input type="date" value={data.dueDate} onChange={e => set('dueDate', e.target.value)} className={dateInputClass} />
+                  </div>
+                  <div>
+                    <label className={labelBase}>Payment Terms</label>
+                    <div className="flex gap-1.5 mb-2 flex-wrap">
+                      {['Net 15','Net 30','Net 45','Net 60'].map(t => (
+                        <button key={t} onClick={() => set('paymentTerms', t)}
+                          className="text-[11px] font-bold px-2.5 py-1 rounded-lg border transition-all"
+                          style={data.paymentTerms === t
+                            ? { background: '#6366f1', color: '#fff', borderColor: '#6366f1' }
+                            : { background: '#f8f9ff', color: '#6366f1', borderColor: '#e0e7ff' }}>
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                    <input type="text" value={data.paymentTerms} onChange={e => set('paymentTerms', e.target.value)} placeholder="Custom terms…" className={inputBase} />
+                  </div>
+                  <div>
+                    <label className={labelBase}>PO Number</label>
+                    <input type="text" value={data.poNumber} onChange={e => set('poNumber', e.target.value)} placeholder="e.g. PO-0001" className={inputBase} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1385,10 +1360,13 @@ function PrintableInvoice({ data }: { data: InvoiceData }) {
             </div>
             <div style={{ fontSize: 13, color: '#333', lineHeight: 1.75 }}>
               {data.clientName && <div style={{ fontWeight: 700, color: '#111' }}>{data.clientName}</div>}
+              {data.clientContactPerson && <div style={{ color: '#555' }}>{data.clientContactPerson}</div>}
               {data.clientCompany && <div>{data.clientCompany}</div>}
               {data.clientAddress && <div style={{ color: '#555' }}>{ml(data.clientAddress)}</div>}
               {data.clientPhone && <div style={{ color: '#555' }}>{data.clientPhone}</div>}
               {data.clientEmail && <div style={{ color: '#555' }}>{data.clientEmail}</div>}
+              {data.clientWebsite && <div style={{ color: '#555' }}>{data.clientWebsite}</div>}
+              {data.clientTaxId && <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>Tax ID: {data.clientTaxId}</div>}
             </div>
           </div>
           <div style={{ width: 1, background: '#ddd' }} />
@@ -1400,14 +1378,13 @@ function PrintableInvoice({ data }: { data: InvoiceData }) {
               <span style={{ fontSize: 11, fontWeight: 800, color: brand, letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: '28px' }}>Pay To</span>
             </div>
             <div style={{ fontSize: 13, color: '#333', lineHeight: 1.75 }}>
-              {data.senderInfo ? ml(data.senderInfo) : (
-                <>
-                  {data.senderName && <div style={{ fontWeight: 700, color: '#111' }}>{data.senderName}</div>}
-                  {data.senderAddress && <div style={{ color: '#555' }}>{ml(data.senderAddress)}</div>}
-                  {data.senderPhone && <div style={{ color: '#555' }}>{data.senderPhone}</div>}
-                  {data.senderEmail && <div style={{ color: '#555' }}>{data.senderEmail}</div>}
-                </>
-              )}
+              {data.senderName && <div style={{ fontWeight: 700, color: '#111' }}>{data.senderName}</div>}
+              {data.senderInfo && <div style={{ color: '#555' }}>{data.senderInfo}</div>}
+              {data.senderAddress && <div style={{ color: '#555' }}>{ml(data.senderAddress)}</div>}
+              {data.senderPhone && <div style={{ color: '#555' }}>{data.senderPhone}</div>}
+              {data.senderEmail && <div style={{ color: '#555' }}>{data.senderEmail}</div>}
+              {data.senderWebsite && <div style={{ color: '#555' }}>{data.senderWebsite}</div>}
+              {data.senderTaxId && <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>Tax ID: {data.senderTaxId}</div>}
             </div>
           </div>
         </div>
@@ -1502,7 +1479,7 @@ function PrintableInvoice({ data }: { data: InvoiceData }) {
 
           {/* PAYMENT INFORMATION */}
           <div style={{ flex: 1 }}>
-            {(data.paymentTerms || data.footerNote) && (
+            {(data.paymentTerms || data.footerNote || data.senderBankName || data.senderAccountNumber) && (
               <div style={{ background: brandLight, borderRadius: 8, padding: '14px 16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 10 }}>
                   <div style={{ width: 28, height: 28, borderRadius: '50%', background: brand, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -1510,7 +1487,10 @@ function PrintableInvoice({ data }: { data: InvoiceData }) {
                   </div>
                   <span style={{ fontSize: 11, fontWeight: 800, color: brand, letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: '28px' }}>Payment Information</span>
                 </div>
-                {data.paymentTerms && <div style={{ fontSize: 11, color: '#444', lineHeight: 1.75 }}>{ml(data.paymentTerms)}</div>}
+                {data.paymentTerms && <div style={{ fontSize: 11, color: '#444', lineHeight: 1.75, marginBottom: 4 }}><strong>Terms:</strong> {data.paymentTerms}</div>}
+                {data.senderBankName && <div style={{ fontSize: 11, color: '#444', lineHeight: 1.75 }}><strong>Bank:</strong> {data.senderBankName}</div>}
+                {data.senderAccountNumber && <div style={{ fontSize: 11, color: '#444', lineHeight: 1.75 }}><strong>Account/IBAN:</strong> {data.senderAccountNumber}</div>}
+                {data.senderSwift && <div style={{ fontSize: 11, color: '#444', lineHeight: 1.75 }}><strong>SWIFT:</strong> {data.senderSwift}</div>}
                 {data.footerNote && <div style={{ fontSize: 11, color: '#444', lineHeight: 1.75, marginTop: 6 }}>{ml(data.footerNote)}</div>}
               </div>
             )}

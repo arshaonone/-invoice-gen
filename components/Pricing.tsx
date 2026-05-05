@@ -181,12 +181,12 @@ export default function Pricing({ onClose, compact = false }: PricingProps) {
 
       {/* Pricing Cards */}
       <div className="max-w-6xl mx-auto px-4 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
           {tiers.map((tier) => (
             <div
               key={tier.id}
               className={`relative bg-white rounded-2xl border-2 ${tier.borderColor} p-6 flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
-                tier.popular ? 'shadow-2xl shadow-indigo-100 ring-2 ring-indigo-500/20 scale-[1.02]' : 'shadow-sm'
+                tier.popular ? 'shadow-2xl shadow-indigo-200 ring-2 ring-indigo-500/30' : 'shadow-sm'
               }`}
             >
               {/* Popular badge */}
