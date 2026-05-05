@@ -109,6 +109,10 @@ function calcAll(items: InvoiceItem[], discount: number, taxRate: number, shippi
 const inputBase =
   'w-full bg-white border border-gray-200 rounded-xl px-3 py-3 sm:px-4 sm:py-3.5 text-[15px] text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-300 shadow-sm min-h-[48px]'
 
+// Date-specific input: restores native picker on all browsers/mobile
+const dateInputClass =
+  'w-full bg-white border border-gray-200 rounded-xl px-3 py-3 sm:px-4 sm:py-3.5 text-[15px] text-gray-900 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all duration-300 shadow-sm min-h-[48px] cursor-pointer'
+
 function cls(...parts: (string | undefined | false)[]) {
   return parts.filter(Boolean).join(' ')
 }
@@ -405,31 +409,31 @@ export default function InvoiceCreator() {
 
       {/* ── SETTINGS PANEL ── */}
       {showSettings && (
-        <div className="print:hidden" style={{ background: 'rgba(249,250,255,0.95)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(99,102,241,0.1)' }}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap gap-4 items-center">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#6366f1' }}>⚙ Settings</span>
+        <div className="print:hidden" style={{ background: 'rgba(249,250,255,0.97)', backdropFilter: 'blur(10px)', borderBottom: '1px solid rgba(99,102,241,0.1)' }}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap gap-x-5 gap-y-3 items-center">
+            <span className="text-xs font-bold uppercase tracking-widest w-full sm:w-auto" style={{ color: '#6366f1' }}>⚙ Settings</span>
             <label className="flex items-center gap-2 text-xs text-gray-600">
               <span className="font-semibold text-gray-700">Currency</span>
               <div className="relative">
                 <select value={data.currency} onChange={e => set('currency', e.target.value)}
-                  className="text-xs border rounded-xl px-2.5 py-1.5 pr-7 bg-white text-gray-700 focus:outline-none appearance-none cursor-pointer"
+                  className="text-sm border rounded-xl px-3 py-2 pr-8 bg-white text-gray-700 focus:outline-none appearance-none cursor-pointer min-h-[40px]"
                   style={{ borderColor: 'rgba(99,102,241,0.3)' }}
                 >
                   {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} – {c.symbol}</option>)}
                 </select>
-                <ChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-400 pointer-events-none" />
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
               </div>
             </label>
             <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
               <span className="font-semibold text-gray-700">Brand Color</span>
               <input type="color" value={data.brandColor} onChange={e => set('brandColor', e.target.value)}
-                className="w-8 h-8 rounded-xl cursor-pointer border-2 p-0.5 bg-white"
+                className="w-10 h-10 rounded-xl cursor-pointer border-2 p-0.5 bg-white"
                 style={{ borderColor: 'rgba(99,102,241,0.3)' }}
               />
               <span className="font-mono text-indigo-400 text-[11px]">{data.brandColor}</span>
             </label>
-            <button onClick={() => setShowSettings(false)} className="ml-auto text-xs text-gray-400 hover:text-red-500 flex items-center gap-1 transition">
-              <X className="w-3.5 h-3.5" /> Close
+            <button onClick={() => setShowSettings(false)} className="ml-auto text-xs text-gray-400 hover:text-red-500 flex items-center gap-1.5 transition min-h-[36px] px-2">
+              <X className="w-4 h-4" /> Close
             </button>
           </div>
         </div>
@@ -437,14 +441,14 @@ export default function InvoiceCreator() {
 
 
       {/* ── MAIN: TWO-COLUMN LAYOUT ── */}
-      <div className="flex print:hidden flex-col lg:flex-row items-start" style={{ minHeight: 'calc(100vh - 56px)' }}>
+      <div className="flex print:hidden flex-col lg:flex-row items-start" style={{ minHeight: 'calc(100vh - 64px)' }}>
 
         {/* ═══════════ LEFT PANEL: FORM ═══════════ */}
         <div className={`w-full lg:w-[58%] lg:border-r border-gray-200 ${showMobilePreview ? 'hidden lg:block' : 'block'}`}>
-          <div className="max-w-2xl mx-auto px-3 sm:px-6 py-4 sm:py-6 pb-28 lg:pb-10 space-y-6">
+          <div className="w-full px-4 sm:px-8 py-5 sm:py-7 pb-28 lg:pb-12 space-y-5">
 
             {/* ── CARD: Branding & Header ── */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5 sm:p-6">
               <div className="flex items-center gap-2.5 mb-4">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: data.brandColor }}>
                   <Building2 className="w-4 h-4 text-white" />
@@ -561,7 +565,7 @@ export default function InvoiceCreator() {
             </div>
 
             {/* ── CARD: Client Details ── */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6 space-y-4">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5 sm:p-6 space-y-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center shrink-0">
                   <User className="w-4 h-4 text-white" />
@@ -601,36 +605,66 @@ export default function InvoiceCreator() {
             </div>
 
             {/* ── CARD: Invoice Dates & Meta ── */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 sm:p-6">
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Invoice Details</h3>
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] p-5 sm:p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg,#6366f1,#4f46e5)' }} />
+                <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider">Invoice Details</h3>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  { label: 'Invoice Date',   key: 'invoiceDate',  type: 'date' },
-                  { label: 'Due Date',       key: 'dueDate',      type: 'date' },
-                  { label: 'Payment Terms',  key: 'paymentTerms', type: 'text', placeholder: 'e.g. Net 30' },
-                  { label: 'PO Number',      key: 'poNumber',     type: 'text', placeholder: 'PO-0001' },
-                ].map(({ label, key, type, placeholder }) => (
-                  <div key={key}>
-                    <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">{label}</label>
-                    <input
-                      type={type}
-                      value={(data as any)[key]}
-                      onChange={e => set(key as keyof InvoiceData, e.target.value)}
-                      placeholder={placeholder ?? label}
-                      className={inputBase}
-                    />
-                  </div>
-                ))}
+                {/* Invoice Date */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Invoice Date</label>
+                  <input
+                    type="date"
+                    value={data.invoiceDate}
+                    onChange={e => set('invoiceDate', e.target.value)}
+                    className={dateInputClass}
+                    style={{ colorScheme: 'light', WebkitAppearance: 'auto', appearance: 'auto' } as React.CSSProperties}
+                  />
+                </div>
+                {/* Due Date */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Due Date</label>
+                  <input
+                    type="date"
+                    value={data.dueDate}
+                    onChange={e => set('dueDate', e.target.value)}
+                    className={dateInputClass}
+                    style={{ colorScheme: 'light', WebkitAppearance: 'auto', appearance: 'auto' } as React.CSSProperties}
+                  />
+                </div>
+                {/* Payment Terms */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Payment Terms</label>
+                  <input
+                    type="text"
+                    value={data.paymentTerms}
+                    onChange={e => set('paymentTerms', e.target.value)}
+                    placeholder="e.g. Net 30"
+                    className={inputBase}
+                  />
+                </div>
+                {/* PO Number */}
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">PO Number</label>
+                  <input
+                    type="text"
+                    value={data.poNumber}
+                    onChange={e => set('poNumber', e.target.value)}
+                    placeholder="PO-0001"
+                    className={inputBase}
+                  />
+                </div>
               </div>
             </div>
 
             {/* ── CARD: LINE ITEMS ── */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] overflow-hidden">
 
               {/* Desktop table header */}
               <div
-                className="hidden sm:grid gap-2 px-8 py-3 text-xs font-bold uppercase tracking-wider text-white"
-                style={{ background: '#1a1a2e', gridTemplateColumns: '1fr 80px 100px 100px 44px' }}
+                className="hidden sm:grid gap-2 px-6 py-3 text-xs font-bold uppercase tracking-wider text-white"
+                style={{ background: 'linear-gradient(90deg,#1e1b4b,#312e81)', gridTemplateColumns: '1fr 80px 100px 100px 44px' }}
               >
                 <div>Item</div>
                 <div className="text-center">Qty</div>
@@ -640,7 +674,7 @@ export default function InvoiceCreator() {
               </div>
 
               {/* Mobile section label */}
-              <div className="sm:hidden px-4 py-3 text-xs font-bold uppercase tracking-wider text-white flex items-center justify-between" style={{ background: '#1a1a2e' }}>
+              <div className="sm:hidden px-4 py-3 text-xs font-bold uppercase tracking-wider text-white flex items-center justify-between" style={{ background: 'linear-gradient(90deg,#1e1b4b,#312e81)' }}>
                 <span>Line Items</span>
                 <span className="text-white/50 text-[10px] normal-case tracking-normal font-normal">{data.items.length} item{data.items.length !== 1 ? 's' : ''}</span>
               </div>
@@ -784,8 +818,8 @@ export default function InvoiceCreator() {
             </div>
 
             {/* ── CARD: NOTES + TOTALS ── */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200">
-              <div className="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
+              <div className="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <div className="space-y-5">
                   <div>
@@ -821,7 +855,7 @@ export default function InvoiceCreator() {
                 </div>
 
                 {/* Totals */}
-                <div className="bg-gray-50 rounded-xl p-4 space-y-1">
+                <div className="rounded-2xl p-5 space-y-1" style={{ background: 'linear-gradient(145deg,#f8faff,#f0f4ff)', border: '1px solid rgba(99,102,241,0.12)' }}>
                   {/* Subtotal */}
                   <div className="flex justify-between items-center py-2 border-b border-gray-200">
                     <span className="text-sm text-gray-600 font-medium">Subtotal</span>
@@ -911,15 +945,7 @@ export default function InvoiceCreator() {
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="px-4 sm:px-8 py-4 border-t border-gray-100 bg-gray-50/60">
-              <input
-                value={data.footerNote}
-                onChange={e => set('footerNote', e.target.value)}
-                placeholder="Thank you for your business!"
-                className="w-full text-sm text-center text-gray-400 border-0 border-b border-dashed border-gray-300 focus:outline-none focus:border-blue-400 bg-transparent py-1"
-              />
-            </div>
+            {/* Remove duplicate footerNote field at bottom */}
 
           </div>{/* end invoice card / space-y-6 cards container */}
 
@@ -936,8 +962,8 @@ export default function InvoiceCreator() {
         {/* ═══════════ RIGHT PANEL: LIVE PREVIEW ═══════════ */}
         <div
           ref={previewPanelRef}
-          className={`flex-col sticky bg-slate-200 w-full lg:w-[42%] ${showMobilePreview ? 'flex' : 'hidden lg:flex'}`}
-          style={{ top: 64, height: 'calc(100vh - 64px)' }}
+          className={`flex-col sticky w-full lg:w-[42%] ${showMobilePreview ? 'flex' : 'hidden lg:flex'}`}
+          style={{ top: 64, height: 'calc(100vh - 64px)', background: 'linear-gradient(145deg,#e8ecf8,#dde3f5)' }}
         >
           {/* Preview toolbar */}
           <div className="px-4 py-2.5 bg-white border-b border-gray-200 flex items-center justify-between shrink-0 shadow-sm">
@@ -1007,8 +1033,8 @@ export default function InvoiceCreator() {
 
       {/* ── MODALS ── */}
       {showHistoryModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[80vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-xl w-full sm:max-w-md max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
               <h3 className="font-bold text-lg text-gray-900">Recent Invoices</h3>
               <button onClick={() => setShowHistoryModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
@@ -1045,8 +1071,8 @@ export default function InvoiceCreator() {
       )}
 
       {showGuideModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-xl w-full sm:max-w-lg max-h-[90vh] overflow-y-auto animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-lg text-gray-900">How to Generate an Invoice</h3>
               <button onClick={() => setShowGuideModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
@@ -1089,8 +1115,8 @@ export default function InvoiceCreator() {
       )}
 
       {showHelpModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-xl w-full sm:max-w-md max-h-[90vh] overflow-y-auto animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-lg text-gray-900">Help & FAQ</h3>
               <button onClick={() => setShowHelpModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
@@ -1121,8 +1147,8 @@ export default function InvoiceCreator() {
       )}
 
       {showPrivacyModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-xl w-full sm:max-w-lg max-h-[85vh] overflow-y-auto animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-lg text-gray-900">Privacy Policy</h3>
               <button onClick={() => setShowPrivacyModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
@@ -1140,8 +1166,8 @@ export default function InvoiceCreator() {
       )}
 
       {showTermsModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-xl w-full sm:max-w-lg max-h-[85vh] overflow-y-auto animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-lg text-gray-900">Terms of Service</h3>
               <button onClick={() => setShowTermsModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
@@ -1159,8 +1185,8 @@ export default function InvoiceCreator() {
       )}
 
       {showAboutModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm print:hidden flex-col">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-gray-900/40 backdrop-blur-sm print:hidden">
+          <div className="bg-white rounded-t-3xl sm:rounded-2xl shadow-xl w-full sm:max-w-lg overflow-hidden animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
               <h3 className="font-bold text-lg text-gray-900">About Ever Legit LLC</h3>
               <button onClick={() => setShowAboutModal(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500 transition"><X className="w-5 h-5"/></button>
@@ -1189,36 +1215,39 @@ export default function InvoiceCreator() {
       )}
 
       {/* ── MOBILE STICKY BOTTOM BAR ── */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 print:hidden"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-      >
-        <div className="bg-white/90 backdrop-blur-xl border-t border-gray-200/80 px-3 py-3 flex gap-2 shadow-[0_-4px_24px_rgba(0,0,0,0.08)]">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 print:hidden">
+        <div className="bg-white/95 backdrop-blur-xl border-t border-gray-200 px-3 pt-2.5 flex gap-2 shadow-[0_-8px_30px_rgba(0,0,0,0.1)]"
+          style={{ paddingBottom: 'calc(0.625rem + env(safe-area-inset-bottom, 0px))' }}
+        >
           {/* Preview toggle */}
           <button
             onClick={() => setShowMobilePreview(p => !p)}
-            className="flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 active:bg-gray-200 rounded-2xl transition shrink-0 min-w-[58px]"
+            className="flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-semibold rounded-2xl transition shrink-0 min-w-[60px] min-h-[54px]"
+            style={showMobilePreview
+              ? { background: '#eef2ff', color: '#6366f1' }
+              : { background: '#f3f4f6', color: '#4b5563' }}
           >
-            {showMobilePreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            {showMobilePreview ? <EyeOff className="w-4.5 h-4.5" style={{width:18,height:18}} /> : <Eye className="w-4.5 h-4.5" style={{width:18,height:18}} />}
             <span>{showMobilePreview ? 'Form' : 'Preview'}</span>
           </button>
           {/* Print */}
           <button
             onClick={handlePrint}
-            className="flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 active:bg-gray-200 rounded-2xl transition shrink-0 min-w-[52px]"
+            className="flex flex-col items-center justify-center gap-0.5 px-3 py-2 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 active:scale-95 rounded-2xl transition shrink-0 min-w-[54px] min-h-[54px]"
           >
-            <Printer className="w-4 h-4" />
+            <Printer className="w-4.5 h-4.5" style={{width:18,height:18}} />
             <span>Print</span>
           </button>
           {/* Download — full width */}
           <button
             onClick={downloadPDF}
             disabled={isGenerating}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 text-sm font-bold text-white rounded-2xl active:scale-[0.98] transition disabled:opacity-60"
-            style={{ background: `linear-gradient(135deg, ${data.brandColor}, ${data.brandColor}dd)`, boxShadow: `0 4px 16px ${data.brandColor}55` }}
+            className="flex-1 flex items-center justify-center gap-2 text-sm font-bold text-white rounded-2xl active:scale-[0.97] transition-all disabled:opacity-60 min-h-[54px]"
+            style={{ background: `linear-gradient(135deg, ${data.brandColor}, ${data.brandColor}cc)`, boxShadow: `0 4px 20px ${data.brandColor}44` }}
           >
             {isGenerating
-              ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating…</>
-              : <><Download className="w-4 h-4" /> Download PDF</>}
+              ? <><Loader2 className="w-5 h-5 animate-spin" /> Generating…</>
+              : <><Download className="w-5 h-5" /> Download PDF</>}
           </button>
         </div>
       </div>

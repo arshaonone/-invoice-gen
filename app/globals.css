@@ -30,7 +30,7 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; }
 
   body {
     font-family: 'Inter', system-ui, sans-serif;
@@ -38,6 +38,8 @@
     color: var(--fg);
     transition: background-color 0.3s ease, color 0.3s ease;
     min-height: 100vh;
+    /* Prevent iOS bounce on the body itself */
+    overscroll-behavior: none;
   }
 
   h1, h2, h3, h4, h5 {
@@ -97,6 +99,12 @@
     border-radius: 99px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.6); }
+
+  /* Mobile modal scroll – momentum on iOS */
+  .modal-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
 
   /* Shimmer loading */
   .shimmer {
@@ -274,5 +282,20 @@
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #6366f122; border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: #6366f144; }
+/* ─── Native date/time picker fix (Tailwind resets appearance) ─── */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  -webkit-appearance: auto;
+  appearance: auto;
+  color-scheme: light;
+  /* Ensure the calendar icon is always visible and tappable on mobile */
+  cursor: pointer;
+  min-height: 48px;
+}
 
-
+/* Remove iOS default inner shadow on date inputs */
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+  padding: 0;
+}

@@ -56,7 +56,13 @@ export function formatCurrency(amount: number, currency: string): string {
 }
 
 export function formatDate(date: Date | string): string {
-  return format(new Date(date), 'MMM dd, yyyy')
+  if (!date) return '—'
+  // If it's a YYYY-MM-DD string, parse in LOCAL time to avoid UTC midnight timezone shift
+  if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    const [year, month, day] = date.split('-').map(Number)
+    return format(new Date(year, month - 1, day), 'dd MMM yyyy')
+  }
+  return format(new Date(date), 'dd MMM yyyy')
 }
 
 export function formatDateRelative(date: Date | string): string {
