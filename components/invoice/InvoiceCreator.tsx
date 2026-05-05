@@ -108,18 +108,51 @@ function calcAll(items: InvoiceItem[], discount: number, taxRate: number, shippi
 const inp = 'w-full px-3.5 py-2.5 rounded-[18px] border border-[#dee7ef] bg-white text-[0.9rem] font-[Inter,sans-serif] outline-none transition focus:border-[#2c7da0] focus:ring-2 focus:ring-[#2c7da0]/20'
 const lbl = 'block text-[0.7rem] font-bold uppercase tracking-[0.8px] text-[#4e7b9b] mb-1.5'
 
+const PROFILE_KEY = 'igProfile'
+const PROFILE_FIELDS = ['senderName','senderEmail','senderPhone','senderAddress','senderWebsite','senderTaxId','senderLogo','senderBankName','senderAccountNumber','senderSwift'] as const
+type ProfileField = typeof PROFILE_FIELDS[number]
+
 export default function InvoiceCreator() {
   const [data, setData] = useState<InvoiceData>(blank)
   const [isGenerating, setIsGenerating] = useState(false)
-  const [showPreview, setShowPreview] = useState(false)
   const [previewScale, setPreviewScale] = useState(0.55)
+  const [isMobile, setIsMobile] = useState(false)
+  const [showMobilePreview, setShowMobilePreview] = useState(false)
   const printRef = useRef<HTMLDivElement>(null)
   const printContainerRef = useRef<HTMLDivElement>(null)
   const logoInputRef = useRef<HTMLInputElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
 
+  /* Load saved profile on mount */
   useEffect(()=>{
-    const upd=()=>{ if(previewRef.current){ const w=previewRef.current.clientWidth-48; setPreviewScale(Math.min(Math.max(w/794,0.35),0.85)) } }
+    try {
+      const saved = localStorage.getItem(PROFILE_KEY)
+      if (saved) {
+        const profile = JSON.parse(saved) as Partial<InvoiceData>
+        const hasData = PROFILE_FIELDS.some(f => !!profile[f])
+        if (hasData) {
+          setData(p => ({ ...p, ...profile }))
+          toast('✅ Your saved profile was auto-filled!', { duration: 3000, icon: '🏢' })
+        }
+      }
+    } catch {}
+  }, [])
+
+  /* Auto-save profile whenever sender fields change */
+  useEffect(()=>{
+    try {
+      const profile: Partial<InvoiceData> = {}
+      PROFILE_FIELDS.forEach(f => { (profile as any)[f] = (data as any)[f] })
+      localStorage.setItem(PROFILE_KEY, JSON.stringify(profile))
+    } catch {}
+  }, PROFILE_FIELDS.map(f => (data as any)[f]))
+
+  /* Responsive scale & mobile detection */
+  useEffect(()=>{
+    const upd=()=>{
+      setIsMobile(window.innerWidth < 768)
+      if(previewRef.current){ const w=previewRef.current.clientWidth-32; setPreviewScale(Math.min(Math.max(w/794,0.3),0.85)) }
+    }
     upd(); window.addEventListener('resize',upd); return()=>window.removeEventListener('resize',upd)
   },[])
 
@@ -145,6 +178,7 @@ export default function InvoiceCreator() {
 
   const sym = getCurrencySymbol(data.currency)
 
+  const clearProfile=()=>{ localStorage.removeItem(PROFILE_KEY); toast.success('Saved profile cleared!') }
   const saveDraft=()=>{ localStorage.setItem('igDraft',JSON.stringify(data)); toast.success('Draft saved!') }
   const loadDraft=()=>{
     const raw=localStorage.getItem('igDraft')
@@ -209,25 +243,33 @@ export default function InvoiceCreator() {
   )
 
   return (
-    <div style={{fontFamily:'Inter,sans-serif',background:'radial-gradient(circle at 10% 30%,#f1f5f9,#e6edf4)',minHeight:'100vh',padding:'1.8rem 1.5rem',color:'#122c3f'}}>
+    <div style={{fontFamily:'Inter,sans-serif',background:'radial-gradient(circle at 10% 30%,#f1f5f9,#e6edf4)',minHeight:'100vh',padding:isMobile?'1rem':' 1.8rem 1.5rem',color:'#122c3f'}}>
       {printTarget}
 
       {/* Brand header */}
-      <div style={{textAlign:'center',marginBottom:'2rem'}}>
-        <div style={{display:'inline-block',background:'rgba(255,255,255,0.5)',backdropFilter:'blur(8px)',padding:'1rem 2rem',borderRadius:'4rem',boxShadow:'0 8px 20px rgba(0,0,0,0.04)'}}>
-          <a href="/" style={{display:'inline-flex',alignItems:'center',gap:12,fontWeight:800,fontSize:'2rem',background:'linear-gradient(125deg,#0b3b4f,#1f6e8c)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',textDecoration:'none',letterSpacing:'-0.3px'}}>
-            <FileText size={32} color="#1f6e8c" style={{flexShrink:0}}/>
+      <div style={{textAlign:'center',marginBottom:isMobile?'1rem':'2rem'}}>
+        <div style={{display:'inline-block',background:'rgba(255,255,255,0.5)',backdropFilter:'blur(8px)',padding:isMobile?'0.7rem 1.2rem':'1rem 2rem',borderRadius:'4rem',boxShadow:'0 8px 20px rgba(0,0,0,0.04)'}}>
+          <a href="/" style={{display:'inline-flex',alignItems:'center',gap:10,fontWeight:800,fontSize:isMobile?'1.3rem':'2rem',background:'linear-gradient(125deg,#0b3b4f,#1f6e8c)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',textDecoration:'none',letterSpacing:'-0.3px'}}>
+            <FileText size={isMobile?22:32} color="#1f6e8c" style={{flexShrink:0}}/>
             invoice-gen.net
           </a>
-          <p style={{fontWeight:500,color:'#3c6e8f',fontSize:'0.85rem',marginTop:6}}>Intelligent invoicing · real-time preview · save &amp; manage drafts</p>
+          {!isMobile && <p style={{fontWeight:500,color:'#3c6e8f',fontSize:'0.85rem',marginTop:6}}>Intelligent invoicing · real-time preview · save &amp; manage drafts</p>}
         </div>
       </div>
 
+      {/* Mobile preview toggle */}
+      {isMobile && (
+        <div style={{display:'flex',gap:8,marginBottom:'1rem',justifyContent:'center'}}>
+          <button onClick={()=>setShowMobilePreview(false)} style={{flex:1,padding:'10px',borderRadius:40,border:'none',fontWeight:700,fontSize:'0.8rem',cursor:'pointer',background:!showMobilePreview?'#1f6e8c':'#eef2f7',color:!showMobilePreview?'white':'#2b5d7a'}}>✏️ Edit</button>
+          <button onClick={()=>setShowMobilePreview(true)} style={{flex:1,padding:'10px',borderRadius:40,border:'none',fontWeight:700,fontSize:'0.8rem',cursor:'pointer',background:showMobilePreview?'#1f6e8c':'#eef2f7',color:showMobilePreview?'white':'#2b5d7a'}}>👁 Preview</button>
+        </div>
+      )}
+
       {/* Dashboard grid */}
-      <div style={{maxWidth:1500,margin:'0 auto',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(340px,1fr))',gap:'2rem'}}>
+      <div style={{maxWidth:1500,margin:'0 auto',display:'grid',gridTemplateColumns:isMobile?'1fr':'repeat(auto-fit,minmax(340px,1fr))',gap:isMobile?'1rem':'2rem'}}>
 
         {/* ── LEFT: EDITOR ── */}
-        <div style={{background:'rgba(255,255,255,0.96)',borderRadius:'2rem',boxShadow:'0 25px 45px -12px rgba(0,0,0,0.12)',border:'1px solid rgba(255,255,255,0.7)',overflow:'hidden'}}>
+        <div style={{background:'rgba(255,255,255,0.96)',borderRadius:'2rem',boxShadow:'0 25px 45px -12px rgba(0,0,0,0.12)',border:'1px solid rgba(255,255,255,0.7)',overflow:'hidden',display:isMobile&&showMobilePreview?'none':'block'}}>
           <div style={{padding:'1.2rem 1.8rem',background:'#ffffffd9',borderBottom:'1px solid #e9f0f5'}}>
             <h2 style={{fontSize:'1.3rem',fontWeight:600,display:'flex',alignItems:'center',gap:10,color:'#1a4b66'}}>
               <FileText size={20}/> Invoice Composer
@@ -327,17 +369,18 @@ export default function InvoiceCreator() {
             </div>
 
             {/* Actions */}
-            <div style={{display:'flex',flexWrap:'wrap',gap:12,marginBottom:8}}>
-              <button onClick={saveDraft} style={{padding:'10px 18px',borderRadius:40,background:'#eef2f7',color:'#2b5d7a',fontWeight:600,fontSize:'0.8rem',border:'none',cursor:'pointer',display:'flex',alignItems:'center',gap:8}}>💾 Save Draft</button>
-              <button onClick={loadDraft} style={{padding:'10px 18px',borderRadius:40,background:'#eef2f7',color:'#2b5d7a',fontWeight:600,fontSize:'0.8rem',border:'none',cursor:'pointer',display:'flex',alignItems:'center',gap:8}}>📁 Load Draft</button>
-              <button onClick={resetDemo} style={{padding:'10px 18px',borderRadius:40,background:'transparent',border:'1px solid #bed3e3',color:'#2b5d7a',fontWeight:600,fontSize:'0.8rem',cursor:'pointer',display:'flex',alignItems:'center',gap:8}}><RefreshCw size={13}/> Reset Demo</button>
+            <div style={{display:'flex',flexWrap:'wrap',gap:10,marginBottom:8}}>
+              <button onClick={saveDraft} style={{padding:'10px 16px',borderRadius:40,background:'#eef2f7',color:'#2b5d7a',fontWeight:600,fontSize:'0.8rem',border:'none',cursor:'pointer',display:'flex',alignItems:'center',gap:6}}>💾 Save Draft</button>
+              <button onClick={loadDraft} style={{padding:'10px 16px',borderRadius:40,background:'#eef2f7',color:'#2b5d7a',fontWeight:600,fontSize:'0.8rem',border:'none',cursor:'pointer',display:'flex',alignItems:'center',gap:6}}>📁 Load Draft</button>
+              <button onClick={resetDemo} style={{padding:'10px 16px',borderRadius:40,background:'transparent',border:'1px solid #bed3e3',color:'#2b5d7a',fontWeight:600,fontSize:'0.8rem',cursor:'pointer',display:'flex',alignItems:'center',gap:6}}><RefreshCw size={13}/> Reset Demo</button>
+              <button onClick={clearProfile} style={{padding:'10px 16px',borderRadius:40,background:'transparent',border:'1px solid #f5c6cb',color:'#a94442',fontWeight:600,fontSize:'0.8rem',cursor:'pointer',display:'flex',alignItems:'center',gap:6}}>🗑 Clear Profile</button>
             </div>
             <p style={{fontSize:'0.7rem',color:'#5a7f99',textAlign:'center',marginTop:8}}>Drafts stored locally · all changes instant preview</p>
           </div>
         </div>
 
         {/* ── RIGHT: LIVE PREVIEW ── */}
-        <div style={{background:'rgba(255,255,255,0.96)',borderRadius:'2rem',boxShadow:'0 25px 45px -12px rgba(0,0,0,0.12)',border:'1px solid rgba(255,255,255,0.7)',overflow:'hidden',display:'flex',flexDirection:'column'}}>
+        <div style={{background:'rgba(255,255,255,0.96)',borderRadius:'2rem',boxShadow:'0 25px 45px -12px rgba(0,0,0,0.12)',border:'1px solid rgba(255,255,255,0.7)',overflow:'hidden',display:isMobile&&!showMobilePreview?'none':'flex',flexDirection:'column'}}>
           <div style={{padding:'1.2rem 1.8rem',background:'#ffffffd9',borderBottom:'1px solid #e9f0f5'}}>
             <h2 style={{fontSize:'1.3rem',fontWeight:600,display:'flex',alignItems:'center',gap:10,color:'#1a4b66'}}>
               👁 Live Invoice Preview
