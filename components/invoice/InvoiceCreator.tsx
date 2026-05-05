@@ -371,14 +371,14 @@ export default function InvoiceCreator() {
       <header className="sticky top-0 z-40 print:hidden" style={{ background: 'rgba(15,12,41,0.72)', backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)', borderBottom: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 2px 32px rgba(0,0,0,0.35)' }}>
         <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
           {/* Brand */}
-          <div className="flex items-center gap-2.5 shrink-0">
+          <Link href="/" className="flex items-center gap-2.5 shrink-0 hover:opacity-80 transition-opacity">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shrink-0" style={{ background: 'linear-gradient(135deg,#818cf8,#6366f1)', boxShadow: '0 0 20px rgba(99,102,241,0.5)' }}>
               <FileText className="w-4.5 h-4.5 text-white" style={{ width: 18, height: 18 }} />
             </div>
             <span className="font-black text-white text-[15px] tracking-tight">
               invoice-<span style={{ color: '#a5b4fc' }}>gen</span><span className="text-white/30 font-normal text-sm">.net</span>
             </span>
-          </div>
+          </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
